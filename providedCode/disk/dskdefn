@@ -1,0 +1,85 @@
+; defn
+;
+;	var NOTRKS : 40, TRKLGH : 3120, NOSECS : 18, SECLGH : 128, RETRIES : 5
+;	type trkarea : array[0..TRKLGH] of byte
+;	type datarea : array[0..NOSECS * SECLGH] of byte
+;
+;	port intrmask : out(03h), opauxcd : out(04h),
+;		ipstat : in(30h) {NOTREADY : 7, WRTPRT : 6, WRTFLT : 5, NOTFOUND : 4,
+;			CRCERR : 3, LOSTDATA : 2, BUSY : 0},
+;		opcmnd : [RESTORE : 08h, STEP : 38h, STEPIN : 58h, STEPOUT : 78h, SEEK : 1ch,
+;			READTRK : 0e4h, WRTTRK : 0f4h, READMSEC : 098h, WRTSEC : 0ach, READADDR : 0c4h,
+;			FICMND : 0d8h, FICLEAR : 0d0h],
+;		iotrk : io(31h),
+;		iosec : io(32h),
+;		iodata: io(33h),
+;		ipflag: in(34h) {DRQ : 7, HEADLOAD : 5, EOJ : 0},
+;		opcntl:	out(34h){MOTOR : 5 [OFF, ON], SIZE : 4 [MINI, MAXI],
+;			DS4 : 3, DS3 : 2, DS2 : 1, DS1 : 0}
+;
+; end defn
+;
+NOTRKS:		equ	40
+TRKLGH:		equ	3120
+NOSECS:		equ	18
+SECLGH:		equ	128
+RETRIES:	equ	5
+;
+intrmask:	equ	03h
+;
+opauxcd:	equ	04h
+;
+ipstat:		equ	30h
+NOTREADY:	equ	80h
+WRTPRT:		equ	40h
+WRTFLT:		equ	20h
+NOTFOUND:	equ	10h
+CRCERR:		equ	08h
+LOSTDATA:	equ	04h
+BUSY:		equ	0h
+;
+opcmnd:		equ	30h
+STR0:		equ	0
+STR1:		equ	1
+STR2:		equ	2
+STR3:		equ	3
+VERIFY:		equ	04h
+UPDTRK:		equ	10h
+IBMBLK:		equ	08h
+EHLD:		equ	04h
+MULTSEC:	equ	10h
+NOSYNCAM:	equ	01h
+;
+RESTORE:	equ	008h | STR0
+STEP:		equ	028h | UPDTRK | STR0
+STEPIN:		equ	048h | UPDTRK | STR0
+STEPOUT:	equ	068h | UPDTRK | STR0
+SEEK:		equ	018h | VERIFY | STR0
+READTRK:	equ	0e4h
+WRTTRK:		equ	0f4h
+READMSEC:	equ	080h | MULTSEC | IBMBLK
+WRTSEC:		equ	0a0h | IBMBLK
+READADDR:	equ	0c4h
+FICMND:		equ	0d8h
+FICLEAR:	equ	0d0h
+;
+iotrk:		equ	31h
+;
+iosec:		equ	32h
+;
+iodata:		equ	33h
+;
+ipflag:		equ	34h
+DRQ:		equ	7
+HEADLOAD:	equ	5
+EOJ:		equ	0
+;
+opcntl:		equ	34h
+MOTORON:	equ	20h
+MOTOROFF:	equ	0h
+SIZEMINI:	equ	0h
+SIZEMAXI:	equ	10h
+DS4:		equ	8h
+DS3:		equ	4h
+DS2:		equ	2h
+DS1:		equ	1h

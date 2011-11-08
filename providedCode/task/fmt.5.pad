@@ -1,0 +1,160 @@
+;
+;--------------------
+;
+; class format_menu
+;
+;	var pmttop : 5, pmtlmar : 0, pmtlgh : SCRWID - pmtlmar,
+;		backtop : pmttop, backlmar : pmtlmar,
+;		padlmar : pmtlmar, padctr : pmtlgh / 2 + padlmar,
+;		padtop : pmttop + 2, padbot : pmttop + 5, padmsg : 3
+;
+;	var backmsg : 'ERASE-LETTER:', 
+;		crosstr : '\RS;\backlmar;\backtop;' || backmsg ||
+;			'\RS;\padlmar;\padbot;1:' ||
+;			'\RS;padlmar + padmsg - 1;\padtop;2:' ||
+;			'\RS;\padctr;\padtop;3:' ||
+;			'\RS;\padctr + padmsg - 1;\padbot;4:',
+;		erastr : '\RS;\backlmar + length(backmsg);\backtop;\GS;' ||
+;			'\RS;\padlmar + padmsg;\padbot;                 ' ||
+;			'\RS;\padlmar + [padmsg * 2] - 1;\padtop;                 ' ||
+;			'\RS;\padctr + padmsg;\padtop;\GS' ||
+;			'\RS;\padctr + [padmsg * 2] - 1;\padbot;\GS'
+;
+pmttop:	equ	5
+pmtlmar:equ	0
+pmtlgh:	equ	SCRWID - pmtlmar
+;
+backtop:equ	pmttop
+backlmar:equ	pmtlmar
+padlmar:equ	pmtlmar
+padctr:	equ	pmtlgh / 2 + padlmar
+padtop:	equ	pmttop + 2
+padbot:	equ	pmttop + 5
+padmsg:	equ	2
+;
+crosstr:
+	db	Lcrosstr
+	db	RS,backlmar,backtop
+backmsg:
+	db	"ERASE-LETTER:"
+Lbackmsg:equ	$-backmsg
+	db	RS,padlmar,padbot,"1:"
+	db	RS,padlmar + padmsg - 1,padtop,"2:"
+	db	RS,padctr,padtop,"3:"
+	db	RS,padctr + padmsg - 1,padbot,"4:"
+Lcrosstr:equ	$-crosstr-1
+;
+erastr:
+	db	Lerastr
+	db	RS,backlmar+Lbackmsg,backtop,GS
+	db	RS,padlmar + padmsg,padbot,"                 "
+	db	RS,padlmar + [padmsg * 2] - 1,padtop,"                 "
+	db	RS,padctr + padmsg,padtop,GS
+	db	RS,padctr + [padmsg * 2] - 1,padbot,GS
+Lerastr:equ	$-erastr-1
+;
+;--------------------
+;
+;-- CROSS - print the cross
+;
+;	proc cross
+;		pmtstr(crosstr)
+;	end proc
+;
+cross:
+	push	hl			; save register HL
+;
+	ld	hl,crosstr
+	call	pmtstr			; pmtstr(crosstr)
+;
+	pop	hl			; restore register HL
+	ret
+;
+;--------------------
+;
+;-- ERASE - erase menu text around cross
+;
+;	proc erase
+;		pmtstr(erastr)
+;	end proc
+;
+erase:
+	push	hl			; save register HL
+;
+	ld	hl,erastr
+	call	pmtstr			; pmtstr(erastr)
+;
+	pop	hl			; restore register HL
+	ret
+;
+;---------------------
+;
+;-- FORMAT - format menu's in shape of input device
+;--
+;-- arguments:
+;--
+;--	HL - pointer to array of strings
+;
+;	proc format(string @str(NARY))
+;		move(backlmar+length(backmsg),backtop)
+;		pmtstr(str(0))
+;
+;		move(padlmar + padmsg,padbot)
+;		pmtstr(str(1))
+;
+;		move(padlmar + [padmsg * 2] - 1,padtop)
+;		pmtstr(str(2))
+;
+;		move(padctr + padmsg,padtop)
+;		pmtstr(str(3))
+;
+;		move(padctr + [padmsg * 2] - 1,padbot)
+;		pmtstr(str(4))
+;	end proc
+;
+format:
+	push	de			; save registers DE, HL
+	push	hl
+;
+	ex	de,hl
+	ld	h,backlmar + Lbackmsg
+	ld	l,backtop
+	call	move			; move(backlmar + length(backmsg),backtop)
+	ex	de,hl
+	call	pmtstr			; pmtstr(str(0))
+;
+	call	nextstr
+	ex	de,hl
+	ld	h,padlmar + padmsg
+	ld	l,padbot
+	call	move			; move(padlmar + padmsg,padbot)
+	ex	de,hl
+	call	pmtstr			; pmtstr(str(1))
+;
+	call	nextstr
+	ex	de,hl
+	ld	h,padlmar + [padmsg * 2] - 1
+	ld	l,padtop
+	call	move			; move(padlmar + [padmsg * 2] - 1,padtop)
+	ex	de,hl
+	call	pmtstr			; pmtstr(str(2))
+;
+	call	nextstr
+	ex	de,hl
+	ld	h,padctr + padmsg
+	ld	l,padtop
+	call	move			; move(padctr + padmsg,padtop)
+	ex	de,hl
+	call	pmtstr			; pmtstr(str(3))
+;
+	call	nextstr
+	ex	de,hl
+	ld	h,padctr + [padmsg * 2] - 1
+	ld	l,padbot
+	call	move			; move(padctr + [padmsg * 2] - 1,padbot)
+	ex	de,hl
+	call	pmtstr			; pmtstr(str(4))
+;
+	pop	hl
+	pop	de			; restore registers DE, HL
+	ret

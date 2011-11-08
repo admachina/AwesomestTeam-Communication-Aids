@@ -1,0 +1,10 @@
+tabgen tab.5.d @temp
+ed @temp << 'ED'
+g/\\10/s//\\b/gp
+g/\\12/s//\\n/gp
+g/\\21/s///gp
+w
+q
+ED
+asz80 start select text fmt.5.joy.sw in.5.d pmt.vid printer syslib @temp end
+rm @temp

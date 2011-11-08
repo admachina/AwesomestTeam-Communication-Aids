@@ -1,0 +1,101 @@
+;
+	org	0c000h				; 0c000h for ROM, 03800h for testing
+;
+;--------------------
+;
+;-- RDDATA - read in N tracks of data
+;
+; proc rddata
+;	var NTRK : 6, i : [0..65536]
+;
+;	except
+;		prtinit('\EC;U ...')
+;		startup(DS1)
+;		hdmv(RESTORE,0)
+;		i <- 0
+;		loop
+;			rdtdata(i)
+;			i +<- SECLGH * NOSECS
+;		until i = NTRKS * SECLGH * NOSECS exit
+;			hdmv(SEEK,iotrk+1)
+;		pool
+;		hdmv(RESTORE,0)
+;		shutdown()
+;		select()
+;	exception ioerr
+;		shutdown()
+;		prtstr('....')
+;	end except
+; end proc
+;
+stackadr:equ	04000h				; 04000h for ROM; 03e00h for testing
+MONITOR:equ	0c008h
+SELECT:	equ	040h
+NTRK:	equ	6
+;
+rddata:
+	ld	sp,stackadr			; set stack address
+	ld	hl,prtclr
+	call	prtinit				; prtinit('\EC;U ...')
+	ld	hl,msg1
+	call	prtstr
+	ld	hl,msg2
+	call	prtstr
+	ld	a,DS1
+	call	startup				; startup(DS1)
+	ld	h,RESTORE
+	call	hdmv				; hdmv(RESTORE,0)
+	ld	de,0				; i <- 0
+>1:
+	ex	de,hl				; restore i
+	call	rdtdata				; rdtdata(i)
+	ld	de,SECLGH*NOSECS
+	add	hl,de				; i +<- SECLGH * NOSECS
+	ld	de,NTRK*SECLGH*NOSECS
+	call	cp16				; i = NTRK * SECLGH * NOSECS
+	jrz	>2				; exit
+	ex	de,hl				; save i
+	in	a,(iotrk)
+	inc	a
+	ld	h,SEEK
+	ld	l,a
+	call	hdmv				; hdmv(SEEK,iotrk+1)
+	jr	>1
+>2:
+	ld	h,RESTORE
+	call	hdmv				; hdmv(RESTORE,0)
+	call	shutdown			; shutdown()
+	call	SELECT				; SELECT()
+	jr	endex
+ioerr:
+	call	shutdown			; shutdown()
+	ld	hl,ioermsg
+	call	prtstr				; prtstr('...')
+endex:
+	halt					; stop machine for ROM
+;	jp	MONITOR				; jump to monitor warm start for testing
+;
+prtclr:
+	db	Lprtclr
+	db	EC,'U'
+	db	RS,32,0,"STARTING INSTRUCTIONS"
+	db	RS,0,2,"When machine is turned off, connect input device to input socket on front panel."
+	db	RS,0,4,"Open disk drive door, remove appropriate disk from its jacket, and insert disk  into the disk drive. "
+Lprtclr:equ	$-prtclr-1
+msg1:
+	db	Lmsg1
+	db	"The edge of the disk on which the slot is located should   enter the disk drive first."
+	db	RS,0,8,"Close disk drive door."
+	db	RS,0,10,"When the RED light goes out on disk drive front, open disk drive door, "
+Lmsg1:	equ	$-msg1-1
+msg2:
+	db	Lmsg2
+	db	"remove   disk and insert it back into its jacket, and close disk drive door."
+	db	RS,32,14,"MISTAKES"
+	db	RS,0,16,"If a problem is encountered: open disk drive door, "
+	db	"remove disk, turn machine offand start again."
+Lmsg2:	equ	$-msg2-1
+ioermsg:
+	db	Lioermsg
+	db	":BAD DISK. PLEASE REPORT. TRY OTHER SIDE OF DISK."
+Lioermsg:equ	$-ioermsg-1

@@ -1,0 +1,185 @@
+;
+;--------------------
+;
+; class select_text
+;
+;	var NARY : 5, SCRWID : 40, SCRLGH : 12, NLINES : 4
+;
+NARY:	equ	5
+SCRWID:	equ	40
+SCRLGH:	equ	12
+NLINES:	equ	4
+;
+;--------------------
+;
+;-- SELECT - this task performs the N-ary tree selection algorithm
+;
+;	task select
+;		type treenode { string @menu(NARY), directory dir(NARY) }
+;		     directory { select from
+;				entitydw: @treenode
+;				entityup: @treenode
+;				direct:   @treenode
+;				leaf:     @string
+;				control:  @proc[STAT, PRINTON, PRINTOFF, NEWPAGE]
+;				reset:    @treenode }
+;
+;		treenode root, @dp
+;		stack(@treenode) entity
+;		var cord : [0..NARY)
+;		input_device inp
+;		format_menu fmt
+;		text_area txt
+;		prompt_device pmt
+;		line_printer prt
+;
+;	task body
+;		startask(stackadr - 100h,input)
+;		startask(stackadr - 200h,prompt)
+;		startask(stackadr - 300h,printer)
+;
+;		box()
+;		cross()
+;		dp <- root
+;		entity.push(dp)
+;
+;		loop
+;			erase()
+;			format(dp -> menu)
+;			home()
+;			nprobes +<- 1
+;			cord <- getchar()
+;
+;			select dp -> dir(cord) from
+;			entitydw:
+;				dp <- dp -> dir(cord)
+;				entity.push(dp)
+;				morf
+;			entityup:
+;				entity.pop
+;				dp <- entity.top
+;				morf
+;			direct:
+;				dp <- dp -> dir(cord)
+;				morf
+;			leaf:
+;				text(dp -> dir(cord))
+;				dp <- entity.top
+;				morf
+;			control:
+;				dp -> dir(cord)()
+;				dp <- entity.top
+;				morf
+;			reset:
+;				dp <- dp -> dir(cord)
+;				morf
+;			esac
+;		pool
+;	end task
+;
+dp:	ds	2
+cord:	ds	1
+;
+select:
+	call	textinit		; initialize class text_area
+	ld	hl,stackadr - 100h
+	ld	de,input
+	call	startask		; startask(stackadr - 100h,input)
+	ld	hl,stackadr - 200h
+	ld	de,prompt
+	call	startask		; startask(stackadr - 200h,prompt)
+	ld	hl,stackadr - 300h
+	ld	de,printer
+	call	startask		; startask(stackadr - 300h,printer)
+;
+	ld	h,0
+	ld	l,botext+1
+	call	box			; box()
+	call	cross			; cross()
+;
+	ld	hl,root
+	ld	(dp),hl			; dp <- root
+	push	hl			; entity.push(dp)
+seloop:
+	call	erase			; erase()
+	ld	a,0
+	ld	hl,(dp)
+	call	indexw
+	call	format			; format(dp -> menu)
+	call	home			; home()
+	ld	hl,(nprobes)
+	inc	hl
+	ld	(nprobes),hl		; nprobes +<- 1
+	call	getchar
+	ld	(cord),a		; cord <- getchar()
+	srl	a
+	add	flgdp			; a <- cord/2 + flgdp
+	ld	hl,(dp)
+	call	indexb			; a <- (dp + flgdp) -> type(cord / 2)
+	ld	b,a
+	ld	a,(cord)
+	and	1			; cord odd or even
+	ld	a,b
+	jrz	>1			; even
+	and	0fh			; zero high order hex digit
+	jr	>2
+>1:
+	srl	a
+	srl	a
+	srl	a
+	srl	a			; shift high order hex digit to low order
+>2:
+	ld	hl,dirtype
+	call	indexw
+	jp	(hl)			; select dp -> dir(cord) from
+entitydw:
+	call	derefdp
+	ld	(dp),hl			; dp <- dp -> dir(cord)
+	push	hl			; entity.push(dp)
+	jr	selesac
+entityup:
+	pop	hl			; entity.pop
+	pop	hl
+	ld	(dp),hl
+	push	hl			; dp <- entity.top
+	jr	selesac
+direct:
+	call	derefdp
+	ld	(dp),hl			; dp <- dp -> dir(cord)
+	jr	selesac
+leaf:
+	call	derefdp
+	call	text			; text(dp -> dir(cord))
+	pop	hl
+	ld	(dp),hl
+	push	hl			; dp <- entity.top
+	jr	selesac
+control:
+	call	derefdp
+	call	dyncal			; dp -> dir(cord)()
+	pop	hl
+	ld	(dp),hl
+	push	hl			; dp <- entity.top
+	jr	selesac
+reset:
+	call	derefdp
+	ld	(dp),hl			; dp <- dp -> dir(cord)
+	jr	selesac
+selesac:
+	jp	seloop
+;
+derefdp:
+	ld	a,(cord)
+	add	a
+	add	2
+	ld	hl,(dp)
+	call	indexw			; hl <- dp -> dir(cord)
+	ret
+;
+dirtype:
+	dw	entitydw
+	dw	entityup
+	dw	direct
+	dw	leaf
+	dw	control
+	dw	reset

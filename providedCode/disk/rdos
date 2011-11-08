@@ -1,0 +1,359 @@
+;
+;	cromemco rdos - disk monitor
+;
+stat:	equ	0			; status port
+dav:	equ	40h			; data-available mask
+;
+data:	equ	1			; data port
+;
+acmndp:	equ	2			; command port
+abaudp:	equ	0			; baud port
+;
+intrmask:equ	03h			; interrupt mask
+;
+opauxcd:equ	04h			; parallel output / auxiliary disk command
+;
+ipstat:	equ	30h
+NOTREADY:equ	80h
+WRTPRT:	equ	40h
+WRTFLT:	equ	20h
+NOTFOUND:equ	10h
+CRCERR:	equ	08h
+LOSTDATA:equ	04h
+;
+opcmnd:	equ	30h			; disk status
+STR0:	equ	0
+STR1:	equ	1
+STR2:	equ	2
+STR3:	equ	3
+VERIFY:	equ	04h
+UPDTRK:	equ	10h
+IBMBLK:	equ	08h
+EHLD:	equ	04h
+MULTSEC:equ	10h
+NOSYNCAM:equ	01h
+;
+RESTORE:equ	08h
+SEEK:	equ	018h
+READTRK:equ	0e4h
+WRTTRK:	equ	0f4h
+READSEC:equ	080h
+WRTSEC:	equ	0a0h
+READADDR:equ	0c4h
+FICLEAR:equ	0d0h
+;
+iotrk:	equ	31h			; track reg.
+;
+iosec:	equ	32h			; sector reg.
+;
+iodata:	equ	33h			; data reg.
+;
+ipflag:	equ	34h			; disk flags
+DRQ:	equ	7
+EOJ:	equ	0
+BOOT:	equ	40h			; boot to CDOS
+;
+opcntl:	equ	34h			; disk control
+MOTORON:equ	20h
+MOTOROFF:equ	0h
+SIZEMINI:equ	0h
+SIZEMAXI:equ	10h
+DS4:	equ	8h
+DS3:	equ	4h
+DS2:	equ	2h
+DS1:	equ	1h
+;
+cr:	equ	0dh
+;
+	org	0c000h
+	ld	hl,007ch
+	ld	sp,hl			; set stack to 7ch
+	ex	de,hl
+	di
+	call	initbaud
+	sub	a
+	out	(intrmask),a		 ; inhibit all interrupts to 4fdc
+	in	a,(ipflag)
+	and	BOOT			; boot mode ?
+	jrz	bootcdos		; yes
+	jp	r2
+	call	0c229h
+bootcdos:
+	ld	a,FICLEAR
+	out	(opcmnd),a		; force interrupt clear to reset disk command
+busy:
+	in	a,(ipstat)
+	rra				; disk busy ?
+	jrk	busy			; yes
+	di				; dsiable interrupts to cpu
+	ld	a,10h			; drive size <- MAXI
+drsize:
+	ld	hl,0080h		; starting memory locn. ro read cdos into
+	ld	sp,hl			; set stack to 80h
+	push	af			; save drive size
+	ld	b,h			; select DS1, 0 => DS1
+	call	restore			; execute restore disk head command
+	jrnz	l3			; command error ? yes
+	pop	af			; restore drive size
+	push	af			; save drive size
+	ld	b,h			; select DS1, 0 => DS1
+	ld	e,01h			; set starting sector no.
+	call	readsec			; read sector 1, track 0, boot rtn for cdos
+	jp	z,0080h			; branch to cdos boot rtn
+l3:
+	pop	af			; restore drive size
+	xor	10h			; drive size <- MINI
+	jr	drsize		; try MINI drive size
+restore:
+	call	setcntl
+	out	(opcntl),a		; write disk control info.
+	ld	d,NOTREADY | NOTFOUND | CRCERR
+	and	10h			; set zero flag, zero => MINI, non-zero => MAXI
+	ld	a,7fh
+	out	(opauxcd),a		; opauxcd <- 7fh
+l12:
+	ld	a,RESTORE | VERIFY | STR3
+	jrz	wrtcmnd			; if MINI,  execute restore with stepping rate STR3
+	ld	a,RESTORE | VERIFY | STR1
+	jr	wrtcmnd			; else execute restore with stepping rate STR1
+;
+	push	af
+	call	setcntl
+	out	(opcntl),a
+	out	(c),d
+	ld	d,98h
+	pop	af
+	rla
+	jrk	l20
+	and	20h
+	ld	a,1fh
+	jrz	wrtcmnd
+	ld	a,1dh
+r10:
+wrtcmnd:
+	out	(opcmnd),a		; write disk command
+l7:
+	in	a,(ipflag)		; read disk flags
+	rra
+l16:
+	jrnk	l7			; EOJ ?, no
+l9:
+	in	a,(ipstat)		; read disk status after command execution
+	ld	b,a			; save status bits
+	and	d			; and command error mask, sets Z flag
+	ret
+l20:
+	ld	a,06fh
+	out	(opauxcd),a
+	ld	a,18h
+	call	r10
+l8:
+	in	a,(04h)
+	and	40h
+	jrnz	l8
+	ld	a,7fh
+	out	(opauxcd),a
+	sub	a
+	ld	b,a
+	ret
+;
+; arguments:
+;
+;	a - drive size
+;	b - drive select: 0, 1, 2, 3
+;	e - sector no.
+;
+readsec:
+	call	r6
+	add	READSEC | IBMBLK	; add read sector command with EHLD
+	ld	d,NOTREADY | NOTFOUND | CRCERR | LOSTDATA
+	out	(opcmnd),a		; write read sector command
+l10:
+	in	a,(ipflag)
+	rra				; EOJ ?
+	jrk	l9			; yes
+	ini
+	jp	nz,l10			; read in 80 bytes ? no
+	jr	l7
+	call	r6
+	add	0a8h
+	ld	d,0fch
+	out	(opcmnd),a
+l11:
+	in	a,(ipflag)
+	rra
+	jrk	l9
+	outi
+	jp	nz,l11
+	jr	l7
+;
+; arguments:
+;
+;	a - drive size
+;	b - drive select: 0, 1, 2, 3
+;	e - sector number
+;
+; returns:
+;
+;	a - enable head load delay mask
+;
+r6:
+	call	setcntl
+	or	080h			; select auto wait
+	ld	d,a			; save disk control bits
+	ld	a,e
+	out	(32h),a			; set sector number
+	in	a,(ipflag)
+	and	20h			; head load ? zero => not loaded, non-zero => loaded
+	ld	a,d
+	out	(opcntl),a		; write disk control bits
+	ld	a,EHLD
+	ret	z			; return, => EHLD
+	sub	a
+	ret				; return, head loaded
+;
+; arguments:
+;
+;	a - drive size
+;	b - drive select: 0, 1, 2, 3
+;
+; returns:
+;
+;	a - disk control bits
+;	b - 80h
+;	c - disk data register port no.
+;
+setcntl:
+	and	10h			; and out drive size bit
+	ld	c,a			; save drive size bit
+	inc	b
+	sub	a
+;	scf
+	db	37h			; assmbler bug SCF => 37h
+l13:
+	rla
+	djnz	l13			; select drive, shift bit to correct drive bit
+	or	c			; select drive size
+	or	20h			; turn motor on
+	ld	bc,8033h		; set b to count 80 bytes, set c to data port address
+	ret
+;
+; check input & return with data if ready
+;
+chkin:
+	in	a,(stat)
+	and	dav
+	ret	z
+	in	a,(data)
+	ret
+;
+; get character from input
+;
+gbyte:
+	call	chkin
+	jrz	gbyte
+	and	7fh
+	ret
+	call	0c229h
+;
+; initialize baud rate of the current device
+;
+; push carriage-return to select the proper baud
+; rate for the current terminal. (the maximum
+; number of carriage-returns required is four.)
+;
+; with the cromemco tuart any of the following baud rates can be selected:
+; 19200, 9600, 4800, 2400, 1200, 300, 150, 110
+;
+; with the 3p+s : 2400, 300, 110
+;
+; two carriage-returns are required for 
+; any uart with a fixed baud rate,
+;
+initbaud:
+	ld	hl,baudrs
+	ld	c,abaudp
+	ld	a,19h			; octuple the clock
+it1:
+	out	(acmndp),a		;  reset current device
+	outi
+	call	gbyte
+	call	gbyte
+	cp	cr
+	ld	a,09h
+	jrnz	it1
+	ret
+	call	0c285h
+	jr	l19
+r2:
+	call	0c2f7h
+	db	cr,cr,"CROMEMCO RDOS"
+	or	c
+l19:
+	sub	a
+	ld	(de),a
+	push	de
+	pop	ix
+	ld	sp,ix
+	call	0c1a9h
+	ld	hl,0c128h
+	push	ix
+	ex	(sp),hl
+	ld	c,(hl)
+	bit	5,c
+	inc	hl
+	call	nz,0c2ech
+	call	0c2f7h
+	cp	e
+	call	0c2bah
+	jrnz	l18
+	ld	(ix+00h),00h
+	ret
+l18:
+	sub	41h
+	jrk	6eh
+	cp	17h
+	jrnk	6ah
+	ld	e,a
+	ld	d,00h
+	call	0c2bah
+	cp	3bh
+	jrz	l17
+	ex	de,hl
+	add	hl,hl
+	ld	de,0c3d2h
+	add	hl,de
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ex	de,hl
+	cp	4dh
+	jp	(hl)
+l17:
+	ld	a,e
+	cp	04h
+	jrnk	4eh
+	ld	b,e
+	push	ix
+	pop	hl
+	or	0b0h
+	ld	(hl),a
+	ld	d,h
+	ld	e,l
+	inc	de
+	ld	a,b
+	add	41h
+	ld	(de),a
+	call	0c219h
+	cp	3bh
+	jrnz	10
+;
+; baud rates
+; with cromemco tuart: 19200, 9600, 4800, 2400, 1200, 300, 150, 110
+;
+; with 3p+s: 2400, 300, 110
+;
+	org	0c3cah
+baudrs:
+	db	90h,0c0h,0a0h,90h,88h,84h,82h,1
+	end

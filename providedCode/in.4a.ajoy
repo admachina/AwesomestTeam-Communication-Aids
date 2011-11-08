@@ -1,0 +1,163 @@
+;
+;	input routine for 4 state analog joystick and internal autoscan
+;
+inbox:	equ	040h		; inside box
+input:
+	push	af		; save registers AF, BC, DE
+	push	bc
+	push	de
+;
+;	check if joystick has moved out of the extreme
+;
+moveout:
+	call	inpjoy
+	ld	a,(x)		; a <- (x)
+	cp	inbox		; x <= inbox ?
+	call	legt
+	jp	pe,joy1		; no
+	cp	-inbox		; x >= -inbox ?
+	call	ltge
+	jp	po,joy1		; no
+	ld	a,(y)		; a <- (y)
+	cp	inbox		; y <= inbox ?
+	call	legt
+	jp	pe,joy1		; no
+	cp	-inbox		; y >= -inbox ?
+	call	ltge
+	jp	po,joy1		; no
+	jr	movein
+joy1:
+	jr	moveout
+;
+;	check if joystick has moved to an extreme
+;
+tol:	equ	020h		; tolerence
+outbox:	equ	060h		; outside box
+movein:
+	ld	de,-16000	; delay 2.0 seconds
+sec2:
+	call	inpjoy
+	ld	a,(x)		; a <- (x)
+	cp	outbox		; x > outbox ?
+	call	legt
+	ld	b,2
+	jp	pe,ychk		; yes
+	cp	-outbox		; x < -outbox ?
+	call	ltge
+	ld	b,1
+	jp	po,ychk		; yes
+	jr	joy2
+ychk:
+	ld	a,(y)		; a <- (y)
+	cp	tol		; y <= tol ?
+	call	legt
+	jp	pe,joy3		; no
+	cp	-tol		; y >= -tol ?
+	call	ltge
+	jp	po,joy3		; no
+	jr	joy4
+joy2:
+	ld	a,(y)		; a <- (y)
+	cp	outbox		; y > outbox ?
+	call	legt
+	ld	b,0
+	jp	pe,xchk		; yes
+	cp	-outbox		; y < -outbox ?
+	call	ltge
+	ld	b,3
+	jp	po,xchk		; yes
+	jr	joy3
+xchk:
+	ld	a,(x)		; a <- (x)
+	cp	tol		; x <= tol ?
+	call	legt
+	jp	pe,joy3		; no
+	cp	-tol		; x >= -tol ?
+	call	ltge
+	jp	po,joy3		; no
+	jr	joy4
+joy3:
+	inc	de		; de <- de + 1
+	ld	a,d
+	cp	0		; high order byte of delay = 0 ?
+	jrnz	sec2		; no
+	ld	b,4
+joy4:
+	call	beep		; make an audio beep
+	ld	a,b
+	ld	(inparm),a
+	pop	de
+	pop	bc
+	pop	af		; restore registers AF, BC, DE
+	ld	a,(inparm)	; return parameter in reg. a
+	ret
+inparm:
+	ds	1
+;
+;	read X and Y co-ordinate of joystick
+;
+xdir:	equ	019h		; joystick x axis
+ydir:	equ	01ah		; joystick y axis
+inpjoy:
+	push	af		; save register AF
+	in	a,(xdir)
+	ld	(x),a		; (x) <- a
+	in	a,(ydir)
+	ld	(y),a		; (y) <- a
+	pop	af		; restore register AF
+	ret
+x:	ds	1
+y:	ds	1
+;
+;	beep the speaker on the joystick
+;
+times:	equ	010h
+bpdel:	equ	040h
+point:	equ	020h
+spker:	equ	019h		; joystick speaker
+beep:
+	push	af		; save registers AF, BC
+	push	bc
+	ld	c,times
+>1:
+	ld	a,point		; output top of sine wave
+	out	(spker),a
+	ld	b,bpdel		; delay
+>2:
+	djnz	>2
+	ld	a,-point	; output bottom of sine wave
+	out	(spker),a
+	ld	b,bpdel		; delay
+>3:
+	djnz	>3
+	dec	c
+	jrnz	>1		; output several sine waves
+	pop	bc
+	pop	af		; restore registers AF, BC
+	ret
+;
+;	test a < C (po) or a >= C (pe)
+;
+so:	equ	084h
+ltge:
+	push	hl
+	push	af
+	pop	hl
+	ld	a,l
+	and	so
+	ld	a,h
+	pop	hl
+	ret
+;
+;	test a <= C (po) or a > C (pe)
+;
+zso:	equ	0c4h
+legt:
+	push	hl
+	push	af
+	pop	hl
+	ld	a,l
+	and	zso
+	ld	a,h
+	pop	hl
+	ret

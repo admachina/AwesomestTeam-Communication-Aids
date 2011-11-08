@@ -1,0 +1,359 @@
+;
+;--------------------
+;
+;-- RDTRK - read track into core
+;--
+;-- arguments:
+;--
+;--	HL - address of core area
+;
+; proc rdtrk(trkarea *trk)
+;	trkarea *temp
+;	var retries : [0..RETRIES], stat : [0..255]
+;
+;	retries <- 0
+;	loop
+;		temp <- trk
+;		opcmnd <- RDTRK
+;
+;		loop until EOJ exit
+;			if DRQ then
+;				*temp <- iodata
+;				temp +<- 1
+;			fi
+;		pool
+;		stat <- ipstat
+;	until stat ~= (NOTREADY & LOSTDATA) exit
+;		retries +<- 1
+;	when retires = RETRIES then
+;		diskerr('\FF;RT-',stat)
+;	pool
+; end proc
+;
+rdtrk:
+	push	af			; save registers AF, BC, HL
+	push	bc
+	push	hl
+;
+	ld	b,0			; retries <- 0
+>1:
+	push	hl			; temp <- trk
+	ld	a,READTRK		; opcmnd <- READTRK
+	out	(opcmnd),a
+>2:
+	in	a,(ipflag)
+	bit	EOJ,a			; EOJ ?
+	jrnz	>3			; exit
+	bit	DRQ,a			; DRQ ?
+	jrz	>4			; no
+	in	a,(iodata)
+	ld	(hl),a			; *temp <- iodata
+	inc	hl			; temp +<- 1
+>4:
+	jr	>2
+>3:
+	in	a,(ipstat)
+	ld	c,a			; stat <- ipstat
+	and	NOTREADY | LOSTDATA
+	jrz	>5			; stat ~= (NOTREADY & LOSTDATA) ? exit
+	inc	b			; retries +<- 1
+	ld	a,b
+	cp	RETRIES			; retries = RETRIES ?
+	jrnz	>6			; no
+	ld	hl,rdtrkid
+	call	diskerr			; diskerr('\FF;RT-',stat)
+>6:
+	pop	hl			; restore trk
+	jr	>1
+>5:
+	pop	hl			; remove trk
+;
+	pop	hl
+	pop	bc
+	pop	af			; restore registers AF, BC, HL
+	ret
+;
+rdtrkid:
+	db	Lrdtrkid
+	db	FF,"RT-"
+Lrdtrkid:equ	$-rdtrkid-1
+;
+;---------------------
+;
+;-- WRTTRK - write track from core to disk, SW4 on 4fdc must be OFF
+;--
+;-- arguments:
+;--
+;--	HL - address of core area
+;
+; proc wrttrk(trkarea *trk)
+;	trkarea *temp
+;	var retries : [0..RETRIES], stat : [0..255]
+;
+;	retries <- 0
+;
+;	loop
+;		temp <- trk
+;		opcmnd <- WRTTRK
+;
+;		loop until EOJ exit
+;			if DRQ then
+;				iodata <- *temp
+;				temp +<- 1
+;			fi
+;		pool
+;		stat <- ipstat
+;	until stat ~= (NOTREADY & WRTPRT & WRTFLT & LOSTDATA) & vertrk() = VALID exit
+;		retries +<- 1
+;	when retries = RETRIES then
+;		diskerr('\FF;WT-',stat)
+;	pool
+; end proc
+;
+wrttrk:
+	push	af			; save registers AF, BC, HL
+	push	bc
+	push	hl
+;
+	ld	b,0			; retries <- 0
+>1:
+	push	hl			; temp <- trk
+	ld	a,WRTTRK
+	out	(opcmnd),a		; opcmnd <- WRTTRK
+>2:
+	in	a,(ipflag)
+	bit	EOJ,a			; EOJ ?
+	jrnz	>3			; exit
+	bit	DRQ,a			; DRQ ?
+	jrz	>4			; no
+	ld	a,(hl)
+	out	(iodata),a		; iodata <- *temp
+	inc	hl			; temp +<- 1
+>4:
+	jr	>2
+>3:
+	in	a,(ipstat)
+	ld	c,a			; stat <- ipstat
+	and	NOTREADY | WRTPRT | WRTFLT | LOSTDATA
+	jrnz	>5			; stat ~= (NOTREADY & WRTPRT & WRTFLT & LOSTDATA) ?, no
+	call	vertrk
+	cp	VALID			; vertrk() = VALID ?
+	jrz	>6			; exit
+>5:
+	inc	b			; retries +<- 1
+	ld	a,b
+	cp	RETRIES			; retries = RETRIES ?
+	jrnz	>7			; no
+	ld	hl,wrttid
+	call	diskerr			; diskerr('\FF;WT-',stat)
+>7:
+	pop	hl			; restore trk
+	jr	>1
+>6:
+	pop	hl			; remove trk
+;
+	pop	hl
+	pop	bc
+	pop	af			; restore registers AF, BC, HL
+	ret
+;
+wrttid:
+	db	Lwrttid
+	db	FF,"WT-"
+Lwrttid:	equ	$-wrttid-1
+;
+;---------------------
+;
+;-- WRTTDATA - write one track of data
+;--
+;-- arguments:
+;--
+;--	HL - address of core area
+;
+; proc wrttdata(datarea *trk)
+;	datarea *temp
+;	var retries : [0..RETRIES], stat : [0..255]
+;
+;
+;	except done
+;		retries <- 0
+;		loop
+;			temp <- data
+;			iosec <- 1
+;			loop
+;				opcmnd <- cheadld(WRTSEC)
+;
+;				loop until EOJ exit
+;					if DRQ then
+;						iodata <- *temp
+;						temp +<- 1
+;					fi
+;				pool
+;				stat <- ipstat
+;			until stat ~= (NOTREADY & WRTPRT & WRTFLT & NOTFOUND & CRCERR & LOSTDATA) exit
+;				iosec +<- 1
+;			unitl iosec = NOSECS+1 then
+;				when vertrk() = VALID then
+;					escape done
+;				exit
+;			pool
+;			retries +<- 1
+;		when retries = RETRIES then
+;			diskerr('\FF;WS-',stat)
+;		pool
+;	end except
+; end proc
+;
+wrttdata:
+	push	af			; save registers AF, BC, HL
+	push	bc
+	push	hl
+;
+	ld	b,0			; retries <- 0
+>1:
+	push	hl			; temp <- data
+;	ld	a,80h | MOTORON | DS1
+;	out	(opcntl),a
+;	ld	a,1
+;	out	(iosec),a		; iosec <- 1
+;	ld	a,WRTSEC | MULTSEC
+;	out	(opcmnd),a
+;>2:
+;	in	a,(ipflag)
+;	rra
+;	jrk	>3
+;	ld	a,(hl)
+;	out	(iodata),a
+;	inc	hl
+;	jr	>2
+;>3:
+;	in	a,(ipstat)
+;	ld	c,a			; stat <- ipstat
+;	in	a,(iosec)
+;	cp	NOSECS+1		; iosec = NOSECS+1 ?
+;	jrnz	>4			; no
+;	ld	a,c
+;	cp	NOTFOUND		; stat = (NOTFOUND) ?
+;	jrz	>8			; exit
+;>4:
+	ld	a,1
+	out	(iosec),a		; iosec <- 1
+>2:
+	ld	a,WRTSEC
+	call	cheadld
+	out	(opcmnd),a		; opcmnd <- cheadld(WRTSEC)
+>3:
+	in	a,(ipflag)
+	bit	EOJ,a			; EOJ ?
+	jrnz	>4			; exit
+	bit	DRQ,a			; DRQ ?
+	jrz	>5			; no
+	ld	a,(hl)
+	out	(iodata),a		; iodata <- *temp
+	inc	hl			; temp +<- 1
+>5:
+	jr	>3
+>4:
+	in	a,(ipstat)
+	ld	c,a			; stat <- ipstat
+	and	NOTREADY | WRTPRT | WRTFLT | NOTFOUND | CRCERR | LOSTDATA
+	jrnz	>6			;  stat ~= (NOTREADY & WRTPRT & WRTFLT & NOTFOUND & CRCERR & LOSTDATA), exit
+	in	a,(iosec)
+	inc	a
+	out	(iosec),a		; iosec +<- 1
+	cp	NOSECS+1		; iosec = NOSECS+1 ?
+	jrnz	>7			; no
+	call	vertrk	
+	cp	VALID			; vertrk() = VALID ?
+	jrz	>8			; escape done
+	jr	>6			; exit
+>7:
+	jr	>2
+>6:
+	inc	b			; retries +<- 1
+	ld	a,b
+	cp	RETRIES			; retries = RETRIES ?
+	jrnz	>9			; no
+	ld	hl,wrtsid
+	call	diskerr			; diskerr('\FF;WS-',stat)
+>9:
+	pop	hl			; restore data
+	jr	>1
+>8:
+	pop	hl			; remove data
+;
+	pop	hl
+	pop	bc
+	pop	af			; restore registers AF, BC, HL
+	ret
+;
+wrtsid:
+	db	Lwrtsid
+	db	FF,"WS-"
+Lwrtsid:equ	$-wrtsid-1
+;
+;--------------------
+;
+;-- VERTRK - verify the format of the track by reading in all the sectors
+;--
+;-- returns:
+;--
+;--	A - VALID or non-zero
+;
+; proc vertrk() : [NOTVALID..VALID]
+;	var data : [0..255], stat : [0..255]
+;
+;	iosec <- 1
+;	opcmd <- cheadld(READMSEC)
+;
+;	loop until EOJ exit
+;		if DRQ then
+;			data <- iodata
+;		fi
+;	pool
+;	stat <- ipstat
+;	if iosec = NOSECS + 1  & stat = (NOTFOUND | CRCERR) then
+;		vertrk <- VALID
+;	else
+;		vertrk <- NOTVALID
+;	if
+; end proc
+;
+NOTVALID:equ	0
+VALID:	equ	1
+vertrk:
+	push	bc			; save registers BC, HL
+	push	hl
+;
+	ld	a,1
+	out	(iosec),a		; iosec <- 1
+	ld	a,READMSEC
+	call	cheadld
+	out	(opcmnd),a		; opcmnd <- cheadld(READMSEC)
+>1:
+	in	a,(ipflag)
+	bit	EOJ,a			; EOJ ?
+	jrnz	>2			; exit
+	bit	DRQ,a			; DRQ ?
+	jrz	>3			; no
+	in	a,(iodata)		; data <- iodata
+>3:
+	jr	>1
+>2:
+	in	a,(ipstat)
+	ld	c,a			; stat <- ipstat
+	in	a,(iosec)
+	cp	NOSECS+1		; iosec = NOSECS+1 ?
+	jrnz	>4			; no
+	ld	a,c
+	cp	NOTFOUND | CRCERR	; stat = (NOTFOUND | CRCERR) ?
+	jrnz	>4			; no
+	ld	a,VALID			; vertrk <- VALID
+	jr	>5
+>4:
+	ld	a,NOTVALID		; vertrk <- NOTVALID
+>5:
+;
+	pop	hl
+	pop	bc			; restore registers BC, HL
+	ret

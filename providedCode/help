@@ -1,0 +1,15 @@
+1. Use the command process "unload.tape" totransfer the files from tape to 
+   disk.
+
+2. Create the table generator:
+
+	yacc gram
+	cc y.tab.c -lp -ly   -- the -lp is to include the portable IO library
+	strip a.out
+	mv a.out tabgen
+	rm y.tab.c
+
+3. Use the command process "asm" to compose the necessary modules into a z-80
+   load module.
+
+4. Use the command process "load.tape" to load the system back onto tape.

@@ -1,0 +1,64 @@
+;
+	org	03800h
+;
+;--------------------
+;
+;-- WRTDATA - write out N tracks of data
+;
+; proc wrtdata
+;	var NTRK : 6, i : [0..65536]
+;
+;	except ioerr
+;		prtinit('\EC;UDISK WRITE\CR;\LF')
+;		startup(DS1)
+;		hdmv(RESTORE,0)
+;		i <- 0
+;		loop
+;			wrttdata(i)
+;			i +<- SECLGH * NOSECS
+;		until i = NTRK * SECLGH * NOSECS exit
+;			hdmv(SEEK,iotrk+1)
+;		pool
+;		hdmv(RESTORE,0)
+;	exception ioerr
+;	end except
+;	shutdown()
+; end proc
+;
+MONITOR:equ	0c008h
+NTRK:	equ	6
+;
+wrtdata:
+	ld	hl,prtclr
+	call	prtinit			; prtinit('\EC;UDISK WRITE\CR;\LF)
+	ld	a,DS1
+	call	startup			; startup(DS1)
+	ld	h,RESTORE
+	call	hdmv			; hdmv(RESTORE,0)
+	ld	de,0			; i <- 0
+>1:
+	ex	de,hl			; restore i
+	call	wrttdata		; wrttdata(i)
+	ld	de,SECLGH * NOSECS
+	add	hl,de			; i +<- SECLGH * NOSECS
+	ld	de,NTRK * SECLGH * NOSECS
+	call	cp16			; i = NTRK * SECLGH * NOSECS
+	jrz	>2			; exit
+	ex	de,hl			; save i
+	in	a,(iotrk)
+	inc	a
+	ld	h,SEEK
+	ld	l,a
+	call	hdmv			; hdmv(SEEK,iotrk+1)
+	jr	>1
+>2:
+	ld	h,RESTORE
+	call	hdmv			; hdmv(RESTORE,0)
+ioerr:
+	call	shutdown		; shutdown()
+	jp	MONITOR			; jump to warm start in monitor
+;
+prtclr:
+	db	Lprtclr
+	db	EC,'U',"DISK WRITE",CR,LF
+Lprtclr:equ	$-prtclr-1

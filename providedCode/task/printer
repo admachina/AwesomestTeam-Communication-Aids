@@ -1,0 +1,233 @@
+;
+;---------------------
+;
+; task line_printer
+;
+;	var nrmlmode : 2h, enhmode : 1h, grphmode : 3h,
+;		char083 : 1ch, char10 : 1dh, char12 : 1eh, char165 : 1fh
+;
+;	var prtsw : [ON, OFF]
+;
+nrmlmode:equ	2h
+enhmode:equ	1h
+grphmode:equ	3h
+char083:equ	1ch
+char10:	equ	1dh
+char12:	equ	1eh
+char165:equ	1fh
+;
+ON:	equ	1
+OFF:	equ	0
+prtsw:	ds	1
+;
+;---------------------
+;
+;-- PRINTON - turn on printing of text and initialize the printer device
+;
+;	proc printon
+;		prtsw <- ON
+;		prtstr('\char10\enhmode')
+;	end proc
+;
+PRINTON:
+	push	af			; save registers AF, HL
+	push	hl
+;
+	ld	a,ON
+	ld	(prtsw),a		; prtsw <- ON
+	ld	hl,initprt
+	call	prtstr			; prtstr(initprt)
+;
+	pop	hl
+	pop	af			; restore registers AF, HL
+	ret
+;
+initprt:
+	db	Linitprt
+	db	char10,enhmode
+Linitprt:equ	$-initprt-1
+;
+;--------------------
+;
+;-- PRINTOFF - turn off printing of text
+;
+;	proc printoff
+;		prtsw <- OFF
+;	end proc
+;
+PRINTOFF:
+	push	af			; save register AF
+;
+	ld	a,OFF
+	ld	(prtsw),a		; prtsw <- OFF
+;
+	pop	af			; restore register AF
+	ret
+;
+;--------------------
+;
+;-- NEWPAGE - advance line-printer to new page by skipping 12 lines
+;
+;	proc newpage
+;		prtstr('\CR\CR\CR\CR\CR\CR\CR\CR\CR\CR')
+;	end proc
+;
+NEWPAGE:
+	push	hl			; save register HL
+;
+	ld	hl,crstr
+	call	prtstr			; prtstr(crstr)
+;
+	pop	hl			; restore register HL
+	ret
+;
+crstr:
+	db	Lcrstr
+	db	CR,CR,CR,CR,CR,CR,CR,CR,CR,CR
+Lcrstr:	equ	$-crstr-1
+;
+;--------------------
+;
+;-- PRTSTR - prints a string on the line-printer with necessary control characters
+;-- 
+;-- arguments:
+;-- 
+;-- 	HL - pointer to string
+;
+;	proc prtstr(string @str)
+;		if prtsw = ON then
+;			loop until printer.ECB = WAIT exit
+;				wait
+;			pool
+;
+;			printer.ECB <- BUSY
+;			printer.STR <- str
+;		fi
+;	end proc
+;
+prtstr:
+	push	af			; save registers AF, DE
+	push	de
+;
+	ld	a,(prtsw)
+	cp	ON			; prtsw = ON ?
+	jrnz	>1			; no
+>2:
+	ld	a,(prtECB)
+	cp	WAIT			; printer.ECB = WAIT ?
+	jrz	>3			; exit
+	call	wait
+	jr	>2
+>3:
+	ld	a,BUSY
+	ld	(prtECB),a		; printer.ECB <- BUSY
+	ld	de,prtSTR
+	call	copystr			; prt.STR <- str
+>1:
+;
+	pop	de
+	pop	af			; restore registers AF, DE
+	ret
+;
+;--------------------
+;
+;-- PRINTER - this task is used to run the line-printer asynchronously
+;		(note, buffer overrun not checked)
+;-- 
+;-- interface:
+;-- 
+;-- 	ecb - indicates whether the printer is BUSY or WAITing
+;-- 
+;-- 	str - the string that is currently printing if ecb = BUSY, otherwise undefined
+;
+;	task printer
+;		interface { ECB : [BUSY, WAIT], string STR }
+;
+;-- PRINT - transmits a string of characters to the line-printer
+;-- 
+;-- arguments:
+;-- 
+;-- 	HL - pointer to str
+;
+;		proc print(string @str)
+;			for (i <- 1;i <= length(str);i +<-1)
+;			loop
+;				putchar(prtstat,byte(str(i)))
+;			pool
+;		end proc
+;
+;	task body
+;		port prtstat : AEh
+;
+;		ECB <- WAIT
+;		PRINTON().
+;		loop
+;			loop until ECB = BUSY exit
+;				wait
+;			pool
+;
+;			print('   ')
+;			print(STR)
+;			print('\CR\CR')
+;			ECB <- WAIT
+;		pool
+;	end task
+;
+prtECB:
+	ds	1
+prtSTR:
+	ds	SCRWID+1
+prtstat:equ	0aeh
+;
+print:
+	push	af			; save registers AF, BC
+	push	bc
+;
+	ld	b,1			; i <- 1
+	ld	c,prtstat		; address of status port for call to putchar
+>1:
+	ld	a,b
+	cp	(hl)			; i > | str | ?
+	call	gtle
+	jrnk	>2			; exit
+	call	indexb			; a <- str(i)
+	call	putchar			; putchar(prtstat,byte(str(i)))
+	inc	b			; i +<- 1
+	jr	>1
+>2:
+	pop	bc
+	pop	af			; restore registers AF, BC
+	ret
+;
+printer:
+	ld	a,WAIT
+	ld	(prtECB),a		; ECB <- WAIT
+	call	PRINTON			; PRINTON()
+;
+prtloop:
+>1:
+	ld	a,(prtECB)
+	cp	BUSY			; ECB = BUSY ?
+	jrz	>2			; exit
+	call	wait
+	jr	>1
+>2:
+	ld	hl,prtblk
+	call	print			; print('   ')
+	ld	hl,prtSTR
+	call	print			; print(STR)
+	ld	hl,prtcr
+	call	print			; print('\CR\CR')
+	ld	a,WAIT
+	ld	(prtECB),a		; ECB <- WAIT
+	jr	prtloop
+;
+prtblk:
+	db	Lprtblk
+	db	"   "
+Lprtblk:equ	$-prtblk-1
+;
+prtcr:
+	db	Lprtcr
+	db	CR,CR
+Lprtcr:	equ	$-prtcr-1

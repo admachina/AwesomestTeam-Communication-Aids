@@ -1,0 +1,21 @@
+;
+;-----------------------------------------------------
+;
+;	copyright C 1980 by Peter Buhr
+;
+;-----------------------------------------------------
+;
+baseadr:equ	040h
+stackadr:equ	04000h
+	org	baseadr
+;
+;--------------------
+;
+; startup - bootstrap the first task : select
+;
+	ld	sp,stackadr
+	call	tsplinit			; tsplinit()
+;
+	ld	de,select
+	ld	hl,stackadr - 400h
+	call	startask			; startask(select,stackadr - 400h)

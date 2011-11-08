@@ -1,0 +1,471 @@
+%term STRING CONTROL RESET RESTART NULL
+%{
+#define	ELEMSIZE 500
+#define	BRANSIZE 50
+#define	ENTSIZE	 20
+#define	STRSIZE	 2000
+
+#define	TRUE	1
+#define	FALSE	0
+
+#define	Entitydw 0
+#define	Entityup 1
+#define	Direct	2
+#define	Leaf	3
+#define	Control	4
+#define	Reset	5
+#define	Restart	6
+#define	Null	7
+
+char	typetab[8] {0,2,4,6,8,10,10,4};
+
+struct element {
+	int type;
+	int disp;
+	int val; } elem[ELEMSIZE];
+
+int	elemptr -1;
+int	branch[BRANSIZE] 0, brptr -1;
+int	entity[ENTSIZE] 0, entptr -1;
+int	dirct 0, leafct 0, value, first TRUE, total;
+
+#define	UNK	0
+#define	STR	1
+#define	CON	2
+#define PUN	3
+#define	EOL	4
+#define	EOF	5
+
+char	lookup[] {
+	EOF,UNK,UNK,UNK,UNK,UNK,UNK,UNK,
+	UNK,UNK,EOL,UNK,UNK,UNK,UNK,UNK,
+	UNK,UNK,UNK,UNK,UNK,UNK,UNK,UNK,
+	UNK,UNK,UNK,UNK,UNK,UNK,UNK,UNK,
+	UNK,UNK,STR,UNK,UNK,UNK,UNK,STR,
+	PUN,PUN,UNK,UNK,PUN,UNK,UNK,UNK,
+	UNK,UNK,UNK,UNK,UNK,UNK,UNK,UNK,
+	UNK,UNK,PUN,PUN,UNK,UNK,UNK,UNK,
+	UNK,CON,CON,CON,CON,CON,CON,CON,
+	CON,CON,CON,CON,CON,CON,CON,CON,
+	CON,CON,CON,CON,CON,CON,CON,CON,
+	CON,CON,CON,PUN,UNK,PUN,UNK,UNK,
+	UNK,UNK,UNK,UNK,UNK,UNK,UNK,UNK,
+	UNK,UNK,UNK,UNK,UNK,UNK,UNK,UNK,
+	UNK,UNK,UNK,UNK,UNK,UNK,UNK,UNK,
+	UNK,UNK,UNK,UNK,UNK,UNK,UNK,UNK};
+
+#define	CONSIZE	7
+
+char	*contab[CONSIZE + 1] {
+	"RESET",
+	"RESTART",
+	"NULL",
+	"NEWPAGE",
+	"STAT",
+	"PRINTON",
+	"PRINTOFF",
+	0 };
+
+int	contype[CONSIZE] {
+	RESET,RESTART,NULL,CONTROL,CONTROL,CONTROL,CONTROL };
+
+char	strbuf[STRSIZE];
+int	strptr 0;
+char	ch ' ', conchar;
+int	yyline 1;
+int	terminal 2, input, output;
+%}
+%%
+tree	: dp.ent '[' branch ']' = {
+		printf(output,"%s:\n",&strbuf[elem[branch[brptr]].disp]);
+		createtable();
+		entptr =- 1;
+		}
+
+branch	: branch ',' dp.ent '[' branch ']' = {
+		createtable();
+		entptr =- 1;
+		}
+	| branch ',' dp.tree '(' branch ')' = {
+		createtable();
+		}
+	| branch ',' dp.leaf value
+	| dp.ent '[' branch ']' = {
+		createtable();
+		entptr =- 1;
+		}
+	| dp.tree '(' branch ')' = {
+		createtable();
+		}
+	| dp.leaf value;
+
+dp.ent	: string = {
+		allocelem(Entitydw,value,dirct++);
+		allocbranch(elemptr);
+		allocentity(elemptr);
+		}
+dp.tree	: string = {
+		allocelem(Direct,value,dirct++);
+		allocbranch(elemptr);
+		}
+dp.leaf	: string = {
+		allocelem(Leaf,value,value);
+		}
+
+string	: STRING = {
+		if (conchar) {
+			errmsg("%d:control character in display string\n",yyline); };
+		}
+
+value	: ':' STRING = {
+		elem[elemptr].val = value;
+		}
+	| ':' CONTROL = {
+		elem[elemptr].type = Control;
+		elem[elemptr].val  = value;
+		}
+	| ':' RESET = {
+		elem[elemptr].type = Reset;
+		}
+	| ':' RESTART = {
+		elem[elemptr].type = Restart;
+		}
+	| ':' NULL = {
+		elem[elemptr].type = Null;
+		}
+	| ;
+%%
+main(argc,argv)
+	int argc;
+	char *argv[];
+{
+	yyinit(argc,argv);
+	yyparse();
+	yyaccpt();
+} /* main */
+
+yyinit(argc,argv)
+	int argc;
+	char *argv[];
+{
+	input = 0;
+	output = 1;
+
+	if (argc >= 2) {
+		input = copen(argv[1],'r');
+		if (input == -1) {
+			printf(terminal,"Open error:%s\n",argv[1]);
+			cexit(-1); };
+
+		if (argc >= 3) {
+			output = copen(argv[2],'w');
+			if (output == -1) {
+				printf(terminal,"Open error:%s\n",argv[2]);
+				cexit(-1); };
+
+			if (argc > 3) {
+				printf(terminal,"Usage: tabgen [in-file] [out-file]\n");
+				cexit(-1); }; } }
+} /* yyinit */
+
+yyaccpt() {
+	cclose(input);
+	cclose(output);
+} /* yyaccpt */
+
+yylex() {
+	register int i;
+	char qu, pun;
+	int temp;
+
+	for (;;) {
+		while(ch == '\t' || ch == ' ') {
+			ch = cgetc(input); };
+		switch (lookup[ch]) {
+		case STR:
+			qu = ch;
+			value = strptr;
+			conchar = FALSE;
+			ch = cgetc(input);
+			while(ch != qu && ch != '\n' && ch != 0) {
+				if (ch == '\\') {
+					conchar = TRUE;
+					ch = cgetc(input);
+					switch (ch) {
+					case 'b':
+						allocstr('\b');
+						ch = cgetc(input);
+						break;
+					case 'n':
+						allocstr('\n');
+						ch = cgetc(input);
+						break;
+					case 'w':
+						allocstr(021);
+						ch = cgetc(input);
+						break;
+					case '\\':
+						allocstr('\\');
+						ch = cgetc(input);
+						break;
+					default:
+						errmsg("%d:Invalid escape character\n",yyline);
+					}; /* switch */ }
+				else {
+					allocstr(ch);
+					ch = cgetc(input); };
+			}; /* while */
+			allocstr(0);
+			if (ch == qu) {
+				ch = cgetc(input); }
+			else {
+				errmsg("%d:No closing quote\n",yyline); };
+			return(STRING);
+		case CON:
+			temp = strptr;
+			allocstr(ch);
+			while((ch = cgetc(input)) >= 'A' && ch <= 'Z') {
+				allocstr(ch); };
+			allocstr(0);
+			strptr = temp;
+			for (i = 0;;i =+ 1) {
+				if (i == CONSIZE) {
+					errmsg("%d:Invalid keyword:%s\n",yyline,&strbuf[temp]);
+					return(RESET); };
+				if (comp(&strbuf[temp],contab[i])) {
+					value = i;
+					return(contype[i]); };
+			}; /* for */
+		case PUN:
+			pun = ch;
+			ch = cgetc(input);
+			return(pun);
+		case EOL:
+			yyline =+ 1;
+			ch = cgetc(input);
+			break;
+		case EOF:
+			return(0);
+		case UNK:
+			errmsg("%d:unknown character:\"%c\",%x\n",yyline,ch,ch);
+			ch = cgetc(input);
+			break;
+		} /* switch */
+	} /* for */
+} /* yylex */
+
+createtable()
+{
+	register int ptr;
+	register char *i;
+	int tleaf, leaflgh, noelem;
+	int flgval, sw, flag[4], flgptr;
+
+	noelem = elemptr - branch[brptr];
+	if (noelem > 8) {
+		errmsg("%d:tree exceeds 8 branch limit\n",yyline); }
+	else {
+		if (first) {
+			printf(output,"flgdp:\tequ\t%d\n",noelem + noelem + 2);
+			total = noelem;
+			first = FALSE; }
+		else if (noelem != total) {
+			errmsg("%d:inconsistent no. of branches\n",yyline); };
+
+		/* generate directory addresses */
+
+		printf(output,"@d%d:\n\tdw\t@t%d",elem[branch[brptr]].val,elem[branch[brptr]].val);
+
+		tleaf = 0;
+		for (ptr = branch[brptr] + 1; ptr <= elemptr;ptr =+ 1) {
+			switch (elem[ptr].type) {
+			case Entitydw:
+			case Direct:
+				printf(output,",@d%d",elem[ptr].val);
+				break;
+			case Leaf:
+				printf(output,",@l%d",leafct + tleaf);
+				tleaf =+ 1;
+				break;
+			case Control:
+				printf(output,",%s",contab[elem[ptr].val]);
+				break;
+			case Reset:
+				if (brptr == 0) {
+					errmsg("\nreset passed root\n"); }
+				else {
+					printf(output,",@d%d",elem[branch[brptr - 1]].val); };
+				break;
+			case Restart:
+				printf(output,",@d%d",elem[entity[entptr]].val);
+				break;
+			case Null:
+				printf(output,",@d%d",elem[branch[brptr]].val);
+				break;
+			} /* switch */
+		} /* for */
+
+		/* generate flag bits */
+
+		printf(output,"\n\tdb\t");
+		sw = TRUE;
+		flgptr = 0;
+		for (ptr = branch[brptr] + 1;ptr <= elemptr;ptr =+ 1) {
+			if (elem[ptr].type == Reset && elem[branch[brptr]].type == Entitydw) {
+				flgval = typetab[Entityup]; }
+			else {
+				flgval = typetab[elem[ptr].type]; };
+
+			if (sw) {
+				flag[flgptr] = flgval << 4; }
+			else {
+				flag[flgptr] =| flgval;
+				flgptr =+ 1; };
+
+			sw = !sw;
+		}; /* for */
+
+		for (flgptr = 0;flgptr < (noelem - 1)/2;flgptr =+ 1) {
+			printf(output,"0%xh,",flag[flgptr]);
+		} /* for */
+		printf(output,"0%xh",flag[flgptr]);
+
+		/* generate display screen */
+
+		printf(output,"\n@t%d:\n",elem[branch[brptr]].val);
+
+		tleaf = 0;
+		for (ptr = branch[brptr] + 1;ptr <= elemptr;ptr =+ 1) {
+			leaflgh = length(&strbuf[elem[ptr].disp]);
+			switch (elem[ptr].type) {
+			case Leaf:
+				if (elem[ptr].disp == elem[ptr].val) {
+					printf(output,"@l%d:\tdb\t%d",leafct + tleaf,leaflgh); }
+				else {
+					printf(output,"\tdb\t%d",leaflgh); };
+				printf(output,",\"%s\"\n",&strbuf[elem[ptr].disp]);
+				tleaf =+ 1;
+				break;
+			case Entitydw:
+			case Direct:
+			case Control:
+			case Null:
+			case Reset:
+			case Restart:
+				printf(output,"\tdb\t%d,\"%s\"\n",leaflgh,&strbuf[elem[ptr].disp]);
+				break;
+			} /* switch */
+		} /* for */
+
+		/* generate value for leafs */
+
+		tleaf = 0;
+		for (ptr = branch[brptr] + 1;ptr <= elemptr;ptr =+ 1) {
+			if (elem[ptr].type == Leaf) {
+				if (elem[ptr].disp != elem[ptr].val) {
+					leaflgh = length(&strbuf[elem[ptr].val]);
+					printf(output,"@l%d:\tdb\t%d,\"",leafct + tleaf,leaflgh);
+					for (i = &strbuf[elem[ptr].val];*i != 0;i =+ 1) {
+						if (*i < ' ')
+							printf(output,"\\%o",*i);
+						else
+							printf(output,"%c",*i);
+					} /* for */
+					printf(output,"\"\n"); };
+				tleaf =+ 1; };
+		}; /* for */ };
+
+	/* deallocate storage for display */
+
+	strptr = elem[branch[brptr] + 1].disp;
+	elemptr = branch[brptr];
+	brptr =- 1;
+	leafct =+ tleaf;
+} /* createtable  */
+
+allocelem(t,d,v)
+	int t, d, v;
+{
+	if (elemptr == ELEMSIZE) {
+		errmsg("element table overflow\n");
+		cexit(-1); }
+	else {
+		elemptr =+ 1;
+		elem[elemptr].type = t;
+		elem[elemptr].disp = d;
+		elem[elemptr].val  = v; };
+} /* allocelem */
+
+allocbranch(e)
+	int e;
+{
+	if (brptr == BRANSIZE) {
+		errmsg("branch table overflow\n");
+		cexit(-1); }
+	else {
+		brptr =+ 1;
+		branch[brptr] = e; };
+} /* allocbranch */
+
+allocentity(e)
+	int e;
+{
+	if (entptr == ENTSIZE) {
+		errmsg("entity table overflow\n");
+		cexit(-1); }
+	else {
+		entptr =+ 1;
+		entity[entptr] = e; };
+} /* allocentity */
+
+allocstr(c)
+	char c;
+{
+	if (strptr > STRSIZE) {
+		errmsg("string table overflow\n");
+		cexit(-1); }
+	else {
+		strbuf[strptr] = c;
+		strptr =+ 1; };
+} /* allocstr */
+
+errmsg(fmt,args)
+	char *fmt;
+	int args;
+{
+	printf(terminal,fmt,&args);
+	printf(output,fmt,&args);
+} /* errmsg */
+
+int comp(a,b)
+	char a[], b[];
+{
+	register int i;
+
+	for (i = 0;;i =+ 1) {
+		if (a[i] != b[i]) {
+			return(0); };
+		if (a[i] == 0) {
+			return(1); };
+	} /* for */
+} /* comp */
+
+int length(s)
+	char s[];
+{
+	register int i;
+
+	for (i = 0;;i =+ 1) {
+		if (s[i] == 0) {
+			return(i); };
+	}; /* for */
+} /* length */
+
+abs(i)
+	int i;
+{
+	if (i < 0) {
+		return(-i); }
+	else {
+		return(i); };
+} /* abs */

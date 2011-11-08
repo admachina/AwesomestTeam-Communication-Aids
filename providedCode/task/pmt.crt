@@ -1,0 +1,165 @@
+;
+;----------------------
+;
+; task prompt_device
+;
+;	var BS : 8h, FF : 0ch, CR : 0ah, GS : 1dh, RS : 1eh, BW : 11h
+;
+BS:	equ	08h
+FF:	equ	0ch
+CR:	equ	0ah
+GS:	equ	1dh
+RS:	equ	1eh
+BW:	equ	11h
+;
+;--------------------
+;
+;-- PMTSTR - prints a string on the CRT prompting device
+;--
+;-- arguments:
+;--
+;--	HL - pointer to string
+;
+;	proc pmtstr(string @str)
+;		loop until pmt.ECB = WAIT exit
+;			wait
+;		pool
+;
+;		pmt.ECB <- BUSY
+;		pmt.STR <- str
+;	end proc
+;
+pmtstr:
+	push	af			; save registers AF, DE
+	push	de
+;
+>1:
+	ld	a,(pmtECB)
+	cp	WAIT			; pmt.ECB = WAIT ?
+	jrz	>2			; exit
+	call	wait
+	jr	>1
+>2:
+	ld	a,BUSY
+	ld	(pmtECB),a		; pmt.ECB <- BUSY
+	ld	de,pmtSTR
+	call	copystr			; pmt.STR <- str
+;
+	pop	de
+	pop	af			; restore registers AF, DE
+	ret
+;
+;--------------------
+;
+;-- PROMPT - this task is used to run the CRT prompting device asynchronously
+;--
+;-- interface:
+;--
+;--	ecb - indicates whether the CRT is BUSY or WAITing
+;--
+;--	str - the string that is currently printing if ecb = BUSY, otherwise undefined
+;
+;	task prompt
+;		interface { ECB : [BUSY, WAIT], string STR }
+;
+;-- PMTWRT - transmits a string of characters to the CRT
+;--
+;-- arguments:
+;--
+;--	HL - pointer to str
+;
+;		proc pmtwrt(string @str)
+;			const OFFSET : 32
+;
+;			for (i <- 1;i <= length(str);i +<-1)
+;			loop
+;				putchar(pmtstat,byte(str(i)))
+;				if str(i) = '\RS' then
+;					i +<- 1
+;					putchar(pmtstat,byte(str(i) + OFFSET))
+;				fi
+;			pool
+;		end proc
+;
+;	task body
+;		const pmtcntl : 04h
+;		port pmtstat : 0
+;
+;		ECB <- BUSY
+;		pmtstat <- PMTCNTL
+;		pmtwrt('\FF')
+;		ECB <- WAIT
+;		loop
+;			loop until ECB = BUSY exit
+;				wait
+;			pool
+;
+;			pmtwrt(STR)
+;			ECB <- WAIT
+;		pool
+;	end task
+;
+pmtECB:
+	ds	1
+pmtSTR:
+	ds	81			; this length is only a guess at the maximum string length
+pmtcntl:equ	04h			; 9600 baud, 2 stop bits
+pmtstat:equ	0h
+;
+OFFSET:	equ	32
+pmtwrt:
+	push	af			; save registers AF, BC
+	push	bc
+;
+	ld	b,1			; i <- 1
+	ld	c,pmtstat		; address of status port for call to putchar
+>1:
+	ld	a,b
+	cp	(hl)			; i > | str | ?
+	call	gtle
+	jrnk	>2			; exit
+	call	indexb			; a <- str(i)
+	call	putchar			; putchar(pmtstat,byte(str(i)))
+	cp	RS			; str(i) = RS ?
+	jrnz	>3			; no
+	inc	b			; i +<- 1
+	ld	a,b
+	call	indexb			; a <- str(i)
+	add	OFFSET
+	call	putchar			; putchar(pmtstat,byte(str(i) + OFFSET))
+>3:
+	inc	b			; i +<- 1
+	jr	>1
+>2:
+	pop	bc
+	pop	af			; restore registers AF, BC
+	ret
+;
+prompt:
+	ld	a,BUSY
+	ld	(pmtECB),a		; pmt.ECB <- BUSY
+	ld	a,pmtcntl
+	out	(pmtstat),a		; pmtstat <- PMTCNTL
+	ld	hl,pmtclr
+	call	pmtwrt			; pmtwrt('\FF')
+	ld	a,WAIT
+	ld	(pmtECB),a		; ECB <- WAIT
+;
+pmtloop:
+>1:
+	ld	a,(pmtECB)
+	cp	BUSY			; ECB = BUSY ?
+	jrz	>2			; exit
+	call	wait
+	jr	>1
+>2:
+	ld	hl,pmtSTR
+	call	pmtwrt			; pmtwrt(STR)
+	ld	a,WAIT
+	ld	(pmtECB),a		; ECB <- WAIT
+	jr	pmtloop
+;
+pmtclr:
+	db	Lpmtclr
+	db	FF
+Lpmtclr:equ	$-pmtclr-1

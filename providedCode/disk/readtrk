@@ -1,0 +1,43 @@
+;
+	org	40h
+	jp	readtrk
+;
+;--------------------
+;
+;-- READTRK - read in a track 
+;
+; proc readtrk
+;	trkarea track
+;
+;	pmtinit('\EC;UREAD TRACK\CR;\LF')
+;	startup(DS1)
+;	except ioerr
+;		restore()
+;
+;		rdtrk(track)
+;		restore()
+;	end except
+;	shutdown()
+; end proc
+;
+track:
+	ds	TRKLGH
+MONITOR:equ	0c008h			; monitor warm start address
+;
+readtrk:
+	ld	hl,pmtclr
+	call	pmtinit			; pmtinit('\EC;UREAD TRACK\CR;\LF')
+	ld	a,DS1
+	call	startup			; startup(DS1)
+	call	restore			; restore()
+	ld	hl,track
+	call	rdtrk			; rdtrk(track)
+	call	restore			; restore()
+ioerr:
+	call	shutdown		; shutdown()
+	jp	MONITOR			; jump to warm start in monitor
+;
+pmtclr:
+	db	Lpmtclr
+	db	EC,'U',"READ TRACK",CR,LF
+Lpmtclr:equ	$-pmtclr-1

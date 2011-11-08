@@ -1,0 +1,30 @@
+'root'[
+	'SPACE':' ',
+	'E',
+	'T  N  O  A'(
+		'T', 'N', 'O', 'A', 'auto':RESET),
+	'I  R  S  H'(
+		'I', 'R', 'S', 'H', 'auto':RESET),
+	'auto'(
+		'D',
+		'L',
+		'M',
+		'F  P  C  U'(
+			'F', 'P', 'C', 'U', 'auto':RESET),
+		'auto'(
+			'Y',
+			'G',
+			'W',
+			'V  B  X  QU'(
+				'V', 'B', 'X', 'QU', 'auto':RESET),
+			'auto'(
+				'J',
+				'K',
+				'Z',
+				'control functions'(
+					'ERASE-LETTER':'\b','NEW-LINE':'\n','? ? ?':NULL,'? ? ?':NULL,'auto':RESET),
+				'auto':RESTART
+			)
+		)
+	)
+]

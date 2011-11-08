@@ -1,0 +1,240 @@
+;
+	org	40h
+	jp	initrk
+;
+;--------------------
+;
+;-- INITRK - initialize soft sectored tracks on disk
+;
+; proc initrk
+;	var trkno : [0..NOTRKS], trkarea track
+;
+;
+;----------------------
+;
+;-- GENTRK - generate a core image of an initialized track
+;--
+;-- arguments:
+;--
+;--	A - track number
+;--
+;--	HL - storage for the building of the track
+;
+;	 proc gentrk(var trkno : [0..NOTRKS), trkarea *trk)
+;		var INDEXAM : 0fch, IDAM : 0feh, SECLCD : 0h, CRC : 0f7h, DATAAM : 0fbh
+;		var secno : [1..NOSECS]
+;
+;--------------------
+;
+;-- GAP - insert N bytes into the track buffer
+;--
+;-- arguments:
+;--
+;--	A - number of nulls to be inserted
+;--	C - value of byte
+;
+;		 proc gap(var n : [0..TRKLGH], val : [0..255])
+;			var i : [0..TRKLGH]
+;		
+;			for (i <- n;i ~= 0;i -<- 1)
+;			loop
+;				insert(val)
+;			pool
+;		 end proc
+;
+gap:
+	push	af		; save registers AF, BC
+	push	bc
+;
+	ld	b,a		; i <- n
+>1:
+	ld	a,b
+	cp	0		; i ~= 0
+	jrz	>2		; no
+	ld	a,c
+	call	insert		; insert(val)
+	dec	b		; i -<- 1
+	jr	>1
+>2:
+	pop	bc
+	pop	af		; restore register AF, BC
+	ret
+;
+;---------------------
+;
+;-- INSERT - insert data bytes into track area
+;--
+;-- arguments:
+;--
+;--	A - data byte
+;
+;		 proc insert(byte data)
+;			*trk <- data
+;			trk +<- 1
+;		 end proc
+;
+insert:
+	push	hl		; save register HL
+;
+	ld	hl,(trk)
+	ld	(hl),a		; *trk <- data
+	inc	hl
+	ld	(trk),hl	; trk +<- 1
+;
+	pop	hl		; restore register HL
+	ret
+;	
+;		insert(INDEXAM)
+;		gap(21,0)
+;	
+;		for (secno <- 1;secno =~ NOSECS+1;secno +<-1)
+;		loop
+;			insert(IDAM)
+;			insert(trkno)
+;			insert(0)
+;			insert(secno)
+;			insert(SECLCD)
+;			insert(CRC)
+;			gap(11,0ffh)
+;			gap(6,0)
+;			insert(DATAAM)
+;			gap(SECLGH,0)
+;			insert(CRC)
+;			gap(11,0ffh)
+;			gap(4,0)
+;		pool
+;		gap(21,0)
+;	 end proc
+;
+INDEXAM:equ	0fch
+IDAM:	equ	0feh
+SECLCD:	equ	0h
+CRC:	equ	0f7h
+DATAAM:	equ	0fbh
+;
+trk:
+	ds	2
+;
+gentrk:
+	push	af			; save registers AF, BC, DE
+	push	bc
+	push	de
+;
+	ld	d,a			; save track no.
+	ld	(trk),hl		; save track address
+	ld	a,INDEXAM
+	call	insert			; insert(INDEXAM)
+	ld	a,21
+	ld	c,0
+	call	gap			; gap(21,0)
+	ld	b,1			; secno <- 1
+>1:
+	ld	a,b
+	cp	NOSECS+1		; sector ~= NOSECS+1
+	jrz	>2			; no
+	ld	a,IDAM
+	call	insert			; insert(IDAM)
+	ld	a,d
+	call	insert			; insert(trkno)
+	ld	a,0
+	call	insert			; insert(0)
+	ld	a,b
+	call	insert			; insert(secno)
+	ld	a,SECLCD
+	call	insert			; insert(SECLCD)
+	ld	a,CRC
+	call	insert			; insert(CRC)
+	ld	a,11
+	ld	c,0ffh
+	call	gap			; gap(11,0ffh)
+	ld	a,6
+	ld	c,0
+	call	gap			; gap(6,0)
+	ld	a,DATAAM
+	call	insert			; insert(DATAAM)
+	ld	a,SECLGH
+	ld	c,0
+	call	gap			; gap(SECLGH,0)
+	ld	a,CRC
+	call	insert			; insert(CRC)
+	ld	a,11
+	ld	c,0ffh
+	call	gap			; gap(11,0ffh)
+	ld	a,4
+	ld	c,0
+	call	gap			; gap(6,0)
+	inc	b			; secno +<- 1
+	jr	>1
+>2:
+	ld	a,21
+	ld	c,0
+	call	gap			; gap(21,0)
+;
+	pop	de
+	pop	bc
+	pop	af			; restore registers AF, BC, DE
+	ret
+;
+;	prtinit('\EC;UDISK INITIALIZE\CR;\LF')
+;	startup(DS1)
+;	except ioerr
+;		hdmv(RESTORE,0)
+;
+;		trkno <- 0
+;		loop
+;			gentrk(trkno,track)
+;			wrttrk(track)
+;			prthex(trkno)
+;			prtstr('\CR;\LF')
+;		until trkno ~= NOTRKS-1 exit
+;			hdmv(STEPIN,0)
+;			trkno +<- 1
+;		pool
+;		hdmv(RESTORE,0)
+;	end except
+;	shutdown()
+; end proc
+;
+track:
+	ds	TRKLGH
+MONITOR:equ	0c008h			; monitor warm start address
+;
+initrk:
+	ld	hl,prtclr
+	call	prtinit			; prtinit('\EC;UDISK INITIALIZE\CR;\LF')
+	ld	a,DS1
+	call	startup			; startup(DS1)
+	ld	h,RESTORE
+	call	hdmv			; hdmv(RESTORE,0)
+	ld	b,0			; trkno <- 0
+>1:
+	ld	a,b
+	ld	hl,track
+	call	gentrk			; gentrk(trkno,track)
+	call	wrttrk			; wrttrk(track)
+	ld	a,b
+	call	prthex			; prthex(trkno)
+	ld	hl,carrtn
+	call	prtstr			; prtstr('\CR;\LF')
+	ld	a,b
+	cp	NOTRKS-1		; trkno ~= NOTRKS-1 ?
+	jrz	>2			; no
+	ld	h,STEPIN
+	call	hdmv			; hdmv(STEPIN,0)
+	inc	b			; trkno +<- 1
+	jr	>1
+>2:
+	ld	h,RESTORE
+	call	hdmv			; hdmv(RESTORE,0)
+ioerr:
+	call	shutdown		; shutdown()
+	jp	MONITOR			; jump to warm start in monitor
+;
+prtclr:
+	db	Lprtclr
+	db	EC,'U',"DISK INITIALIZE",CR,LF
+Lprtclr:equ	$-prtclr-1
+carrtn:
+	db	Lcarrtn
+	db	CR,LF
+Lcarrtn:equ	$-carrtn-1

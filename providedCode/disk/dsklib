@@ -1,0 +1,77 @@
+;
+;--------------------
+;
+;-- PRTHEX - convert byte to ascii and print
+;--
+;-- arguments:
+;--
+;--	A - byte to be converted
+;
+; proc hex(val : [0..255])
+; end proc
+;
+prthex:
+	call	prthex1			; convert high order nibble
+	rra				; skip carry flag
+prthex1:
+	rra
+	rra
+	rra
+	rra
+	push	af
+	and	0fh			; mask high order nibble
+	cp	10			; <= 9 ?
+	jrk	>1
+	add	7			; A thru F
+>1:
+	add	'0'			; ascii bias
+	call	vidchar			; print character
+	pop	af
+	ret
+;
+;--------------------
+;
+;-- INDEXB - index a byte from a base address
+;--
+;-- arguments:
+;--
+;--	A - contains index value
+;--
+;--	HL - contains base address
+;--
+;-- returns:
+;--
+;--	A - byte value at base + index
+;
+indexb:
+	push	de			; save registers DE, HL
+	push	hl
+	ld	d,0
+	ld	e,a
+	add	hl,de
+	ld	a,(hl)
+	pop	hl
+	pop	de			; restore registers DE, HL
+	ret
+;
+;--------------------
+;
+;-- cp16 - compare 2 16-bit values
+;--
+;-- arguments:
+;--
+;--	DE - compare value
+;--	HL - compare value
+;--
+;-- returns:
+;--
+;--	F - flags set for compare
+;
+cp16:
+	push	hl			; save register HL
+;
+	and	a			; clear carry flag
+	sbc	hl,de			; subtract hl - de, => flags set
+;
+	pop	hl			; resore register HL
+	ret

@@ -1,0 +1,729 @@
+;
+;---------------------
+;
+; class task_rtns
+;
+;-- TSPL - (Task Stack Pointer List) contains the stack pointers for the
+;--	tasks current executing in the system. The table is linked together
+;--	and the links are circular. Since there must always be one task running
+;--	in the system the TSPL starts with one task node on the list, linked
+;--	to itself. This node is initialized by the bootstrap routine to start
+;--	the first task in the system.
+;--
+;-- CTP - (Current Task Pointer) pointer to the node in TSPL for the current task
+;--
+;-- AVAIL - pointer to the next available node
+;
+;	var NOTASKS : 4, WAIT : 0, BUSY : 1
+;	type tsplrec : { addr SP, tsplrec @LINK }
+;	tsplrec @ctp, @avail
+;
+NOTASKS:equ	4
+WAIT:	equ	0
+BUSY:	equ	1
+NULL:	equ	0
+dsect:	equ	$
+	org	0
+tspl:
+SP:	equ	$-tspl
+	ds	2
+LINK:	equ	$-tspl
+	ds	2
+Ltspl:	equ	$-tspl
+	org	dsect
+;
+ctp:	ds	2
+;
+avail:	ds	2
+availist:
+	ds	Ltspl * NOTASKS
+;
+;--------------------
+;
+;-- TSPLINIT - initialize the tasking control blocks
+;
+;	proc tsplinit()
+;		avail <- NULL
+;		for (i <- 0;i ~= NOTASKS;i +<- 1)
+;		loop
+;			tsplrec @temp
+;	
+;			temp <- new(tsplrec)
+;			temp -> LINK <- avail
+;			avail <- temp
+;		pool
+;
+;		ctp <- avail
+;	end proc
+;
+tsplinit:
+	call	rsave			; save registers
+;
+	ld	(spadr),hl
+	ld	(taskname),de		; save parameters
+;
+	ld	hl,NULL
+	ld	(avail),hl		; avail <- NULL
+;
+	ld	b,0
+	ld	hl,availist
+>1:
+	ld	a,b
+	cp	NOTASKS			; i ~= NOTASKS
+	jrz	>2			; no
+;
+	ld	de,(avail)
+	ld	a,LINK
+	call	sindexw			; temp -> LINK <- avail
+	ld	(avail),hl		; avail <- temp
+	ld	de,Ltspl
+	add	hl,de			; advance to next storage area
+	inc	b			; i +<- 1
+	jr	>1
+>2:
+	ld	hl,(avail)
+	ld	(ctp),hl		; ctp <- avail
+;
+	call	rretn			; restore registers
+	ret
+;
+;---------------------
+;
+;-- STARTASK - start up a new task in the system by:
+;--
+;--	1. Storing the current task's general registers and placing the task's SP
+;--	   into the pointer currently being pointed to by CTP.
+;--
+;--	2. Taking a node off the available list, and advancing the available list
+;--	   pointer. No error checking is done for empty available space.
+;--
+;--	3. Link the new node in after CTP, and insert the stack area address into
+;--	   the stack field.
+;--
+;--	4. Branch to the new task.
+;--
+;-- arguments:
+;--
+;--	DE - address of task to be started
+;--
+;--	HL - address of storage area to be used as stack for new task
+;
+;	proc startask(addr spadr, task @taskname)
+;		tsplrec @new
+;
+;		ctp -> SP <- sp
+;		new <- avail
+;		avail <- avail -> link
+;		new -> LINK <- ctp -> LINK
+;		ctp -> LINK <- new
+;		ctp <- new
+;		ctp -> SP <- spadr
+;		sp <- spadr
+;		goto taskname
+;	end proc
+;
+spadr:
+	ds	2
+taskname:
+	ds	2
+new:
+	ds	2
+;
+startask:
+	call	rsave			; save registers of current task
+;
+	ld	(spadr),hl
+	ld	(taskname),de		; save parameters
+;
+	ld	a,SP
+	ld	hl,0
+	add	hl,sp
+	ex	de,hl
+	ld	hl,(ctp)
+	call	sindexw			; ctp -> SP <- sp
+;
+	ld	hl,(avail)
+	ld	(new),hl		; new <- avail
+;
+	ld	a,LINK
+	ld	hl,(avail)
+	call	indexw
+	ld	(avail),hl		; avail <- avail -> LINK
+;
+	ld	a,LINK
+	ld	hl,(ctp)
+	call	indexw
+	ex	de,hl			; de <- ctp -> LINK
+;
+	ld	a,LINK
+	ld	hl,(new)
+	call	sindexw			; new -> LINK <- de
+;
+	ld	a,LINK
+	ld	hl,(ctp)
+	ld	de,(new)
+	call	sindexw			; ctp -> LINK <- new
+;
+	ld	hl,(new)
+	ld	(ctp),hl		; ctp <- new
+;
+	ld	a,SP
+	ld	hl,(ctp)
+	ld	de,(spadr)
+	call	sindexw			; ctp -> SP <- spadr
+;
+	ex	de,hl
+	ld	sp,hl			; sp <- spadr
+;
+	ld	hl,(taskname)
+	jp	(hl)			; branch to task
+;
+;--------------------
+;
+;-- WAIT - suspends the current task and schedules another by:
+;--
+;--	1. Storing the current tasks general registers and placing the task's SP
+;--	   into the position currently being pointed to by CTP.
+;--
+;--	2. Advance the CTP to the next entry in the TSPL.
+;--
+;--	3. Load the SP for the new task's stack and restore the task's registers
+;--	   from the top of the stack and return to the routine in the new task
+;--	   that called WAIT.
+;
+;	proc wait
+;		ctp -> SP <- sp
+;		ctp <- ctp -> LINK
+;		sp <- ctp -> SP
+;	end proc
+;
+wait:
+	call	rsave			; save registers of current task
+;
+	ld	a,SP
+	ld	hl,0
+	add	hl,sp
+	ex	de,hl
+	ld	hl,(ctp)
+	call	sindexw			; ctp -> SP <- sp
+;
+	ld	a,LINK
+	ld	hl,(ctp)
+	call	indexw
+	ld	(ctp),hl		; ctp <- ctp -> LINK
+;
+	ld	a,SP
+	ld	hl,(ctp)
+	call	indexw
+	ld	sp,hl			; sp <- ctp -> SP
+;
+	call	rretn			; restore registers of new task
+	ret
+;
+;--------------------
+;
+;-- ASCII - convert unsigned 16 bit integer to ascii string
+;--
+;-- arguments:
+;--
+;--	DE - contains values to be converted
+;--
+;--	HL - contains address of string value, which must have room for upto 5 characters
+;--
+;-- returns:
+;--
+;--	The argument string contains the converted value
+;
+;	proc ascii(val : [0..65535], string @str)
+;		var ptens(0:4) : [0..10000] {10000,1000,100,10,1},
+;			quot : [0..9], rem : [0..65535], i : [0..3]
+;
+;		proc digit returns quot : [0..9]
+;			(quot,rem) <- rem / ptens(i)
+;			return quot
+;		end proc
+;
+;		rem <- val
+;		str <- ''
+;
+;		except done
+;			i <- 0
+;			loop until i = 4 exit
+;				quot <- digit()
+;				if quot ~= 0 then
+;					loop
+;						str ||<- string(quot + '0')
+;						i +<- 1
+;						when i = 4 escape done
+;						quot <- digit()
+;					pool
+;				fi
+;				i +<- 1
+;			pool
+;		end except
+;
+;		str ||<- string(digit() + '0')
+;	end proc
+;
+ptens:
+	dw	10000
+	dw	1000
+	dw	100
+	dw	10
+	dw	1
+rem:	ds	2
+digit:
+	push	de			; save registers DE, HL
+	push	hl
+;
+	ld	a,b
+	add	a
+	ld	hl,ptens
+	call	indexw			; hl <- ptens(i)
+	ld	de,(rem)
+	call	divide
+	ld	(rem),de
+	ld	a,l			; (quot,rem) <- rem / ptens(i)
+;
+	pop	hl
+	pop	de			; restore registers DE, HL
+	ret
+ascii:
+	call	rsave			; save registers
+;
+	ld	(rem),de		; rem <- val
+	ld	(hl),0			; str <- ''
+	ld	de,digstr		; parameter for call to concat
+	ex	de,hl			; exchange parms for call to concat
+	ld	b,0			; i <- 0
+>1:
+	ld	a,b
+	cp	4			; i = 4 ?
+	jrz	>2			; exit
+	call	digit			; quot <- digit()
+	cp	0			; quot ~= 0 ?
+	jrz	>3			; no
+>4:
+	add	'0'
+	ld	(digval),a
+	call	concat			; str ||<- string(quot + '0')
+	inc	b			; i +<- 1
+	ld	a,b
+	cp	4			; when i = 4
+	jrz	>2			; escape done
+	call	digit			; quot <- digit()
+	jr	>4
+>3:
+	inc	b			; i +<- 1
+	jr	>1
+>2:
+	call	digit
+	add	'0'
+	ld	(digval),a
+	call	concat			; str ||<- string(digit() + '0')
+;
+	call	rretn			; restore registers
+	ret
+;
+digstr:
+	db	Ldigstr
+digval:	ds	1
+Ldigstr:equ	$-digstr-1
+;
+;--------------------
+;
+;-- MULT - multiply unsigned 8 bit values
+;--
+;-- arguments:
+;--
+;--	A - multiplicand
+;--
+;--	E - multiplier
+;--
+;-- returns:
+;--
+;--	HL - product
+;
+;	proc mult(byte multiplicand, multiplier)
+;		int product
+;
+;		product <- 0
+;		loop until multiplier = 0 exit
+;			multiplier <- shiftl(multiplier)
+;			if carry then
+;				product +<- multiplicand
+;			fi
+;			multiplicand <- shiftl(multiplicand)
+;		pool
+;	end proc
+;
+mult:
+	push	af			; save registers AF, DE
+	push	de
+;
+	ld	d,0			; clear upper part of multiplicand
+	ld	hl,0			; product <- 0
+>1:
+	cp	0			; multiplier = 0 ?
+	jrz	>3			; exit
+	srl	a			; multiplier <- shiftl(multiplier)
+	jrnk	>2			; carry ? no
+	add	hl,de			; product +<- multiplicand
+>2:
+	sla	e
+	rl	d			; multiplicand <- shiftl(multiplicand)
+	jr	>1
+>3:
+;
+	pop	de
+	pop	af			; restore registers AF, DE
+	ret
+;
+;--------------------
+;
+;-- DIVIDE - divide unsigned 16 bit values
+;--
+;-- arguments:
+;--
+;--	DE - dividend (no. on top)
+;--	HL - divisor  (no. on bottom)
+;--
+;-- returns:
+;--
+;--	DE - remainder
+;--	HL - quotient
+;
+;	proc divide(int dividend, divisor)
+;		int quotient
+;
+;		quotient <- -1
+;
+;		loop
+;			quotient +<- 1
+;			dividend -<- divisor
+;		until dividend < 0 exit pool
+;
+;		dividend +<- divisor
+;		return quotient, dividend
+;	end proc
+;
+divide:
+	push	bc			; save register BC
+;
+	ex	de,hl			; exchange dividend & divisor for SBC
+	ld	bc,-1			; quotient <- -1
+	and	a			; clear carry for SBC
+>1:
+	inc	bc			; quotient +<- 1
+	sbc	hl,de			; dividend -<- divisor
+	jrnk	>1			; dividend < 0 ? no
+	add	hl,de			; adjust remainder
+	ld	d,b
+	ld	e,c			; de <- quotient
+	ex	de,hl			; exchange quotient & remainder for return
+;
+	pop	bc			; restore registers BC
+	ret
+;
+;--------------------
+;
+; COPYSTR - assign one string to another
+;
+; arguments:
+;
+;	DE - pointer to to-string
+;
+;	HL - pointer to from-string
+;
+copystr:
+	push	bc			; save registers BC, DE, HL
+	push	de
+	push	hl
+;
+	ld	b,0
+	ld	c,(hl)			; c <- length(from-string)
+	inc	bc			; add 1 to move length field, too
+	ldir				; copy from-string to to-string
+;
+	pop	hl
+	pop	de
+	pop	bc			; restore registers BC, DE, HL
+	ret
+;
+;--------------------
+;
+;-- CONCAT - concatenate two strings
+;--
+;-- arguments:
+;--
+;--	DE - pointer to to-string
+;--
+;--	HL - pointer to from-string
+;
+concat:
+	call	rsave			; save registers
+;
+	push	de			; save original str1 pointer
+	push	hl			; save original str2 pointer
+	ld	b,0			; clear upper byte of length reg.
+	ex	de,hl
+	ld	c,(hl)			; c <- length(str1)
+	inc	hl			; increment pass length field
+	add	hl,bc			; calculate address of end of str1
+	ex	de,hl
+	ld	c,(hl)			; c <- length(str2)
+	inc	hl			; incrememt pass length field
+	ldir				; move str2 after str1
+	pop	hl			; restore pointer to str2
+	pop	de			; restore pointer to str1
+	ld	a,(de)
+	add	(hl)			; a <- length(str1) + length(str2)
+	ld	(de),a			; set new length of concatenated string
+;
+	call	rretn			; restore registers
+	ret
+;
+;---------------------
+;
+;-- PUTCHAR - output a character to a specified serial port
+;--
+;-- arguments:
+;--
+;--	A - character to be transmitted
+;--
+;--	C - address of status port for serial device. The data post is assumed
+;--	    to have the address immediately following the status port
+;
+;	proc putchar(port @portadr, byte data)
+;		var TBE : 080h
+;
+;		loop unitl portadr = TBE exit
+;			wait
+;		pool
+;
+;		portadr +<- 1
+;		*portadr <- data
+;	end proc
+;
+TBE:	equ	080h
+putchar:
+	push	af			; save register AF, BC
+	push	bc
+;
+	ld	b,a			; b <- data
+>1:
+	in	a,(c)			; a <- status port value
+	and	TBE			; UART buffer empty
+	jrnz	>2			; exit
+	call	wait
+	jr	>1
+>2:
+	inc	c			; advance to data port
+	out	(c),b			; data port <- data
+;
+	pop	bc
+	pop	af			; restore registers AF, BC
+	ret
+;
+;--------------------
+;
+;-- DYNCAL - dynamicly call a routine
+;--
+;-- arguments:
+;--
+;--	HL - address of routine to be invoked
+;
+dyncal:
+	jp	(hl)
+;
+;--------------------
+;
+;-- INDEXB - index a byte from a base address
+;--
+;-- arguments:
+;--
+;--	A - contains index value
+;--
+;--	HL - contains base address
+;--
+;-- returns:
+;--
+;--	A - byte value at base + index
+;
+indexb:
+	push	de			; save registers DE, HL
+	push	hl
+	ld	d,0
+	ld	e,a
+	add	hl,de
+	ld	a,(hl)
+	pop	hl
+	pop	de			; restore registers DE, HL
+	ret
+;
+;--------------------
+;
+;-- INDEXW - index a word from a base address
+;--
+;-- arguments:
+;--
+;--	A - contains index value
+;--
+;--	HL - contains base address
+;--
+;-- returns:
+;--
+;--	HL - word value at base + index
+;
+indexw:
+	push	de			; save register DE
+	ld	d,0
+	ld	e,a
+	add	hl,de
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ex	de,hl
+	pop	de			; restore register DE
+	ret
+;
+;--------------------
+;
+;-- SINDEXB - store a byte at base address + index
+;--
+;-- arguments:
+;--
+;--	A - contains index value
+;--
+;--	E - contains data byte to be stored
+;--
+;--	HL - contains base address
+;
+sindexb:
+	push	bc			; save registers BC, HL
+	push	hl
+;
+	ld	b,0
+	ld	c,a
+	add	hl,bc
+	ld	(hl),e
+;
+	pop	hl
+	pop	bc			; restore registers BC, HL
+	ret
+;
+;---------------------
+;
+;-- SINDEXW - store a word at base address + index
+;--
+;-- arguments:
+;--
+;--	A - contains index value
+;--
+;--	DE - contains data word to be stored
+;--
+;--	HL - contains base address
+;
+sindexw:
+	push	bc			; save registers BC, HL
+	push	hl
+;
+	ld	b,0
+	ld	c,a
+	add	hl,bc
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+;
+	pop	hl
+	pop	bc			; restore registers BC, HL
+	ret
+;
+;--------------------
+;
+;-- RSAVE - save general registers AF, BC, DE, HL  on system stack
+;
+rsave:
+	pop	ix			; ix <- return address
+	push	af			; place registers on the stack
+	push	bc
+	push	de
+	push	hl
+	jp	(ix)			; transfer back to calling routine
+;
+;--------------------
+;
+;-- RRETN - restore general registers AF, BC, DE, HL  from system stack
+;
+rretn:
+	pop	ix			; ix <- return address
+	pop	hl
+	pop	de
+	pop	bc
+	pop	af
+	jp	(ix)			; transfer back to calling routine
+;
+;--------------------
+;
+;-- GELT - used to compare 2 values for greater than or equal to, or less than by
+;--		C flag <- S flag XOR V flag
+;--
+;-- argument:
+;--
+;--	F - S & V flags in the F register which are set by the compare instruction
+;--
+;-- returns:
+;--
+;--	C flag - C flag = 1 => a < operand, C flag = 0 => a >= operand
+;
+;
+gelt:
+	jp	m,>1			; S flag = 1 ?
+	jp	po,GE			; V flag = 0 ?
+	scf				; carry <- 1
+	ret
+>1:
+	jp	pe,GE			; V flag = 1 ?
+	scf				; carry <- 1
+	ret
+GE:
+	and	a			; carry <- 0
+	ret
+;
+;--------------------
+;
+;-- GTLE - used to compare 2 values for greater than, or less than or equal to by
+;--		C flag <- Z flag OR (S flag XOR V flag)
+;--
+;-- arguments:
+;--
+;--	F - S, Z, & V flags in the F register which are set by the compare instruction
+;--
+;-- returns:
+;--
+;--	C flag - C flag = 1 => a <= operand, C flag = 0 => a > operand
+;
+gtle:
+	jrnz	>1			; Z flag = 0 ?
+	scf				; carry <- 1
+	ret
+>1:
+	call	gelt			; S flag XOR V flag
+	ret
+;
+;--------------------
+;
+;-- NEXTSTR - advance to next string in a list of strings
+;--
+;-- arguments:
+;--
+;--	HL - pointer to string
+;
+nextstr:
+	push	de			; save register DE
+	ld	d,0
+	ld	e,(hl)			; e <- length(string)
+	inc	e
+	add	hl,de			; hl <- addr(string) + length(string) + 1
+	pop	de			; restore register DE
+	ret

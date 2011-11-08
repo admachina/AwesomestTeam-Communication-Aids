@@ -1,0 +1,181 @@
+;
+;----------------------
+;
+; task prompt_device
+;
+;	var BS : 8h, FF : 1ah, CR : 0ah, GS : 15h, RS : 1eh, BW : 11h, EC : 1bh
+;
+BS:	equ	08h
+FF:	equ	1ah
+CR:	equ	0ah
+GS:	equ	15h
+RS:	equ	1eh
+BW:	equ	11h
+EC:	equ	1bh
+;
+;--------------------
+;
+;-- PMTSTR - prints a string on the VIDEO prompting device
+;--
+;-- arguments:
+;--
+;--	HL - pointer to string
+;
+;	proc pmtstr(string @str)
+;		loop until pmt.ECB = WAIT exit
+;			wait
+;		pool
+;
+;		pmt.ECB <- BUSY
+;		pmt.STR <- str
+;	end proc
+;
+pmtstr:
+	push	af			; save registers AF, DE
+	push	de
+;
+>1:
+	ld	a,(pmtECB)
+	cp	WAIT			; pmt.ECB = WAIT ?
+	jrz	>2			; exit
+	call	wait
+	jr	>1
+>2:
+	ld	a,BUSY
+	ld	(pmtECB),a		; pmt.ECB <- BUSY
+	ld	de,pmtSTR
+	call	copystr			; pmt.STR <- str
+;
+	pop	de
+	pop	af			; restore registers AF, DE
+	ret
+;
+;--------------------
+;
+;-- PROMPT - this task is used to run the VIDEO prompting device asynchronously
+;--
+;-- interface:
+;--
+;--	ecb - indicates whether the VIDEO device is BUSY or WAITing
+;--
+;--	str - the string that is currently printing if ecb = BUSY, otherwise undefined
+;
+;	task prompt
+;		interface { ECB : [BUSY, WAIT], string STR }
+;
+;-- PMTWRT - transmits a string of characters to the VIDEO device
+;--
+;-- arguments:
+;--
+;--	HL - pointer to str
+;
+;		proc pmtwrt(string @str)
+;			var OFFSET : 32
+;
+;			for (i <- 1;i ~= length(str)+1;i +<-1)
+;			loop
+;				if str(i) = '\RS' then
+;					i +<- 1
+;					vidchar(EC)
+;					vidchar(byte('='))
+;					vidchar(byte(str(i+1)) + OFFSET)
+;					vidchar(byte(str(i)) + OFFSET)
+;					i +<- 1
+;				else
+;					vidchar(byte(str(i)))
+;				fi
+;			pool
+;		end proc
+;
+;	task body
+;		ECB <- BUSY
+;		vidinit()
+;		pmtwrt('\EC;l\EC;c\EC;U')
+;		ECB <- WAIT
+;		loop
+;			loop until ECB = BUSY exit
+;				wait
+;			pool
+;
+;			pmtwrt(STR)
+;			ECB <- WAIT
+;		pool
+;	end task
+;
+pmtECB:
+	ds	1
+pmtSTR:
+	ds	81			; this length is only a guess at the maximum string length
+vidinit:equ	0f800h
+vidchar:equ	0f803h
+;
+OFFSET:	equ	32
+pmtwrt:
+	push	af			; save registers AF, BC
+	push	bc
+;
+	ld	b,1			; i <- 1
+	ld	c,(hl)
+	inc	c			; c <- length(str)+1
+>1:
+	ld	a,b
+	cp	c			; i ~= length(str)+1
+	jrz	>2			; exit
+	call	indexb			; a <- str(i)
+	cp	RS			; str(i) = RS ?
+	jrnz	>3			; no
+	inc	b			; i +<- 1
+	ld	a,EC
+	call	vidchar			; vidchar(EC)
+	ld	a,'='
+	call	vidchar			; vidchar(byte('='))
+	ld	a,b
+	inc	a
+	call	indexb			; a <- str(i+1)
+	add	OFFSET
+	call	vidchar			; vidchar(byte(str(i+2)) + OFFSET)
+	ld	a,b
+	call	indexb			; a <- str(i)
+	add	OFFSET
+	call	vidchar			; vidchar(byte(str(i)) + OFFSET)
+	inc	b			; i +<- 1
+	jr	>4
+>3:
+	call	vidchar			; vidchar(str(i))
+>4:
+	inc	b			; i +<- 1
+	jr	>1
+>2:
+	pop	bc
+	pop	af			; restore registers AF, BC
+	ret
+;
+prompt:
+	ld	a,BUSY
+	ld	(pmtECB),a		; pmt.ECB <- BUSY
+	call	vidinit			; vidinit()
+	ld	hl,pmtclr
+	call	pmtwrt			; pmtwrt('\EC;l\EC;c\EC;U')
+	ld	a,WAIT
+	ld	(pmtECB),a		; ECB <- WAIT
+;
+pmtloop:
+>1:
+	ld	a,(pmtECB)
+	cp	BUSY			; ECB = BUSY ?
+	jrz	>2			; exit
+	call	wait
+	jr	>1
+>2:
+	ld	hl,pmtSTR
+	call	pmtwrt			; pmtwrt(STR)
+	ld	a,WAIT
+	ld	(pmtECB),a		; ECB <- WAIT
+	jr	pmtloop
+;
+pmtclr:
+	db	Lpmtclr
+	db	EC,'l'
+	db	EC,'c'
+	db	EC,'U'
+Lpmtclr:equ	$-pmtclr-1

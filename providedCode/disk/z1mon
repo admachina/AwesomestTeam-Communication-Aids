@@ -1,0 +1,1045 @@
+;
+;  cromemco z-80 monitor version 1.4 copyright 1901
+;  modified for assembly by 'asz80' at uom, and vio board by Peter Buhr
+;
+stat:	equ	0		; status port, device a
+data:	equ	1		; data port, device a
+acmndp:	equ	2		; command port, dev. a
+abaudp:	equ	0		; baud port, device a
+aparlp:	equ	4		; parallel port, dev. a
+bcmndp:	equ	52h		; command port, dev. b
+bparlp:	equ	54h		; parallel port, dev. b
+dav:	equ	40h		; data-available mask
+tbe:	equ	80h		; xmitter-buf-empty msk
+;
+nbrkpt:	equ	5		; allow room for
+bpstor:	equ	nbrkpt*4+2	; breakpoint storage
+temps:	equ	bpstor
+bpmrk:	equ	0bh		; used to mark the set-
+;				; ting of a bp in bpstor.
+rstlc:	equ	30h		; rst location
+case:	equ	20h		;UOM, (requires lower-case)
+b2f:	equ	5		; 2-byte flag
+pf:	equ	6		; prime-able reg flag
+crf:	equ	7		; crlf flag
+;
+cr:	equ	0dh
+lf:	equ	0ah
+esc:	equ	1bh
+alt:	equ	7dh
+;
+; displacement from ix of hi byte of reg pairs
+;
+;
+dupc:	equ	-1
+duaf:	equ	-3
+dubc:	equ	-5
+dude:	equ	-7
+duhl:	equ	-9
+dusp:	equ	-11
+duix:	equ	-13
+duiy:	equ	-15
+duin:	equ	-17		; i & the interrupt ff
+duaf2:	equ	-19
+dubc2:	equ	-21
+dude2:	equ	-23
+duhl2:	equ	-25
+;
+lenrgs:	equ	dupc-duhl2+2
+;
+;
+;
+;
+	org	0c000h		;UOM, prom address on 4FDC
+;
+; enter the monitor from reset.
+; cold start entry.  initializes the uart
+; and zeroes the breakpoint stack pointer.
+; alters the a-register.  saves all other 
+; registers except the program counter,
+; but does not display them.
+;
+cstart:	ld	a,1		
+	out	(40h),a		;select bank 0
+	push	af		;simulate upc
+	push	af		;user-f-register
+	jr	common		
+;
+;
+;
+; warm start entry.  initializes the breadpoint
+; storage pointer.  saves all registers except
+; the program counter, but does not display them.
+;
+wstart:	push	af		;simulate upc
+	push 	af		;uaf
+	ld	a,80h		;flag:
+	jr	common		;warm-start entry
+;
+;
+; check input & return with data if ready
+;
+chkin:	in	a,(stat)
+	and	dav
+	ret	z
+	in	a,(data)
+	ret
+;
+;
+; get character from input.
+;
+gbyte:	call	chkin
+	jrz	gbyte
+	and	7fh
+	ret
+;
+;
+; print character.
+;
+pbyte:	push	af
+pby1:	in	a,(stat)
+	and	tbe
+	jrz	pby1
+	pop	af
+	out	(data),a
+	ret
+;
+;
+; select device a & initialize its baud rate.
+; enter with a=1.
+;
+init:	out	(bparlp),a	;select devive a
+	out	(bcmndp),a	;reset device b
+				;[continue below]
+;
+;
+;
+; initialize baud rate of the current device.
+;
+; push carriage-return to select the proper baud
+; rate for the current terminal.  (the maximum
+; number of carriage-returns required is four.)
+;
+; withe the cromemco tuart any of the follwing
+; baud rates can be selected:
+; 19200, 9600, 4800, 2400, 1200, 300, 150, 110.
+;
+; with the 3p+s: 2400, 300, 110.
+;
+; two carriage-returns are required for
+; any uart with a fixed baud rate.
+;
+initbaud: ld	hl,baudrs
+	ld	c,abaudp		
+	ld	a,11h		;octuple the clock
+it1:	out	(acmndp),a	;& reset current device
+	outi	
+	call	gbyte
+	call	gbyte
+	cp	cr
+	ld	a,1		;slow the clock
+	jrnz	it1
+	ret
+;
+;
+; breadpoint entry.  initializs nothing.
+; saves all registers and displays them.
+;
+svms:	ex	(sp),hl		;adjust brkpt
+	dec	hl		;ret addr
+	ex	(sp),hl	
+	push	af		;uaf
+	sub	a		;flag:
+;				;breakpoint entry;
+;
+;
+common:	push	bc		;ubc
+	ld	b,a		;entry flag
+	push	de		;ude
+	push	hl		;uhl
+;
+; place sys stack at highest page of 
+; available ram.
+; allow room for temp storage.
+;
+	ld	hl,0f0ffh-temps	;UOM, skip VIO ram @ F000 to F7FF
+com1:	dec	h
+	ld	a,(hl)
+	inc	(hl)
+	cp	(hl)		;did it change?
+	jrz	com1
+	dec	(hl)		;yes.  restore it.
+;
+	ld	a,b		;entry flag
+	ex	de,hl
+	ld	hl,9
+	add	hl,sp		; -> upc, hi byte
+	ld	bc,10		
+	lddr
+;
+	inc	de		; -> uhl,lo on sys stk
+	ex	de,hl
+	ld	sp,hl		;current sys sp
+	ex	de,hl
+	ld	bc,dupc-duhl+3
+	add	hl,bc		;hl = user sp
+	push	hl		;usp
+	push	ix		;uix
+	push	iy		;uiy
+	ex	de,hl
+	add 	hl,bc
+	ld	c,l		;save
+	dec	hl
+	push	hl
+	pop	ix
+	cp	1		;entry
+	jrk	com3		;skip if via bp.
+	ld	(hl),c		;bp pntr, lo byte
+	inc	hl
+	ld	(hl),0		;bp-stack endmark
+; initialize the tuart if entry was via reset.
+; (a contains 1.)
+;
+	call	z,init
+;
+com3:	ld	a,i
+	ld	h,a
+	ld	l,0
+	jp	po,com4
+	inc	l
+com4:	push	hl		;uin
+	ex	af
+	push	af		;uaf'
+	ex	af
+	exx	
+	push	bc		;ubc'
+	push	de		;ude'
+	push	hl		;uhl'
+	exx
+;
+; if cy is set, entry was via a breakpoint
+	ld	hl,head
+	call	nk,pmsg
+	ld	bc,[['P'+case] shl 8]+86h ; if bp entry,
+	call	k,subr3		;dusplay the pc.
+;
+;
+; clear all breakponts
+;
+;
+clbp:	push	ix
+	pop	hl		;points to bpsp, lo
+	ld	l,(hl)		;bpsp now in hl
+;
+cl1:	ld	a,(hl)		;bp stk empty?
+	cp	bpmrk		;if bpmrk, bp is set
+	jrnz	cl2
+;
+	inc	(hl)		;bp-erased mark
+	dec	hl
+	ld	d,(hl)
+	dec	hl
+	ld	e,(hl)
+	dec	hl
+	ldd			;restore mem contents
+	jr	cl1
+;
+cl2:	ld	a,l
+	dec	hl
+	ld	(hl),a		;adjust bpsp
+;
+	ld	de,-lenrgs	;for the benefit
+	add	hl,de		;of eror & escpe
+	ld	sp,hl		;re-initialize sp
+;
+;
+; get 1-byte command.
+; returns value in hl & jumps to that addr.
+;
+	call	crlf
+cmnd:	ld	de,cmnd		;set-up return
+	push	de
+cmnd1:	ld	hl,prmpt	;re-entry point
+	call 	pmsg		;for recursion
+; hl now pnts to the command table.
+;
+; get the command.
+; de gets the first alpha char less 'D'.
+;
+	call 	sksg0		;get non-space
+	ret	z		;if cr, ignore.
+	sub	'D'+case	; < 'D'?
+	jrk	error
+	cp	'W'-'D'+1	; > 'W'?
+	jrnk	error
+	ld	e,a
+	ld	d,0
+;
+	ld	c,d		;initialize for subr
+	ex	de,hl
+	add	hl,hl		;times 2
+	add	hl,de		; + tbl addr
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ex	de,hl
+	call	sksg0		;next cmnd ghar
+	cp	'M'+case	;(used in subst & displ)
+	jp	(hl)
+;
+;
+; error & escape. returns to cmnd with sp
+; pointing to saved-reg area (uhl').
+;
+error:	ld	a,'?'
+	call 	pchr
+escpe:	jr	clbp		;clear any brkpts
+;
+;
+; program proms.  aborts if destination
+; is not on a 1k (400h) boundary, or if swath
+; width is not a multiple of 1k.
+;
+;
+prog:	call	l3ncr
+	ld	a,b		;are increment &
+	or	d		;destination both
+	and	3		;multiples of
+	or	c		;1024?
+	or	e
+errv1:	jrnz	error	;error vector
+;
+	push 	hl		;source
+	ld	hl,320		;# of iterations
+pr1:	ex	(sp),hl
+	call	mve		;move it
+	ex	(sp),hl
+	dec	hl		;iteration ct
+	ld	a,h
+	or	l
+	jrnz	pr1
+	pop	hl
+	jr	vrfy		;verify it
+;
+;
+; print the 2 bytes in (hl) & (hl-1).
+; decrements hl by 2.  alters a.
+; preserves other regs.
+;
+p2nms:	call	pnm
+	dec	hl
+	call	pnm
+	dec	hl		;(continuw below)
+;
+;
+; print space.  alters a.
+;
+space:	ld	a,20h		;(continue below)
+;
+;
+; print the character in the a-register.
+; (chks input for esc.) preserves all regs.
+;
+pchr:	push	af		;save the char
+pc1:	and	7fh
+	cp	esc
+	jrz	escpe
+	cp	alt		;alt mode?
+	jrz	escpe
+	call	chkin
+	jrnz	pc1
+;
+pc2:	pop	af
+	push	hl
+	push	af
+	and	7fh
+	call 	pbyte
+	ld	hl,lfnn
+	cp	cr
+	call	z,pmsg
+	cp	'<'		;recursive call
+	jrnz	pc3		;on cmnd?
+	pop	af
+	ld	a,cr		;yes.  convert
+	push	af		;'<' to a cr.
+	push	de
+	push	bc
+	call 	cmnd1
+	pop	bc
+	pop	de
+pc3:	pop	af
+	pop	hl
+	ret
+;
+;
+; get character.  returns it in a.
+; alters f.
+;
+gchr:	call 	gbyte
+	call	pchr
+	jrz	gchr		;if null don't return
+	cp	'A'		;UOM
+	jrk	gchr1		;UOM
+	or	20h		;UOM, convert to lower-case
+gchr1:				;UOM
+	ret
+;
+;
+; crlf.  alters a only.
+;
+crlf:	ld	a,cr
+	jr	pchr
+;
+;
+; loads hl with source addr, bc & de
+; with the increment.  ends with a crlf.
+;
+l2ncr0:	sub	a
+;
+l2ncr:	call 	ld2n
+;
+; skip initial spaces.
+; if delimiter not a cr, error
+;
+sksgcr:	call	sksg			;wait for non-space
+	jrnz	errv1		;if not cr, error
+	ex	de,hl
+	ret
+;
+;
+; print the number in hl, followed by a colon.
+; preserves all registers except a.
+;
+pcaddr:	call	crlf
+;
+paddr:	call 	pnhl
+	ld	a,':'
+	jr	pchr
+;
+;
+; command
+;
+verif:	call	l3ncr		;get 3 operands
+;
+; compares two areas of memory.  enter with
+; source in hl, destination in de & count
+; in bc.  alters all registers.
+;
+vrfy:	ld	a,(de)
+	cpi			;compare to source
+	dec	hl
+	call	nz,pnhl		;print source addr
+	call	nz,psnm		; & contents
+	ex	de,hl
+	call	nz,psnm		; & dest contents
+	call 	nz,psnhl	; & dest addr
+	call	nz,crlf
+	ex	de,hl
+	inc	hl
+	inc	de
+	ret	po		;if bc=0, done.
+	jr	vrfy
+;
+;
+; command
+;
+move:	call	l3ncr		;operands
+	call	mve		;move it
+	jr	vrfy
+;
+;
+;
+; load two numbers.  loads de with the beginning
+; addr, n1.  loads bc & hl with the increment
+; n2-n1+1 (or with n2 if the opr is 'S').
+; returns with last delimiter in a.
+;
+;
+ld2n:	call	gnhl		;n1 to hl, delim to a
+	ex	de,hl		;save n1 in de
+	call	sksg		;get next non-space
+	cp	'S'+case	;swath?
+	jrnz	l2n1
+;
+	call	gnhl0		;yes.  increment to hl.
+	jr 	l2n2
+;
+l2n1:	call 	gnhl		;increment
+	or 	a 		;clear cy
+	sbc	hl,de		;n2-n1
+	inc	hl		;include end point
+l2n2:	ld	b,h
+	ld	c,l		;bc gets the incrm
+	ret
+;
+;
+; load 3 operands.  hl gets the source, bc 
+; the increment, and de the 3rd operand.
+;
+l3ncr:	call	ld2n
+;  (continue below)
+;
+;
+; enter with space or the first digit
+; of a number in a.  loads hl  
+; with a new number & then exchanges
+; de & hl.  finishes with a crlf.
+;
+l1ncr:	call 	gnhl		;skip spaces, load hl
+	jr	sksgcr		;wait for a cr
+;
+;
+; clears hl.  if entered with hex char in a,
+; shifts it into hl. o/w, ignores leading
+; spaces.  first char must be hex.  continues
+; shift until a non-hex char received & then
+; returns with the latter in a.
+; preserves b,c,d,e.
+;
+;
+gnhl0:	sub	a
+;
+gnhl:	push	bc		;save
+	ld	hl,0		;clr buffer
+; strip leading spaces & get char
+	call 	sksg
+; first char must be hex
+	call	hexsh		;if hex, shift into hl
+	jp	k,error		;o/w, error
+gn1:	call 	gchr
+	call	hexsh		;if hex, shift into hl
+	ld	a,b		;restore char
+	jrnk	gn1		;if hex, continue
+	pop	bc		;if non-hex, done.
+	ret
+;
+;
+; if a contains hex char, shifts binary equivalent
+; into hl.  if not hex, ret wth cy set.  saves
+; original char in b.
+;
+hexsh:	ld	b,a
+	sub	'0'		; < '0'?
+	ret	k
+	add 	'0'-['G'+case]
+	ret	k
+	sub	'A'-'G'
+	jrnk	hx1		;ok if >= 'A'
+	add	['A'+case]-['9'+1]
+	ret	k
+hx1:	add	'9'+1-'0'
+; the a-reg now contains the hex digit in binary.
+; (the high-order nibble of a is 0.)
+hxsh4:	add	hl,hl		;shift 4 bits into hl
+	add	hl,hl
+	add 	hl,hl
+	add	hl,hl
+	or	l
+	ld	l,a
+	ret
+;
+;
+; returns with a non-space in the a-reg.
+; if entered with a-reg containing a null
+; or a space, gets new chars until first
+; non-space occurs.  alters af.
+;
+sksg0:	sub	a
+;
+sksg:	or	a		;does a contain null?
+sk1:	call	z,gchr
+	cp	20h		;space?
+	jrz	sk1
+	cp	cr
+	ret
+;
+;
+;
+; print space followed by the number pointed
+; to be hl.  alters a only.
+;
+psnm:	call	space
+; (continue below)
+;
+; prints the number pointed to by hl.
+; preserves all registers but a.
+;
+pnm:	ld	a,(hl)
+	jr	p2hex
+;
+;
+;
+; print the number in hl.
+; preserves all but a.
+;
+psnhl:	call	space
+;
+pnhl:	ld	a,h
+	call	p2hex
+	ld	a,l
+;				;(continue below)
+;
+; prit the number in the a-register.
+; preserves all registers.
+;
+p2hex:	call	p1hex
+	rra
+p1hex:	rra
+	rra
+	rra
+	rra
+	push	af
+	and	0fh		;mask
+	cp	10d		; <= 9?
+	jrk	ph1
+	add	7		;a thru f
+ph1:	add	30h		;ascii bias
+	call 	pchr		;print it
+	pop	af
+	ret
+;
+;
+; print message.  enter with addr of msg
+; in hl.  the message is terminated
+; after printing a character whose
+; parity bit was set.
+; preserves flags, increments hl.
+;
+;
+;
+pmsg:	push	af		;save
+ps1:	ld	a,(hl)
+	inc	hl
+	call 	pchr
+	rla			;last character?
+	jrnk	ps1		;if not, loop
+	pop	af
+	ret
+;
+;
+; move from one location to another.  enter
+; with source addr in hl, dest in de, byte
+; count in bc.  preserves all registers.
+;
+mve:	push	hl		;source
+	push	de		;dest
+	push	bc		;byte count
+	ldir
+	pop 	bc
+	pop	de
+	pop	hl
+	ret
+;
+;
+; command
+;
+; go <cr> execution begins at user pc.
+;
+; command
+; 
+; go <addr1>/<addrs> ... <addrn>
+; execution begins at addr1 with breakpoints set
+; at addr2,...,addrn.
+;
+go:
+; b gets nbrkpt+1 (max. number of bp + 1)
+; c, the breakpoint flag, gets 0 (no bp set)
+	ld	bc,[[nbrkpt+1] shl 8]+0
+go1:	call	sksg		;wait for non-space
+	jrz	retrn		;retrn if cr
+	cp	'/'		;bp?
+	jrnz	go3		
+	ld	c,a		;set brkpt flag (2fh)
+	ld	hl,rstlc	;transfer
+	ld	(hl),0c3h	;'jp svms' to
+	ld	hl,svms
+	ld	(rstlc+1),hl	;rst loc
+	sub	a
+go3:	call	gnhl		;get addr
+	bit	5,c		;flag set?
+	ex	de,hl
+	push	ix
+	pop	hl
+	jrz	go5		;jump if no bp
+;
+	dec	b  		;if too many bp,
+	jp	z,error		;error.
+	ld	l,(hl)		;hl = bpsp
+;
+	inc	hl		;bump bpsp
+	ex	de,hl		;de = bpsp, hl = bp addr
+	ldi
+	dec	hl
+	ld	(hl),0c7h+rstlc	;rst instruction
+	ex	de,hl		;hl=bpsp
+	ld	(hl),e		;bp addr to stack
+	inc	hl
+	ld	(hl),d
+	inc	hl
+	ld	(hl),bpmrk	;punctuation (bp set)
+	ld	(ix),l
+	jr 	go1
+; change user pc
+go5:	dec	hl
+	ld	(hl),d
+	dec	hl
+	ld	(hl),e
+	jr	go1		;back for more
+;
+retrn:	pop	hl		;strip addr from stk
+	pop	hl		;uhl'
+	pop	de		;ude'
+	pop	bc		;ubc'
+	pop	af		;uaf'
+	exx
+	ex	af
+;
+	pop	af		;uin
+	ld	i,a		;ui
+	di
+	jrnk	rt1
+	ei
+; iff now restored
+rt1:	pop	iy		;uiy
+	pop	ix		;uix
+	pop	de		;usp
+;
+; copy the remainder of the sys stack 
+; to the user stack.  if this transfer
+; is made without error, switch to the 
+; user stack.  otherwise, retain the
+; system stack.
+;
+	ld	hl,10d
+	ld	b,l
+	add	hl,sp
+	ex	de,hl
+rt2:	dec	de
+	dec	hl
+	ld	a,(de)
+	ld	(hl),a
+	cp	(hl)
+	jrnz	rt3
+	djnz	rt2
+	ld	sp,hl
+;
+rt3:	pop	hl
+	pop 	de
+	pop	bc
+	pop	af
+	ret
+;
+;
+; command.  display registers.
+;
+; dr
+;
+; command.  display memory.
+;
+; dm <starting addr> <ending addr or swath>
+;
+;
+displ:	ld	bc,[['A'+case] shl 8]+80h ;(for dr)
+	jrnz	subr2	;if not 'M', dr
+;
+;
+dspm:	call 	l2ncr0		;get operands
+dspm1:	ld	d,16		;byte count
+	call	pcaddr		;address
+dm2:	call	psnm		;mem contents
+	cpi			;inc hl & dec bc
+	jp	po,crlf
+	dec	d
+	jrz	dspm1
+	ld	a,d
+	and	3
+	call 	z,space
+	call	z,space
+	jr	dm2
+;
+;
+; command.  substitute memory location.
+;
+; sm <addr>
+;
+; command.  substitute user-register.
+;
+; s <register name>
+;
+; register names: p [pc], s [sp],
+; a, f, b, c, d, e, h [hl],
+; i, n [iff], x [ix], y [iy],
+; a',f',b',c',d',e',h' [hl'].
+;
+;
+subst:	jrnz	subr		;in not 'M', sr
+;
+;
+subm:	sub	a
+	ld	b,a		;1-byte mask
+	call	l1ncr	
+	ex	de,hl		;hl gets addr
+sm1:	call	z,pcaddr
+	call	z,space
+; print current value, request new value &
+; print it if given
+	call	gsubv
+	ret	z		;if cr, done.
+	inc	hl
+	ld	a,7		;print address if it
+	and	l		;is a multiple of 8
+	jr	sm1
+;
+;
+subr:	ld	b,a
+	call	gchr
+	cp	27h		; quote
+	jrnz	sr2
+	inc	c		;turn on the prime-flag
+subr2:	sub	a
+sr2:	call 	sksgcr		;wait for cr
+sr3: 	ld	a,b
+	sub	'A'+case	;check the range
+	jp	k,error
+	cp	'Y'-'A'+1
+	jp	nk,error
+	ld	e,a
+	ld	d,0
+	ld	hl,rgtbl
+	add	hl,de
+	ld	a,(hl)
+	or	a
+	jrz	sr6		;if entry = 0, skip
+	ld	e,0
+	bit	0,c		;prime?
+	jrz	sr4
+	bit	pf,(hl)		;yes. primeable reg?
+	jrz	sr6		;if not, skip.
+	ld	e,duaf-duaf2
+sr4:	and	1fh		;strip flags from entry
+	add	e
+	ld	e,a
+	push	bc		;save
+	ld	a,b		;print reg name
+	call 	pchr
+	cp	'H'+case
+	ld	a,'L'+case
+	call	z,pchr
+	xor	'L'+case % '=';clear cy, a = '='.
+	bit	0,c		;prime?
+	jrz	sr5
+	ld	a,27h
+sr5:	call	pchr
+	ld	b,(hl)		;save original entry
+	push	ix
+	pop	hl		;stack frame
+	sbc	hl,de		;hl -> user reg
+	call	gsubv		;print value, request new
+	ld	a,b		;save
+	pop	bc
+	ret 	z		;done if cr
+;
+sr6:	inc	b		;next reg
+	rlca			;y or h?
+	jrnk	sr3		;if neither, loop
+	rlca			;yes, is it y?
+subr3:	call crlf		;(entry for displaying pc)
+	jrk	sr8
+	ld	b,'A'+case	;yes, it is y.
+	inc	c		;turn on prime-flag
+	jr	sr3
+sr8:	bit	0,c		;no.  h or h'?
+	jrz	sr3		;if h, loop.
+	ret			;it is h'.  done.
+;
+;
+; enter with hl pointing to memory &
+; b containing the 1-byte or 2-byte flag.
+; prints space, contents of (hl), & also (hl-1) for
+; 2-byte regs, gets substitution value & loads it.
+; returns with z-flag set iff the delimiter is
+; a carriage-return.
+; preserves bc & hl.
+;
+gsubv:	call	pnm		;print (hl)
+	bit	b2f,b		;2-byte?
+	jrz	gs1
+	dec	hl
+	call	pnm		;lo byte
+gs1:	ld	a,c		;subst-or-display flag
+	rlca
+	jrk	gs2		;if display, exit.
+	ld	a,'.'
+	call	pchr
+	call	gchr
+	cp	'.'+1		;substitution?
+gs2:	call	k,pchr		;if not, print another.
+	jrk	gs3
+        ex      de,hl
+        call    gnhl            ;new value
+        ex      de,hl
+        ld      (hl),e
+        bit     b2f,b
+	jrz	gs3
+        inc     hl
+        ld      (hl),d
+gs3:    cp      cr
+	call	nz,space
+	ret
+;
+;
+;...subdm 00 7e 5 585 by 5 100 dbe++
+;
+;
+; command
+;UOM ; select uart-a or uart-b.
+;UOM ;
+;UOM ; ua
+;UOM ; ub
+;UOM ;
+;UOM uart:	call	l1ncr		;a or b?
+;UOM 	ld	a,e
+;UOM 	cp	0bh
+;UOM 	jrnz	uarta
+;UOM 	ld	a,80h
+;UOM 	out	(aparlp),a
+;UOM 	ret
+;UOM ;
+;UOM uarta:	sub	a
+;UOM 	out	(bparlp),a
+;UOM 	ret
+;UOM 
+;UOM ----------------- new UOM command -----------------
+;UOM  examine input port
+;UOM 
+;UOM  e <port number>
+;UOM 
+examine:			;UOM
+	call	l1ncr		;UOM, get port number
+	ld	c,e		;UOM, move port number to c
+	in	a,(c)		;UOM, input value at port
+	call	p2hex		;UOM, print value read in
+	call	crlf		;UOM, advance to next line
+	ret			;UOM
+;
+;
+; command
+; read binary input from data port
+;
+readb:	call	l2ncr		;get mem addrs
+rb1:	call 	chkin		;get input
+	jrz	rb1
+	ld	(hl),a		;to mem
+	cpi
+	ret	po
+	jr	rb1
+;
+;
+; command
+; write binary output to data port
+;
+writb:	call	l2ncr		;get mem addrs
+wb1:	ld	a,(hl)
+	call	pbyte
+	cpi
+	ret	po
+	jr	wb1
+;
+;
+; command
+; print nulls on the current device.
+;
+; n <number-of-nulls>
+;
+nulls:	call 	l1ncr
+	ld	b,e
+	sub	a
+n2:	call 	pchr
+	djnz	n2
+	ret
+;
+;
+; command
+; out <data-byte> <port number>
+;
+outp:	call	gnhl
+	ex	de,hl		;e gets data
+	call	l1ncr		;get port number
+;
+	ld	c,e		;to c
+	out	(c),l
+	ret
+;
+;
+; baud rates.
+; with the cromemco tuart: 19200, 9600, 4800,
+;                          2400, 1200, 300, 150, 110.
+;
+; with the 3p+s: 2400, 300, 110.
+;
+;
+baudrs:	db	94h,0ceh,0a2h,92h,88h,84h,82h,1
+;
+;
+lfnn:	db	lf | 80h	;UOM, null characters removed
+;
+;
+prmpt:	db	':' | 80h
+; the command tbl must immediately follow
+; the prompt message
+	dw	displ		;display: dm, dr
+	dw	examine		;UOM, examine
+	dw	error		;f
+	dw	go		;go; go/with breakpoints
+	dw	error		;h
+	dw	initbaud	;initialize baud rate
+	dw 	error		;j
+	dw	error		;k
+	dw	error		;l
+	dw	move		;move a blok of memory
+	dw	nulls		;nulls
+	dw	outp		;output
+	dw	prog		;program
+	dw	error		;q
+	dw	readb		;read binary or ascii
+	dw	subst		;substitute: sm, sa, sb, e
+	dw	error		;t
+	dw	error		;UOM, uart command replaced with examine command
+	dw	verif		;verif blocks of memory
+	dw	writb		;write binary or ascii
+;
+pm:	equ	1 shl pf	;primeable-reg mask
+b1m:	equ 	0		;1-byte reg mask
+b2m:	equ	1 shl b2f	;2-byte reg mask
+crm:	equ	1 shl crf	;carriage-return mask
+;
+rgtbl:	db	-duaf | pm	;a
+	db	-dubc | pm	;b
+	db	-dubc+1 | pm	;c
+	db	-dude | pm	;d
+	db 	-dude+1 | pm	;e
+	db	-duaf+1 | pm 	;f
+	db	0
+	db	-duhl | pm | b2m | crm ;h [hl]
+	db	-duin | b1m	;i
+	db	0
+	db 	0
+	db	0
+	db	0
+	db	-duin+1 | b1m	;n [interrupt ff]
+	db	0
+	db	-dupc | b2m	;pc
+	db	0
+	db	0
+	db	-dusp | b2m	;sp
+	db	0
+	db	0
+	db	0
+	db	0
+	db	-duix | b2m	;x [ix]
+	db	-duiy | b2m | crm ;y [iy]
+;
+;
+head:	db	cr,"ZM1.4 - SA",'C' | 80h ;UOM, shorten to fit 1k
+;
+	end

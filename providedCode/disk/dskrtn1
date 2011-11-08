@@ -1,0 +1,278 @@
+;
+;--------------------
+;
+; class dskrtn
+;
+;--------------------
+;
+;-- DISKERR - handle disk command failures
+;--
+;-- arguments:
+;--
+;--	C - status bits
+;--	HL - disk command name
+;
+; proc diskerr(var stat: [0..255], string cmndnm)
+;	prtstr(cmndnm)
+;	prthex(stat)
+;	prthex(iotrk)
+;	prthex(iosec)
+;	escape ioerr
+; end proc
+;
+diskerr:
+	call	prtstr			; prtstr(cmndnm)
+	ld	a,c
+	call	prthex			; prthex(stat)
+	in	a,(iotrk)
+	call	prthex			; prthex(iotrk)
+	in	a,(iosec)
+	call	prthex			; prthex(iosec)
+	jp	ioerr
+;
+;--------------------
+;
+;-- CHEADLD - check if head loaded and set EHLD in command if not
+;--
+;-- arguments:
+;--
+;--	A - command
+;--
+;-- returns:
+;--
+;--	A - command with EHLD on or off
+;
+; proc cheadld(var cmnd : [READMSEC, WRTSEC]) cmnd
+;	if ~HEADLOAD then
+;		cmnd <- cmnd | EHLD
+;	fi
+; end proc
+;
+cheadld:
+	push	bc			; save register BC
+;
+	ld	b,a			; save cmnd
+	in	a,(ipflag)
+	bit	HEADLOAD,a		; HEADLOAD ?
+	ld	a,b
+	jrnz	>1			; yes
+	or	EHLD			; load head
+>1:
+;
+	pop	bc			; restore register BC
+	ret
+;
+;---------------------
+;
+;-- STARTUP - power on 1 of the 4 mini-disk drives
+;--
+;-- arguments:
+;--
+;--	A - disk drive no.
+;
+; proc startup(var drive : [DS1, DS2, DS3, DS4])
+;	opcmnd <- FICLEAR
+;
+;	loop until ~BUSY exit
+;	pool
+;
+;	intrmask <- 0h
+;	opauxcd <- 07fh
+;	opcntl <- MOTORON | SIZEMINI | drive
+; end proc
+;
+startup:
+	push	af			; save registers AF, BC
+	push	bc
+;
+	ld	b,a			; save drive no.
+	ld	a,FICLEAR
+	out	(opcmnd),a		; force interrupt clear to reset 4FDC
+>1:
+	in	a,(ipstat)
+	bit	BUSY,a			; disk busy ?
+	jrnz	>1			; yes
+	sub	a
+	out	(intrmask),a		; inhibit all interrupts on 4FDC
+	ld	a,07fh
+	out	(opauxcd),a		; opauxcd <- 07fh
+	ld	a,b			; restore drive no.
+	or	MOTORON | SIZEMINI
+	out	(opcntl),a		; opcntl <- MOTORON | SIZEMINI | drive
+;
+	pop	bc
+	pop	af			; restore registers AF, BC
+	ret
+;
+;--------------------
+;
+;-- SHUTDOWN - power off all drives
+;
+; proc shutdown
+;	opcntl <- MOTOROFF
+; end proc
+;
+shutdown:
+	push	af			; save register AF
+;
+	ld	a,MOTOROFF
+	out	(opcntl),a		; opcntl <- MOTOROFF
+;
+	pop	af			; restore  register AF
+	ret
+;
+;--------------------
+;
+;-- HDMV - process all commands that move R/W head
+;--
+;-- arguments:
+;--
+;--	H - R/W command
+;--	L - track no. (for SEEK)
+;
+; proc hdmv(var cmnd : [RESTORE, STEP, STEPIN, STEPOUT, SEEK], trkno : [0..NOTRKS))
+;	var retires : [0..RETRIES], stat : [0..255]
+;
+;	retries <- 0
+;
+;	loop
+;		iodata <- trkno
+;		opcmnd <- cmnd
+;
+;		loop until EOJ exit
+;		pool
+;		stat <- ipstat
+;	until stat ~= (NOTREADY & NOTFOUND & CRCERR) exit
+;		retries +<- 1
+;	when retries = RETRIES then
+;		diskerr('\FF;S-',stat)
+;	pool
+; end proc
+;
+hdmv:
+	push	af			; save registers AF, BC, HL
+	push	bc
+	push	hl
+;
+	ld	b,0			; retries <- 0
+>1:
+	ld	a,l
+	out	(iodata),a		; iodata <- trkno
+	ld	a,h
+	out	(opcmnd),a		; opcmnd <- cmnd
+>3:
+	in	a,(ipflag)
+	bit	EOJ,a			; EOJ ?
+	jrz	>3			; no
+	in	a,(ipstat)
+	ld	c,a			; stat <- ipstat
+	and	NOTREADY | NOTFOUND | CRCERR
+	jrz	>2			; stat ~= (NOTREADY & NOTFOUND & CRCERR) ? exit
+	inc	b			; retries +<- 1
+	ld	a,b
+	cp	RETRIES			; retries = RETRIES ?
+	jrnz	>4			; no
+	ld	hl,seekid
+	call	diskerr			; diskerr('\FF;S-',stat)
+>4:
+	jr	>1
+>2:
+;
+	pop	hl
+	pop	bc
+	pop	af			; store registers AF, BC, HL
+	ret
+;
+seekid:
+	db	Lseekid
+	db	FF,"S-"
+Lseekid:	equ	$-seekid-1
+;
+;---------------------
+;
+;-- RDTDATA - read one track of data
+;--
+;-- arguments:
+;--
+;--	HL - address of core area
+;
+; proc rdtdata(datarea *trk)
+;	datarea *temp
+;	var retries : [0..RETRIES], stat : [0..255]
+;
+;	retries <- 0
+;
+;	loop
+;		temp <- data
+;		iosec <- 1
+;		opcmnd <- cheadld(READMSEC)
+;
+;		loop until EOJ exit
+;			if DRQ then
+;				*temp <- iodata
+;				temp +<- 1
+;			fi
+;		pool
+;		stat <- ipstat
+;	until iosec = NOSECS+1 & stat = (NOTFOUND & CRCERR) exit
+;		retries +<- 1
+;	when retries = RETRIES then
+;		diskerr('\FF;RM-',stat)
+;	pool
+; end proc
+;
+rdtdata:
+	push	af			; save registers AF, BC, HL
+	push	bc
+	push	hl
+;
+	ld	b,0			; retries <- 0
+>1:
+	push	hl			; temp <- data
+	ld	a,1
+	out	(iosec),a		; iosec <- 1
+	ld	a,READMSEC
+	call	cheadld
+	out	(opcmnd),a		; opcmnd <- cheadld(READMSEC)
+>2:
+	in	a,(ipflag)
+	bit	EOJ,a			; EOJ ?
+	jrnz	>3			; exit
+	bit	DRQ,a			; DRQ ?
+	jrz	>4			; no
+	in	a,(iodata)
+	ld	(hl),a			; *temp <- iodata
+	inc	hl			; temp +<- 1
+>4:
+	jr	>2
+>3:
+	in	a,(ipstat)
+	ld	c,a			; stat <- ipstat
+	in	a,(iosec)
+	cp	NOSECS+1		; iosec = NOSECS+1 ?
+	jrnz	>5			; no
+	ld	a,c
+	cp	NOTFOUND | CRCERR	; stat = (NOTFOUND & CRCERR) ?
+	jrz	>6			; exit
+>5:
+	inc	b			; retries +<- 1
+	ld	a,b
+	cp	RETRIES			; retries = RETRIES ?
+	jrnz	>7			; no
+	ld	hl,rdmid
+	call	diskerr			; dsikerr('\FF;RM-',stat)
+>7:
+	pop	hl			; restore data
+	jr	>1
+>6:
+	pop	hl			; remove data
+;
+	pop	hl
+	pop	bc
+	pop	af			; restore registers AF, BC, HL
+	ret
+;
+rdmid:
+	db	Lrdmid
+	db	FF,"RM-"
+Lrdmid:	equ	$-rdmid-1

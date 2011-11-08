@@ -1,0 +1,42 @@
+	org	40h
+;
+;----------------------
+;
+; proc boot
+;
+;	startup(DS1)
+;	restore()
+;	stat <- 0
+;	firtonr()
+;	stat <- 1
+;	finrtor()
+;	stat <- 2
+;	firtonr()
+;	stat <- 3
+;	finrtor()
+;	stat <- 4
+; end proc
+;
+boot:
+	ld	a,DS1
+	call	startup				; startup(DS1)
+	call	restore				; restore()
+	ld	a,0
+	ld	(stat),a			; stat <- 0
+	call	firtonr				; firtonr()
+	ld	a,1
+	ld	(stat),a			; stat <- 1
+	call	finrtor				; finrtor()
+	ld	a,2
+	ld	(stat),a			; stat <- 2
+	call	firtonr				; firtonr()
+	ld	a,3
+	ld	(stat),a			; stat <- 3
+	call	finrtor				; finrtor()
+	ld	a,4
+	ld	(stat),a			; stat <- 4
+;
+	jp	0c008h				; goto warmstart
+;
+stat:
+	ds	1

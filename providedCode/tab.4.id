@@ -1,0 +1,36 @@
+'root'[
+	'SPACE':' ',
+	'E  T  N'(
+		'previous letters':RESET, 'E', 'T', 'N'),
+	'O  A  I'(
+		'previous letters':RESET, 'O', 'A', 'I'),
+	'more letters'(
+		'R',
+		'S',
+		'H  D  L'(
+			'previous letters':RESET, 'H', 'D', 'L'),
+		'more letters'(
+			'M',
+			'F',
+			'P  C  U'(
+				'previous letters':RESET, 'P', 'C', 'U'),
+			'more letters'(
+				'Y',
+				'G',
+				'W',
+				'more letters'(
+					'V',
+					'B',
+					'X',
+					'more letters'(
+						'QU',
+						'K',
+						'J',
+						'more letters'(
+							'Z', 'ERASE-LETTER':'\b', 'NEW-LINE':'\n', 'restart':RESTART)
+					)
+				)
+			)
+		)
+	)
+]

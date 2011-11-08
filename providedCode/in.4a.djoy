@@ -1,0 +1,70 @@
+;
+;	input routine for prentke-romich 4-state digital joystick and internal autoscan
+;
+input:
+switch:	equ	0bh
+valdata:equ	7
+auto:	equ	5
+topsw:	equ	1
+left:	equ	2
+right:	equ	3
+bottom:	equ	4
+	push	af		; save registers AF, BC, DE
+	push	bc
+	push	de
+;
+;	check when valid data bit goes low
+;
+>1:
+	in	a,(switch)	; input switch
+	bit	valdata,a	; valid data bit high ?
+	jrnz	>1		; yes
+;
+;	check when valid data bit goes high or internal autoscan signals
+;
+	ld	c,2
+>5:
+	ld	de,256	; delay 1.0 second
+>2:
+	in	a,(switch)	; input switch
+	bit	valdata,a	; valid data bit high ?
+	jrnz	>3		; yes
+	inc	de		; de <- de + 1
+	ld	a,d
+	cp	0		; high order byte of delay = 0 ?
+	jrnz	>2		; no
+	dec	c		; c <- c - 1
+	jrnz	>5		; c = 0 ?, no
+	ld	b,4		; kluge
+	jr	>4
+>3:
+;
+;	test bits to discern which switch was depressed
+;
+	bit	topsw,a		; top ?
+	ld	b,0
+	jrnz	>4		; yes
+	bit	left,a		; left ?
+	ld	b,1
+	jrnz	>4		; yes
+	bit	right,a		; right ?
+	ld	b,2
+	jrnz	>4		; yes
+	bit	bottom,a	; bottom ?
+	ld	b,3
+	jrz	>1		; no, all possibilities failed, retry
+>4:
+	ld	a,b
+	ld	(inparm),a
+	pop	de
+	pop	bc
+	pop	af		; restore registers AF, BC, DE
+	ld	a,(inparm)	; return parameter in reg. a
+	ret
+inparm:
+	ds	1
+;
+;	null beep routine since joystick does not have a audio device
+;
+beep:
+	ret

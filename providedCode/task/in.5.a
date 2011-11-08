@@ -1,0 +1,176 @@
+;
+;---------------------
+;
+; task input_device
+;
+;
+;--------------------
+;
+;-- GETDATA - read data from input device
+;--
+;-- returns:
+;--
+;--	A - input value
+;
+;	proc getdata returns data : [0..NARY)
+;		loop until input.ECB = WAIT exit
+;			wait
+;		pool
+;
+;		input.ECB <- BUSY
+;		return input.DATA
+;	end proc
+;
+getdata:
+>1:
+	ld	a,(inpECB)
+	cp	WAIT			; input.ECB = WAIT ?
+	jrz	>2			; exit
+	call	wait
+	jr	>1
+>2:
+	ld	a,BUSY
+	ld	(inpECB),a		; input.ECB <- BUSY
+	ld	a,(inpDATA)		; return input.DATA
+	ret
+;
+;--------------------
+;
+;-- INPUT - this task is used to read from the input device asynchronously
+;--
+;-- interface:
+;--
+;--	ecb - indicates whether the input device is BUSY or WAITing
+;--
+;--	data - the value of the input device if ecb = WAIT, otherwise undefined
+;
+;	task input
+;		interface { ECB : [BUSY, WAIT], DATA : [0..NARY) }
+;
+;-- GETCHAR - reads the input device and normalizes the value
+;--
+;-- returns:
+;--
+;--	A - normalized input value
+;
+;		proc getchar returns data : [0..NARY)
+;			var inbox : 30, outbox : 100
+;			port buts : 018h {but4:4, but3:3, but2:2, but1:1}, xdir : 019h, ydir : 01ah
+;	
+;			loop until (but1 = 1) & (-inbox <= xdir <= inbox) & (-inbox <= ydir <= inbox) exit
+;				wait
+;			pool
+;	
+;			loop
+;			until but1 = 0 then data <- 0 exit
+;			until ydir > 100 then data <- 1 exit
+;			until ydir < -100 then data <- 4 exit
+;			until xdir > 100 then data <- 3 exit
+;			until xdir < -100 then data <- 2 exit
+;				wait
+;			pool
+;	
+;			return data
+;		end proc
+;
+;	task body
+;		ECB <- BUSY
+;		loop
+;			loop until ECB = BUSY exit
+;				wait
+;			pool
+;
+;			DATA <- getchar
+;			ECB <- WAIT
+;		pool
+;	end task
+inpECB:
+	ds	1
+inpDATA:
+	ds	1
+inbox:	equ	30
+outbox:	equ	100
+but1:	equ	01h
+buts:	equ	018h
+xdir:	equ	019h
+ydir:	equ	01ah
+getchar:
+movein:
+>1:
+	in	a,(buts)
+	and	but1			; but1 = OFF ?
+	jrz	>3			; no; 1 => off, 0 => on
+	in	a,(xdir)
+	cp	inbox			; x <= inbox ?
+	call	gtle
+	jrnk	>3			; no
+	cp	-inbox			; x >= -inbox ?
+	call	gelt
+	jrk	>3			; no
+	in	a,(ydir)
+	cp	inbox			; y <= inbox ?
+	call	gtle
+	jrnk	>3			; no
+	cp	-inbox			; y >= -inbox ?
+	call	gelt
+	jrk	>3			; no
+	jr	>2			; exit
+>3:
+	call	wait
+	jr	>1
+>2:
+moveout:
+>1:
+	in	a,(buts)
+	and	but1			; but1 = ON ?
+	jrnz	>3			; no; 1 => off, 0 => on
+	ld	a,0			; data <- 0
+	jr	>2			; exit
+>3:
+	in	a,(ydir)
+	cp	outbox			; y > outbox ?
+	call	gtle
+	jrk	>4			; no
+	ld	a,1			; data <- 1
+	jr	>2			; exit
+>4:
+	cp	-outbox			; y < -outbox ?
+	call	gelt
+	jrnk	>5			; no
+	ld	a,4			; data <- 4
+	jr	>2			; exit
+>5:
+	in	a,(xdir)
+	cp	outbox			; x > outbox ?
+	call	gtle
+	jrk	>6			; no
+	ld	a,3			; data <- 3
+	jr	>2			; exit
+>6:
+	cp	-outbox			; x < -outbox ?
+	call	gelt
+	jrnk	>7			; no
+	ld	a,2			; data <- 2
+	jr	>2			; exit
+>7:
+	call	wait
+	jr	>1
+>2:
+	ret
+;
+input:
+	ld	a,BUSY
+	ld	(inpECB),a		; ECB <- BUSY
+inploop:
+>1:
+	ld	a,(inpECB)
+	cp	BUSY			; ECB = BUSY ?
+	jrz	>2			; exit
+	call	wait
+	jr	>1
+>2:
+	call	getchar
+	ld	(inpDATA),a		; DATA <- getchar
+	ld	a,WAIT
+	ld	(inpECB),a		; ECB <- WAIT
+	jr	inploop

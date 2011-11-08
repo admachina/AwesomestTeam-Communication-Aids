@@ -1,0 +1,638 @@
+;
+;--------------------
+;
+; class text_area
+;
+;	var txttop : 0, txtlmar : 0, txtlgh : SCRWID - txtlmar
+;		prtline : 3, botline : nlines - 1,
+;		toptext : txttop, botext : txttop + botline, prtext : prtline + txttop
+;
+;	var xcur : [txtlmar..txtlmar+txtlgh), ycur : [toptext..botext]
+;
+;	string @txtptr(0:botline)
+;	int counter(3)
+;	equate counter(1) : nprobes, counter(2) : nchar, counter(3) : nbacksp
+;
+txttop:	equ	0
+txtlmar:equ	0
+txtlgh:	equ	SCRWID - txtlmar
+prtline:equ	3
+botline:equ	NLINES - 1
+toptext:equ	txttop
+botext:	equ	txttop + botline
+prtext:	equ	txttop + prtline
+;
+xcur:	ds	1
+ycur:	ds	1
+;
+counter:
+nprobes:
+	ds	2
+nchar:
+	ds	2
+nbacksp:
+	ds	2
+Lcounter:equ	$-counter
+;
+before:	ds	2
+txtptr:
+	ds	NLINES * 2
+after:	ds	2
+;
+txtbuf:
+	ds	NLINES * [txtlgh + 1]
+;
+;----------------------
+;
+;-- TEXT - print a string on the prompting device
+;--
+;-- arguments:
+;--
+;--	HL - pointer to the string
+;
+;	proc text(string @str)
+;		for (i <- 1;i <= length(str);i +<- 1)
+;		loop
+;			if str(i) >= ' ' then
+;				textchar(str(i))
+;			else
+;				case str(i) in
+;				'\BS':
+;					backsp()
+;					ni
+;				'\CR':
+;					scroll()
+;					ni
+;				'\BW':
+;					backword()
+;					ni
+;				esac
+;			fi
+;		pool
+;	end proc
+;
+text:
+	push	af			; save registers AF, BC
+	push	bc
+;
+	ld	b,1			; i <- 1
+>1:
+	ld	a,b
+	cp	(hl)			; i > length(str) ?
+	call	gtle
+	jrnk	>2			; exit
+	call	indexb			; a <- str(i)
+	cp	' '			; str(i) >= ' ' ?
+	call	gelt
+	jrk	>3			; no
+	push	hl			; save string pointer
+	ld	(textval),a
+	ld	hl,textstr
+	call	textchar		; textchar(str(i))
+	pop	hl			; restore string pointer
+	jr	>4
+>3:
+	cp	BS			; str(i) = BS ?
+	jrnz	>6			; no
+	call	backsp			; backsp()
+	jr	>5
+>6:
+	cp	CR			; str(i) = CR ?
+	jrnz	>7			; no
+	call	scroll			; scroll()
+	jr	>5
+>7:
+	cp	BW			; str(i) = BW ?
+	jrnz	>5			; no
+	call	backword		; backword()
+>5:
+>4:
+	inc	b			; i +<- 1
+	jr	>1
+>2:
+	pop	bc
+	pop	af			; restore registers AF, BC
+	ret
+;
+textstr:
+	db	Ltextstr
+textval:ds	1
+Ltextstr:equ	$-textstr-1
+;
+;---------------------
+;
+;-- TEXTCHAR - place a character into the buffer and on the prompt screen
+;--
+;-- arguments:
+;--
+;--	HL - pointer to string
+;
+;	proc textchar(string @str)
+;		xcur +<- 1
+;		*txtptr(botline) ||<- str
+;		if length(*txtptr(botline)) = txtlgh then
+;			scroll()
+;		else
+;			pmtstr(str)
+;		fi
+;		nchar +<- 1
+;	end proc
+;
+textchar:
+	push	af			; save register AF, DE, HL
+	push	de
+	push	hl
+;
+	ld	a,(xcur)
+	inc	a
+	ld	(xcur),a		; xcur <- xcur + 1
+	ld	de,(txtptr+botline*2)
+	call	concat			; *txtptr(botline) ||<- str
+	ld	a,(de)
+	cp	txtlgh			; length(*txtptr(botline)) = txtlgh ?
+	jrnz	>1			; no
+	call	scroll			; scroll()
+	jr	>2
+>1:
+	call	pmtstr			; pmtstr(str)
+>2:
+	ld	hl,(nchar)
+	inc	hl
+	ld	(nchar),hl		; nchar +<- 1
+;
+	pop	hl
+	pop	de
+	pop	af			; restore registers AF, DE, HL
+	ret
+;
+;--------------------
+;
+;-- BACKSP - backspace one character from the text buffer and the prompt device
+;
+;	proc backsp
+;		if ycur ~= prtext | xcur ~= txtlmar then
+;			nbacksp +<- 1
+;			if xcur ~= txtlmar then
+;				xcur -<- 1
+;				*txtptr(botline) <- substr(*txtptr(botline),0,length(txtptr(botline) - 1)
+;			else
+;				txtptr(0:nlines) <- txtptr(1:nlines,0)
+;				xcur <- length(*txtptr(botline)) + txtlmar
+;				ycur -<- 1
+;				if xcur ~= txtlmar then
+;					xcur -<- 1
+;					*txtptr(botline) <- substr(*txtptr(botline),0,length(txtptr(botline) - 1)
+;				fi
+;			fi
+;			home()
+;			pmtstr(' \BS')
+;		fi
+;	end proc
+;
+backsp:
+	call	rsave			; save registers
+;
+	ld	a,(ycur)
+	cp	prtext			; ycur ~= prtext ?
+	jrnz	>1			; yes
+	ld	a,(xcur)
+	cp	txtlmar			; xcur ~= txtlmar ?
+	jrz	>2			; no
+>1:
+	ld	hl,(nbacksp)
+	inc	hl
+	ld	(nbacksp),hl		; nbacksp +<- 1
+	ld	a,(xcur)
+	cp	txtlmar			; xcur ~= txtlmar ?
+	jrz	>3			; no
+	call	shorten
+	jr	>4
+>3:
+	ld	hl,(txtptr+botline*2)
+	ld	(before),hl
+	ld	de,txtptr+botline*2+1
+	ld	hl,txtptr+[botline-1]*2+1
+	ld	bc,NLINES * 2
+	lddr				; rotate buffers backwards
+	ld	hl,(txtptr+botline*2)
+	ld	a,(hl)
+	add	txtlmar
+	ld	(xcur),a		; xcur <- length(*txtptr(botline)) + txtlmar
+	ld	a,(ycur)
+	dec	a
+	ld	(ycur),a		; ycur -<- 1
+	ld	a,(xcur)
+	cp	txtlmar			; xcur ~= txtlmar ?
+	jrz	>5			; no
+	call	shorten
+>5:
+>4:
+	call	home			; home()
+	ld	hl,dbsp
+	call	pmtstr			; pmtstr(' \BS')
+>2:
+	call	rretn			; restore registers
+	ret
+;
+;-- remove last character in string by decreasing length by 1
+;
+shorten:
+	ld	a,(xcur)
+	dec	a
+	ld	(xcur),a		; xcur -<- 1
+	ld	hl,(txtptr+botline*2)
+	ld	a,(hl)
+	dec	a
+	ld	(hl),a			; decrement length of string by 1
+	ret
+;
+dbsp:
+	db	Ldbsp
+	db	' ',BS
+Ldbsp:	equ	$-dbsp-1
+;
+;---------------------
+;
+;-- BACKWORD - erase a word from the buffers and prompt screen
+;
+;	proc backword
+;		except done
+;			loop
+;				backsp()
+;				loop until xcur = txtlmar exit
+;					when *txtptr(botline)(length(*txtptr(botline))) = ' ' escape done
+;					backsp()
+;				pool
+;			until ycur = prtext | length(*txtptr(botline-1)) = 0 | *txtptr(botline-1)(length(*txtptr(botline-1))) = ' ' exit
+;			pool
+;		end except
+;	end proc
+;
+backword:
+	push	af			; save registers AF, HL
+	push	hl
+;
+>1:
+	call	backsp			; backsp()
+>2:
+	ld	a,(xcur)
+	cp	txtlmar			; xcur = txtlmar ?
+	jrz	>3			; exit
+	ld	hl,(txtptr+botline*2)
+	ld	a,(hl)
+	call	indexb
+	cp	' '			; *txtptr(botline)(length(*txtptr(botline))) = ' ' ?
+	jrz	>4			; escape done
+	call	backsp			; backsp()
+	jr	>2
+>3:
+	ld	a,(ycur)
+	cp	prtext			; ycur = prtext ?
+	jrz	>4			; exit
+	ld	hl,(txtptr+[botline-1]*2)
+	ld	a,(hl)
+	cp	0			; length(*txtptr(botline-1)) = 0 ?
+	jrz	>4			; exit
+	call	indexb
+	cp	' '			; *txtptr(botline-1)(length(*txtptr(botline-1))) = ' '
+	jrnz	>1			; no
+>4:
+;
+	pop	hl
+	pop	af			; restore registers AF, HL
+	ret
+;
+;---------------------
+;
+;-- STAT - print statistic message
+;
+;	proc stat
+;		string message(0:2) {'PROBE=',',CHAR=',',ERASE='}, conbuf
+;
+;		msgtext <- ''
+;		for (i <- 0;i ~= 3; i +<- 1)
+;		loop
+;			msgtext ||<- message(i)
+;			ascii(counter(i),conbuf)
+;			msgtext ||<- conbuf
+;		pool
+;
+;		text(msgtext)
+;		nchar -<- length(msgtext)
+;	end proc
+;
+message:
+msg1:
+	db	Lmsg1
+	db	"PROBE="
+Lmsg1:	equ	$-msg1-1
+msg2:
+	db	Lmsg2
+	db	",CHAR="
+Lmsg2:	equ	$-msg2-1
+msg3:
+	db	Lmsg3
+	db	",ERASE="
+Lmsg3:	equ	$-msg3-1
+;
+msgtext:
+	ds	35
+conbuf:
+	ds	6
+;
+STAT:
+	call	rsave			; save registers
+;
+	ld	hl,msgtext
+	ld	(hl),0			; msgtext <- ''
+	ex	de,hl
+	ld	hl,message
+	ld	b,0			; i <- 0
+>1:
+	ld	a,b
+	cp	3			; i ~= 3 ?
+	jrz	>2			; exit
+	call	concat			; msgtext ||<- message(i)
+	push	hl			; save message pointer
+	push	de			; save msgtext pointer
+	ld	a,b
+	add	a
+	ld	hl,counter
+	call	indexw			; hl <- counter(i)
+	ex	de,hl
+	ld	hl,conbuf
+	call	ascii			; convert no. to ascii
+	pop	de			; restore msgtext pointer
+	call	concat			; msgtext ||<- ascii(counter(i))
+	pop	hl			; restore message pointer
+	call	nextstr
+	inc	b			; i +<- 1
+	jr	>1
+>2:
+	ex	de,hl
+	call	text			; text(msgtext)
+	ld	d,0
+	ld	e,(hl)			 ; e <- length(msgtext)
+	ld	hl,(nchar)
+	and	a			; clear carry flag
+	sbc	hl,de
+	ld	(nchar),hl		; nchar -<- length(msgtext)
+;
+	call	rretn			; restore registers
+	ret
+;
+;--------------------
+;
+;-- SCROLL - scroll lines in text area upwards
+;
+;	proc scroll
+;		xcur <- txtlmar
+;		if ycur = botext then
+;			prtstr(*txtptr(prtline))
+;			for (i <- 0;;i +<- 1)
+;			loop
+;				move(txtlmar,i + txttop)
+;				pmtstr('\GS')
+;			until i = botline exit
+;				pmtstr(*txtptr(i + 1))
+;			pool
+;			*txtptr(0) <- ''
+;		else
+;			home()
+;			pmtstr(*txtptr(botline))
+;			ycur +<- 1
+;		fi
+;
+;		txtptr(0:nlines) <- txtptr(nlines,0:nlines-1)
+;		home()
+;	end proc
+;
+scroll:
+	call	rsave			; save registers
+;
+	ld	a,txtlmar
+	ld	(xcur),a		; xcur <- txtlmar
+	ld	a,(ycur)
+	cp	botext			; ycur = botext ?
+	jrnz	>1			; no
+	ld	hl,(txtptr + prtline * 2)
+	call	prtstr			; prtstr(*txtptr(prtline))
+	ld	b,0			; i <- 0
+>3:
+	ld	h,txtlmar
+	ld	a,txttop
+	add	b
+	ld	l,a
+	call	move			; move(txtlmar,i + txttop)
+	ld	hl,clrline
+	call	pmtstr			; pmtstr('\GS')
+	ld	a,b
+	cp	botline			; i = botline ?
+	jrz	>4			; exit
+	inc	a
+	add	a
+	ld	hl,txtptr
+	call	indexw
+	call	pmtstr			; pmtstr(*txtptr(i + 1))
+	inc	b			; i +<- 1
+	jr	>3
+>4:
+	ld	hl,(txtptr)
+	ld	(hl),0			; *txtptr(0) <- ''
+	jr	>5
+>1:
+	call	home			; home()
+	ld	hl,(txtptr + botline * 2)
+	call	pmtstr			; pmtstr(txtptr + botline * 2)
+	ld	a,(ycur)
+	inc	a
+	ld	(ycur),a		; ycur +<- 1
+>5:
+	ld	hl,(txtptr)
+	ld	(after),hl
+	ld	de,txtptr
+	ld	hl,txtptr + 2
+	ld	bc,NLINES * 2
+	ldir				; rotate buffers forward
+	call	home			; home()
+;
+	call	rretn			; restore registers
+	ret
+;
+clrline:
+	db	Lclrline
+	db	GS
+Lclrline:equ	$-clrline-1
+;
+;--------------------
+;
+; BOX - print box aroud text area
+;
+;	proc box
+;		dotline(txtlmar,botext+1)
+;	end proc
+;
+box:
+	push	hl			; save registers HL
+;
+	ld	h,txtlmar
+	ld	l,botext+1
+	call	dotline			; dotline(txtlmar,botext + 1)
+;
+	pop	hl			; restore register HL
+	ret
+;
+;--------------------
+;
+;-- DOTLINE - draw dotted line on prompt CRT at position (x,y)
+;--
+;-- arguments:
+;--
+;--	H - contains the x co-ordinate
+;--	L - contains the y co-ordinate
+;
+;	proc dotline(var x : [0..SCRWID), y : [0..SCRLGH))
+;		move(x,y)
+;
+;		for (i <- 0;i ~= txtlgh;i +<- 1)
+;		loop
+;			pmtstr('-')
+;		pool
+;	end proc
+;
+dotline:
+	push	af			; save registers AF, BC, HL
+	push	bc
+	push	hl
+;
+	call	move			; move(x,y)
+	ld	b,0			; i <- 0
+	ld	hl,minus		; set up parameter for text
+>1:
+	ld	a,b
+	cp	txtlgh			; i ~= txtlgh ?
+	jrz	>2			; no
+	call	pmtstr			; pmtstr('-')
+	inc	b			; i +<- 1
+	jr	>1
+>2:
+;
+	pop	hl
+	pop	bc
+	pop	af			; restore registers AF, BC, HL
+	ret
+;
+minus:
+	db	Lminus
+	db	'-'
+Lminus:	equ	$-minus-1
+;
+;--------------------
+;
+;-- HOME - position cursor to (xcur,ycur)
+;
+;	proc home
+;		move(xcur,ycur)
+;	end proc
+;
+home:
+	push	af			; save registers AF, HL
+	push	hl
+;
+	ld	a,(xcur)
+	ld	h,a
+	ld	a,(ycur)
+	ld	l,a
+	call	move			; move(xcur,ycur)
+;
+	pop	hl
+	pop	af			; restore registers AF, HL
+	ret
+;
+;--------------------
+;
+;-- MOVE - move to position (x,y) on the prompt screen
+;
+;-- arguments:
+;--
+;--	H - contains the x co-ordinate
+;--
+;--	L - contains the y co-ordinate
+;
+;	proc move(var x : [0..SCRWID), y : [0..SCRLGH))
+;		pmtstr('\RS' || string(x) || string(y))
+;	end proc
+;
+move:
+	push	af
+	push	hl
+;
+	ld	a,h
+	ld	(xcor),a
+	ld	a,l
+	ld	(ycor),a
+	ld	hl,pos
+	call	pmtstr			; pmtstr('\RS' || string(x) || string(y))
+;
+	pop	hl
+	pop	af			; restore registers AF, HL
+	ret
+;
+pos:
+	db	Lpos
+	db	RS
+xcor:	ds	1
+ycor:	ds	1
+Lpos:	equ	$-pos-1
+;
+;--------------------
+;
+; class body
+;
+;	xcur <- txtlmar
+;	ycur <- botext
+;	counter <- 0
+;
+;	for (i <- 0;i ~= NLINES;i +<- 1)
+;	loop
+;		txtptr(i) <- new(string(txtlgh))
+;		*txtptr(i) <- ''
+;	pool
+;
+; end class
+;
+textinit:
+	call	rsave			; save registers
+;
+	ld	a,txtlmar
+	ld	(xcur),a		; xcur <- txtlmar
+	ld	a,botext
+	ld	(ycur),a		; ycur <- botext
+	ld	bc,Lcounter-1
+	ld	de,counter+1
+	ld	hl,counter
+	ld	(hl),0
+	ldir				; counter <- 0
+	ld	b,0			; i <- 0
+	ld	de,txtbuf
+	ld	hl,txtptr
+>1:
+	ld	a,b
+	cp	NLINES			; i ~= NLINES
+	jrz	>2			; no
+	add	a
+	call	sindexw			; txtptr(i) <- new(string(txtlgh))
+	ld	a,0
+	ld	(de),a			; txtptr(i) <- ''
+	push	bc			; save loop index
+	ex	de,hl
+	ld	bc,txtlgh+1
+	add	hl,bc			; advance to next storage area
+	ex	de,hl
+	pop	bc			; restore loop index
+	inc	b			; i +<- 1
+	jr	>1
+>2:
+;
+	call	rretn			; restore registers
+	ret
