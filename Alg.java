@@ -1,28 +1,30 @@
 public class Alg
 {
-	private MyTree tree;
-	private int numChoices;
+	private Tree _tree, _treeRoot;
+	private int _numChoices;
 
-	public Alg(int choices)
+	public Alg(int choices, Tree tree)
 	{
-		numChoices = choices;
-		tree = new MyTree(choices);
+		_numChoices = choices;
+		_tree = tree;
+		_treeRoot = tree;
 	}
 
 	public String choose(int choice, String newValues[]){
-		tree = tree.next(choice);
+		_tree = _tree.next(choice);
 
-		String printVal = tree.printValue();
+		String printVal = _tree.printValue();
 
-		if(tree.isLeaf())
+		if(_tree.isLeaf())
 		{
-			tree = tree.root();
+			_tree = _treeRoot;
 		}
 
-		for(int i=0; i<numChoices; i++)
+		for(int i=0; i<_numChoices; i++)
 		{
-			newValues[i] = tree.next(i).display();
+			newValues[i] = _tree.next(i).displayValue();
 		}
-		
+
+		return printVal;
 	}
 }
