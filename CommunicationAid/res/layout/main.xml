@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+	<!-- TODO: Need to make the edit text box height proportional to the screen height-->		
+	<EditText android:id="@+id/message"  
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:minHeight="70dp" 
+	    android:text="ABCD"
+	    android:textSize="28dp" />
+
+	<Button android:id="@+id/charButtonUp"
+	    android:layout_width="95dp"
+	    android:layout_height="70dp"
+	    android:layout_alignParentBottom="true"
+	    android:text="A"
+	    android:textSize="28dp"
+	    android:layout_marginLeft="300dp" />
+	    
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+
+		<Button android:id="@+id/charButtonLeft"
+		    android:layout_width="95dp"
+		    android:layout_height="70dp"
+		    android:layout_alignParentBottom="true"
+		    android:layout_marginTop="45dp"
+		    android:layout_marginLeft="165dp"
+		    android:text="D"
+		    android:textSize="28dp" />
+
+        <ImageView android:id="@+id/joystick_cross"
+        	android:src="@drawable/joystick_cross_3"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content" />
+		    
+		<Button android:id="@+id/charButtonRight"
+		    android:layout_width="95dp"
+		    android:layout_height="70dp"
+		    android:layout_alignParentBottom="true"
+		    android:layout_marginTop="45dp"
+		    android:text="B"
+		    android:textSize="28dp" />
+	</LinearLayout>
+	
+	<Button android:id="@+id/charButtonDown"
+	    android:layout_width="95dp"
+	    android:layout_height="70dp"
+	    android:layout_alignParentBottom="true"
+	    android:text="C"
+	    android:textSize="28dp"
+	    android:layout_marginLeft="300dp" />
+    
+</LinearLayout>
