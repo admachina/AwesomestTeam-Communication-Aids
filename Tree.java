@@ -48,38 +48,39 @@ public class Tree
 	}
 
 	// Mutators
-	public void addNode(int location, Tree t)
+	public Tree addNode(int location, Tree t)
 	{
 		_branches.add(location, t);
+		return t;
 	}
 
-	public void addNode(int location, String displayValue, String printValue)
+	public Tree addNode(int location, String displayValue, String printValue)
 	{
-		addNode(location, new Tree(displayValue, printValue));
+		return addNode(location, new Tree(displayValue, printValue));
 	}
 
-	public void addNode(int location, String displayValue)
+	public Tree addNode(int location, String displayValue)
 	{
-		addNode(location, displayValue, "");
+		return addNode(location, displayValue, "");
 	}
 
-	public void addNode(int location)
+	public Tree addNode(int location)
 	{
-		addNode(location, "");
+		return addNode(location, "");
 	}
 
-	public void addNode(String displayValue, String printValue)
+	public Tree addNode(String displayValue, String printValue)
 	{
-		addNode(_branches.size(), displayValue, printValue);
+		return addNode(_branches.size(), displayValue, printValue);
 	}
 
-	public void addNode(String displayValue)
+	public Tree addNode(String displayValue)
 	{
-		addNode(displayValue, "");
+		return addNode(displayValue, "");
 	}
 
-	public void addNode()
+	public Tree addNode()
 	{
-		addNode("");
+		return addNode("");
 	}
 }
