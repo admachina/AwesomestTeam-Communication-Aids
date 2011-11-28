@@ -48,6 +48,10 @@ public class Tree
 	}
 
 	// Mutators
+	public Tree addNode(Tree t) {
+		return addNode(_branches.size(),t);
+		
+	}
 	public Tree addNode(int location, Tree t)
 	{
 		_branches.add(location, t);
@@ -82,5 +86,15 @@ public class Tree
 	public Tree addNode()
 	{
 		return addNode("");
+	}
+
+	@SuppressWarnings("unchecked")
+	public Tree clone() {
+		// TODO Auto-generated method stub
+		Tree copy = new Tree();
+		copy._branches = (Vector<Tree>) _branches.clone(); 
+		copy._displayValue = _displayValue;
+		copy._printValue = _printValue;
+		return copy;
 	}
 }
