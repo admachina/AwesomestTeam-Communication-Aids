@@ -54,6 +54,10 @@ public class Tree
 		_branches.add(location, t);
 		return t;
 	}
+	
+	public Tree addNode(Tree t) {
+		return addNode(_branches.size(), t);
+	}
 
 	public Tree addNode(int location, String displayValue, String printValue)
 	{
@@ -84,4 +88,13 @@ public class Tree
 	{
 		return addNode("");
 	}
+	
+	public Tree clone(){
+		Tree copy = new Tree();
+		copy._branches = (Vector<Tree>) _branches.clone();
+		copy._displayValue = _displayValue;
+		copy._printValue = _printValue;
+		return copy;
+	}
+	
 }
