@@ -12,7 +12,7 @@ public class ProfileManager {
 	private static String profileInputTypeStr = "inputType";
 	private static String profileExperienceLevelStr = "expLevel";
 	
-	private String startDir = "androidDir";
+	private String startDir = "";
 	
 	// FileFilter for filtering profile files
 	class ProfileFileFilter implements FileFilter{
@@ -40,9 +40,17 @@ public class ProfileManager {
 	
 	// Imports profiles
 	private void readProfiles() throws IOException{
-		File dir = new File(startDir);
-		System.out.println(dir.getAbsolutePath());
-		if (!dir.exists()) throw new IOException("Invalid directory");
+		File dir = null;
+		if (Utils.isStringEmptyOrNull(startDir))
+		{
+			// set Android dir
+			CommunicationAid.instance.getDir("Profiles", 0);
+		}
+		else
+		{
+			// Currently used for Unit test cases only
+			dir = new File(startDir);
+		}
 		
 		File[] files = dir.listFiles(new ProfileFileFilter());
 		for (int i=0;i<files.length;i++)

@@ -22,4 +22,10 @@ public class Utils {
 		}
 		return "\n";
 	}
+	
+	// Returns if a string is empty or null
+	public static boolean isStringEmptyOrNull(String str)
+	{
+		return str.equals("") || str.equals(null);
+	}
 }
