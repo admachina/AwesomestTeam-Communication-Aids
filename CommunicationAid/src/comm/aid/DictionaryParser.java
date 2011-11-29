@@ -1,7 +1,7 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+package comm.aid;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -18,12 +18,13 @@ public class DictionaryParser {
 	private int nodesPerLevel;
 	
 	//variables for holding external files 
-	private File dictionary, configFile;
+	private InputStream dictionary, configFile;
 	
 	//both files being overridden
 	DictionaryParser(String dictionaryFilename, String configFilename) {
-		dictionary = new File(dictionaryFilename);
-		configFile = new File(configFilename);
+		//TODO: protect for file not existing
+		dictionary = getClass().getResourceAsStream(dictionaryFilename);
+		configFile = getClass().getResourceAsStream(configFilename);
 		loadConfig();
 	}
 	//both defaults
@@ -42,8 +43,7 @@ public class DictionaryParser {
 		
 		//read properties in from file
 		try{
-			FileInputStream fis = new FileInputStream(configFile);			
-			props.load(fis);
+			props.load(configFile);
 		} catch (IOException e) {
 			System.err.println("could not open/read from config file: " + configFile.toString());
 			e.printStackTrace();
@@ -59,13 +59,8 @@ public class DictionaryParser {
 		String printVal;
 		Tree treeHead = new Tree();		
 		
-		Scanner parser = null;
-		try {
-			parser = new Scanner(dictionary);
-		} catch (FileNotFoundException e1) {
-			System.err.print("could not open dictionary file: " + dictionary.toString());
-			e1.printStackTrace();
-		}
+		Scanner parser = new Scanner(dictionary);
+		
 		parser.useDelimiter(",|\\n");
 		
 		Tree currentNode = treeHead;
@@ -88,11 +83,11 @@ public class DictionaryParser {
 		return treeHead;
 	}
 	
+	/*
 	public static void main(String[] args) {
 		
 		DictionaryParser parser = new DictionaryParser();
 		Tree tree = parser.parse();
 	}
-	
-
+	*/
 }

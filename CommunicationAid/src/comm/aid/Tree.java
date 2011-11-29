@@ -1,3 +1,5 @@
+package comm.aid;
+
 import java.util.Vector;
 
 public class Tree
@@ -25,6 +27,15 @@ public class Tree
 	public Tree()
 	{
 		this("");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Tree clone(){
+		Tree copy = new Tree();
+		copy._branches = (Vector<Tree>) _branches.clone();
+		copy._displayValue = new String(_displayValue);
+		copy._printValue = new String(_printValue);
+		return copy;
 	}
 
 	// Accessors
@@ -87,14 +98,6 @@ public class Tree
 	public Tree addNode()
 	{
 		return addNode("");
-	}
-	
-	public Tree clone(){
-		Tree copy = new Tree();
-		copy._branches = (Vector<Tree>) _branches.clone();
-		copy._displayValue = _displayValue;
-		copy._printValue = _printValue;
-		return copy;
 	}
 	
 }

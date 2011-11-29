@@ -26,15 +26,32 @@ public class Joystick extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
         
+        Tree t = new DictionaryParser().parse();
+        final Alg a = new Alg(4, t);
+        
         AddCharOnClickListener = new OnClickListener()
         {
 
 			@Override
 			public void onClick(View v) {
 				Button b = (Button) v;
-				String newText = message.getText().toString() + b.getText();
-				message.setTextKeepState(newText, TextView.BufferType.EDITABLE);
-				message.setSelection(newText.length());
+				int choice;
+				
+				if(b == charButtonUp)
+					choice = 0;
+				else if(b == charButtonRight)
+					choice = 1;
+				else if(b == charButtonDown)
+					choice = 2;
+				else if(b == charButtonLeft)
+					choice = 3;
+				else
+					throw new NullPointerException();
+				
+				String newDisplays[] = new String[4];
+				setMessageText(getMessageText() + a.choose(choice, newDisplays));
+				for(int i=0; i<4; i++)
+					setButtonOption(i, newDisplays[i]);
 			}
         	
         };
@@ -49,6 +66,12 @@ public class Joystick extends Activity {
         charButtonLeft.setOnClickListener(AddCharOnClickListener);
         charButtonRight = (Button) this.findViewById(R.id.charButtonRight);
         charButtonRight.setOnClickListener(AddCharOnClickListener);
+        
+        
+
+        for(int i=0; i<4; i++)
+        	setButtonOption(i, t.next(i).displayValue());
+        setMessageText("");
     }
     
     // Message widget methods

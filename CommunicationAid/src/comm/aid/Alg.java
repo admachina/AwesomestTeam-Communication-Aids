@@ -1,3 +1,5 @@
+package comm.aid;
+
 public class Alg
 {
 	private Tree _tree, _treeRoot;
