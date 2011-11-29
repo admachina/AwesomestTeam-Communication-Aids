@@ -41,7 +41,12 @@ public class Tree
 	// Accessors
 	public Tree next(int branch)
 	{
-		return _branches.elementAt(branch);
+		try{
+			return _branches.elementAt(branch);
+		}catch(ArrayIndexOutOfBoundsException e)
+		{
+			return new Tree();
+		}
 	}
 
 	public String displayValue()
