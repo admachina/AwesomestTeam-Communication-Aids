@@ -2,4 +2,18 @@
 <resources>
     <string name="hello">Hello World, Joystick!</string>
     <string name="app_name">CommunicationAid</string>
+    
+    <string name="input_device_prompt">Input Device: </string>
+     <string-array name="input_device_types">
+    	<item>Joystick</item>
+    	<item>Paddles</item>
+    	<item>Straw</item>
+    </string-array>
+    
+    <string name="difficulty_level_prompt">Difficulty Level: </string>
+     <string-array name="difficulty_level_types">
+    	<item>Beginner</item>
+    	<item>Intermediate</item>
+    	<item>Advanced</item>
+    </string-array>
 </resources>

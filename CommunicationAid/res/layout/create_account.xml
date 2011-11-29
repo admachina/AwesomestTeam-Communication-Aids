@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content">
+  
+  <LinearLayout
+   		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        
+        <TextView
+		    	android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+		    	android:textColor="@android:color/white"
+		    	android:textSize="22dp"
+		    	android:text="Name:"
+		    	android:background="@android:color/transparent"
+		    	android:layout_marginRight="15dp"
+		    />
+		    
+		<EditText android:id="@+id/account_name"
+		    	android:layout_width="fill_parent"
+		    	android:layout_height="wrap_content"
+		    	android:textColor="@android:color/black"
+		    	android:textSize="22dp"
+		    	android:text=""
+		    />
+  </LinearLayout>
+  
+   <LinearLayout
+   		android:orientation="horizontal"
+		android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp">
+        
+    	<TextView
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:textColor="@android:color/white"
+	    	android:textSize="22dp"
+	    	android:text= "Input Device: "
+	    	android:background="@android:color/transparent"
+	    	android:gravity="center"
+	    	android:paddingRight="10dp"
+    	/>
+	   	<Spinner android:id="@+id/input_device_spinner"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:prompt="@string/input_device_prompt"
+    	/>
+    </LinearLayout>
+  
+  <LinearLayout
+   		android:orientation="horizontal"
+		android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp">
+        
+    	<TextView
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:textColor="@android:color/white"
+	    	android:textSize="22dp"
+	    	android:text= "Difficulty Level: "
+	    	android:background="@android:color/transparent"
+	    	android:gravity="center"
+	    	android:paddingRight="10dp"
+    	/>
+	   	<Spinner android:id="@+id/difficulty_level_spinner"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:prompt="@string/difficulty_level_prompt"
+    	/>
+    </LinearLayout>
+</LinearLayout>

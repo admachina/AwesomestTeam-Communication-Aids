@@ -2,6 +2,7 @@ package comm.aid;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -24,7 +25,8 @@ public class Joystick extends Activity {
         super.onCreate(savedInstanceState);
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.main);
+        //Log.i(CommunicationAid.LOG_TAG, "Opening Joystick screen");
+        setContentView(R.layout.joystick);
         
         AddCharOnClickListener = new OnClickListener()
         {
@@ -32,9 +34,8 @@ public class Joystick extends Activity {
 			@Override
 			public void onClick(View v) {
 				Button b = (Button) v;
-				String newText = message.getText().toString() + b.getText();
-				message.setTextKeepState(newText, TextView.BufferType.EDITABLE);
-				message.setSelection(newText.length());
+				String newText = getMessageText() + b.getText();
+				setMessageText(newText);
 			}
         	
         };
