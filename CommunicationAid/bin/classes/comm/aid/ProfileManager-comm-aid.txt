@@ -1,3 +1,0 @@
-name = Bob James
-inputType = Joystick
-expLevel = Beginner
