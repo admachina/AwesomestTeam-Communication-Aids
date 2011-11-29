@@ -22,4 +22,7 @@
           android:smallScreens="true"
           android:anyDensity="true" />
 
+    <uses-sdk android:minSdkVersion="4"
+          android:targetSdkVersion="8"
+          android:maxSdkVersion="8" />
 </manifest> 
