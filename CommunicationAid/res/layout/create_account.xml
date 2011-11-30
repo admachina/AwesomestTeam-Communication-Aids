@@ -2,8 +2,8 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content">
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
   
   <LinearLayout
    		android:orientation="horizontal"
@@ -27,12 +27,13 @@
 		    	android:textColor="@android:color/black"
 		    	android:textSize="22dp"
 		    	android:text=""
+		    	android:layout_marginRight="5dp"
 		    />
   </LinearLayout>
   
    <LinearLayout
    		android:orientation="horizontal"
-		android:layout_width="wrap_content"
+		android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp">
         
@@ -44,18 +45,19 @@
 	    	android:text= "Input Device: "
 	    	android:background="@android:color/transparent"
 	    	android:gravity="center"
-	    	android:paddingRight="10dp"
+	    	android:paddingRight="55dp"
     	/>
 	   	<Spinner android:id="@+id/input_device_spinner"
-	    	android:layout_width="wrap_content"
+	    	android:layout_width="fill_parent"
 	    	android:layout_height="wrap_content"
 	    	android:prompt="@string/input_device_prompt"
+	    	android:textSize="25dp"
     	/>
     </LinearLayout>
   
   <LinearLayout
    		android:orientation="horizontal"
-		android:layout_width="wrap_content"
+		android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp">
         
@@ -64,15 +66,36 @@
 	    	android:layout_height="wrap_content"
 	    	android:textColor="@android:color/white"
 	    	android:textSize="22dp"
-	    	android:text= "Difficulty Level: "
+	    	android:text= "Experience Level: "
 	    	android:background="@android:color/transparent"
 	    	android:gravity="center"
 	    	android:paddingRight="10dp"
     	/>
-	   	<Spinner android:id="@+id/difficulty_level_spinner"
-	    	android:layout_width="wrap_content"
+	   	<Spinner android:id="@+id/experience_level_spinner"
+	    	android:layout_width="fill_parent"
 	    	android:layout_height="wrap_content"
-	    	android:prompt="@string/difficulty_level_prompt"
+	    	android:prompt="@string/experience_level_prompt"
+	    	android:textSize="25dp"
     	/>
+    </LinearLayout>
+    
+    
+    <LinearLayout
+    	android:orientation="horizontal"
+		android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_gravity="right"
+        >
+        
+    	<Button android:id="@+id/createAccountButton"
+		    android:layout_alignParentBottom="true"
+		    android:text="Create Profile"
+		    android:layout_width="wrap_content"
+	  		android:layout_height="wrap_content"
+		    android:textSize="22dp"
+		    android:layout_gravity="bottom"
+		    android:layout_marginRight="10dp"
+		    android:layout_marginBottom="10dp" />
+	    	
     </LinearLayout>
 </LinearLayout>

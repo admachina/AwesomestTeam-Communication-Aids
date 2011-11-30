@@ -4,7 +4,7 @@
       android:versionCode="1"
       android:versionName="1.0">
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
-        <activity android:name=".Joystick"
+        <activity android:name=".CommunicationAid"
                   android:label="@string/app_name"
                   android:screenOrientation="landscape">
             <intent-filter>
@@ -12,6 +12,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="CreateAccount" android:screenOrientation="landscape"></activity>
+        <activity android:name="Joystick" android:screenOrientation="landscape"></activity>
 
     </application>
 

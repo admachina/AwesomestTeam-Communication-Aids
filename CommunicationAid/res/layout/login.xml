@@ -7,19 +7,30 @@
   
   <Button android:id="@+id/createNewAccount"
 	    android:layout_alignParentBottom="true"
-	    android:text="Create New Account"
+	    android:text="Create New Profile"
 	    android:layout_width="wrap_content"
   		android:layout_height="wrap_content"
 	    android:textSize="28dp"
 	    android:layout_marginTop="100dp"
-	    android:layout_marginLeft="203dp"/>
+	    android:layout_marginLeft="205dp"/>
+	    
+ <Button android:id="@+id/createNewAccount2"
+	    android:layout_alignParentBottom="true"
+	    android:text="Create New Account"
+	    android:layout_width="wrap_content"
+  		android:layout_height="wrap_content"
+	    android:textSize="28dp"
+	    android:layout_marginTop="140dp"
+	    android:layout_marginLeft="205dp"
+	    android:visibility="gone"/>
 	    
   <Button android:id="@+id/loginAccount"
 	    android:layout_alignParentBottom="true"
-	    android:text="Use Existing Account"
+	    android:text="Use Existing Profile"
 	    android:layout_width="wrap_content"
   		android:layout_height="wrap_content"
 	    android:textSize="28dp"
 	    android:layout_marginTop="10dp"
-	    android:layout_marginLeft="200dp"/>
+	    android:layout_marginLeft="201dp"/>
+	    
 </LinearLayout>

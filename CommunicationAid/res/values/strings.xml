@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Joystick!</string>
-    <string name="app_name">CommunicationAid</string>
+    <string name="app_name">Communication Aid</string>
     
     <string name="input_device_prompt">Input Device: </string>
      <string-array name="input_device_types">
@@ -10,8 +9,8 @@
     	<item>Straw</item>
     </string-array>
     
-    <string name="difficulty_level_prompt">Difficulty Level: </string>
-     <string-array name="difficulty_level_types">
+    <string name="experience_level_prompt">Experience Level: </string>
+     <string-array name="experience_level_types">
     	<item>Beginner</item>
     	<item>Intermediate</item>
     	<item>Advanced</item>

@@ -16,7 +16,6 @@ public class ProfileManager {
 	
 	// FileFilter for filtering profile files
 	class ProfileFileFilter implements FileFilter{
-		@Override
 		public boolean accept(File file) {
 			if (Pattern.matches(".*" + profileFileNameSuffix, file.getName())){
 				return true;

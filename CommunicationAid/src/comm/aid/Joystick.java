@@ -34,7 +34,6 @@ public class Joystick extends Activity {
         AddCharOnClickListener = new OnClickListener()
         {
 
-			@Override
 			public void onClick(View v) {
 				Button b = (Button) v;
 				int choice;
