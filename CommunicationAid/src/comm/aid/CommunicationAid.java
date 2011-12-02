@@ -72,8 +72,7 @@ public class CommunicationAid extends Activity {
 				// create ListView with all accounts
 				Builder builder = new AlertDialog.Builder(CommunicationAid.instance);
 				ListView list = new ListView(CommunicationAid.instance);
-//				String[] accountNames = {"John Smith", "Mary Brown", "Mark Red", "Ivan Blue", "Tom Yellow", "Rob Green"};
-				String[] accountNames = profileManager.getProfileNames();	// TODO(VL): Make the list alphabetic order?
+				final String[] accountNames = profileManager.getProfileNames();	// TODO(VL): Make the list alphabetic order?
 				ArrayAdapter<String> listadapter = new ArrayAdapter<String>(CommunicationAid.instance, android.R.layout.simple_list_item_1, accountNames);
 //				{
 //			
@@ -103,8 +102,9 @@ public class CommunicationAid extends Activity {
 						Log.i(LOG_TAG, "Selected " + which);
 						selectAccountDialog.dismiss();
 						
-						// TODO(VL): load selected profile's input type
-						startActivityForResult(new Intent(CommunicationAid.instance, Joystick.class), 0);
+						// set the current profile and load screen of profile's input type
+						profileManager.setCurrentProfile(accountNames[which]);
+						CommunicationAid.instance.displayInputScreenOfCurrProfile();
 					}
 				});
 				
@@ -132,11 +132,9 @@ public class CommunicationAid extends Activity {
     
     public void update()
     {
-//      int num_profiles = 1;
       int num_profiles = profileManager.getProfileNames().length;
       Log.i(CommunicationAid.LOG_TAG, "UPDATE: Checking account number");
       if ( num_profiles <= 0 )
-//      if (profileManager.getProfileNames() == null )
       {
       	newAccountButton.setVisibility(View.GONE);
       	existingAccountButton.setVisibility(View.GONE);
@@ -148,6 +146,24 @@ public class CommunicationAid extends Activity {
       	newAccountButton.setVisibility(View.VISIBLE);
       	existingAccountButton.setVisibility(View.VISIBLE);
       }
+    }
+    
+    // start input activity of current profile's input type
+    public void displayInputScreenOfCurrProfile()
+    {
+		String input_type = profileManager.getCurrentProfile().getInputType().toString();
+		if ( input_type.equals("Joystick") )
+		{
+			startActivityForResult(new Intent(CommunicationAid.instance, Joystick.class), 0);
+		}
+		else if ( input_type.equals("Paddles") )
+		{
+			startActivityForResult(new Intent(CommunicationAid.instance, Paddles.class), 0);
+		}
+		else
+		{
+			startActivityForResult(new Intent(CommunicationAid.instance, Straw.class), 0);
+		}
     }
     
     public void onResume()

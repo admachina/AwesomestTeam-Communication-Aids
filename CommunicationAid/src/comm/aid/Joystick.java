@@ -16,6 +16,7 @@ public class Joystick extends Activity {
 	private Button charButtonDown;
 	private Button charButtonLeft;
 	private Button charButtonRight;
+	private TextView usernameText;
 	
 	private OnClickListener AddCharOnClickListener;
 	
@@ -67,8 +68,9 @@ public class Joystick extends Activity {
         charButtonLeft.setOnClickListener(AddCharOnClickListener);
         charButtonRight = (Button) this.findViewById(R.id.charButtonRight);
         charButtonRight.setOnClickListener(AddCharOnClickListener);
+        usernameText = (TextView) this.findViewById(R.id.username);
         
-        
+        usernameText.setText(CommunicationAid.instance.profileManager.getCurrentProfile().getName());
 
         for(int i=0; i<4; i++)
         	setButtonOption(i, t.next(i).displayValue());

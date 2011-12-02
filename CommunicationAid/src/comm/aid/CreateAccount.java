@@ -70,7 +70,10 @@ public class CreateAccount extends Activity {
 				{
 					CommunicationAid.instance.profileManager.createProfile(nameText.getText().toString(), inputType, experienceLevel);
 					Log.i(CommunicationAid.LOG_TAG, "Created profile with Name = " + nameText.getText() + ", Input Type = " + inputType + " and Experience Level = " + experienceLevel);
-					startActivityForResult(new Intent(CommunicationAid.instance, Joystick.class), 0);
+					
+					// set the current profile and display screen of profile's input type 
+					CommunicationAid.instance.profileManager.setCurrentProfile(nameText.getText().toString());
+					CommunicationAid.instance.displayInputScreenOfCurrProfile();
 					finish();
 				}
 				catch(Exception e)

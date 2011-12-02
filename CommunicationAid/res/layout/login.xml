@@ -5,22 +5,31 @@
   android:layout_width="fill_parent"
   android:layout_height="fill_parent">
   
+  <TextView
+	   	android:layout_width="wrap_content"
+	   	android:layout_height="wrap_content"
+	   	android:textColor="@android:color/white"
+	   	android:textSize="28dp"
+	   	android:text="Select a profile:"
+	   	android:background="@android:color/transparent"
+   />
+		    
   <Button android:id="@+id/createNewAccount"
 	    android:layout_alignParentBottom="true"
 	    android:text="Create New Profile"
 	    android:layout_width="wrap_content"
   		android:layout_height="wrap_content"
 	    android:textSize="28dp"
-	    android:layout_marginTop="100dp"
+	    android:layout_marginTop="80dp"
 	    android:layout_marginLeft="205dp"/>
 	    
  <Button android:id="@+id/createNewAccount2"
 	    android:layout_alignParentBottom="true"
-	    android:text="Create New Account"
+	    android:text="Create New Profile"
 	    android:layout_width="wrap_content"
   		android:layout_height="wrap_content"
 	    android:textSize="28dp"
-	    android:layout_marginTop="140dp"
+	    android:layout_marginTop="115dp"
 	    android:layout_marginLeft="205dp"
 	    android:visibility="gone"/>
 	    
