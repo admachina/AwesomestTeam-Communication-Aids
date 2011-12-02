@@ -26,6 +26,6 @@ public class Utils {
 	// Returns if a string is empty or null
 	public static boolean isStringEmptyOrNull(String str)
 	{
-		return str.equals("") || str.equals(null);
+		return str.equals("") || str == null;
 	}
 }

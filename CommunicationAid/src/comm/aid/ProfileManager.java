@@ -28,6 +28,7 @@ public class ProfileManager {
 	private ArrayList<Profile> profiles = new ArrayList<Profile>();
 	
 	public ProfileManager() throws IOException{
+		startDir = CommunicationAid.instance.getDir("Profiles", 0).getAbsolutePath();
 		readProfiles();
 	}
 	
@@ -40,17 +41,17 @@ public class ProfileManager {
 	// Imports profiles
 	private void readProfiles() throws IOException{
 		File dir = null;
-		if (Utils.isStringEmptyOrNull(startDir))
-		{
-			// set Android dir
-			CommunicationAid.instance.getDir("Profiles", 0);
-		}
-		else
-		{
-			// Currently used for Unit test cases only
-			dir = new File(startDir);
-		}
-		
+//		if (Utils.isStringEmptyOrNull(startDir))
+//		{
+//			// set Android dir
+//			dir = CommunicationAid.instance.getDir("Profiles", 0);
+//		}
+//		else
+//		{
+//			// Currently used for Unit test cases only
+//			dir = new File(startDir);
+//		}
+		dir = new File(startDir);
 		File[] files = dir.listFiles(new ProfileFileFilter());
 		for (int i=0;i<files.length;i++)
 		{

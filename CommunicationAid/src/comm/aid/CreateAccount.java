@@ -12,10 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-// TODO(VL): Need to change the names from Account to Profile
 public class CreateAccount extends Activity {
 	// profile information
-	private String accountName = "", inputType = "", experienceLevel = "";
+	private String inputType = "", experienceLevel = "";
 	
 	// screen widgets
 	private EditText nameText;
@@ -67,7 +66,17 @@ public class CreateAccount extends Activity {
 
 			public void onClick(View v) {
 				// start Create New Account activity
-				Log.i(CommunicationAid.LOG_TAG, "Creating profile with Name = " + nameText.getText() + ", Input Type = " + inputType + " and Experience Level = " + experienceLevel);
+				try
+				{
+					CommunicationAid.instance.profileManager.createProfile(nameText.getText().toString(), inputType, experienceLevel);
+					Log.i(CommunicationAid.LOG_TAG, "Created profile with Name = " + nameText.getText() + ", Input Type = " + inputType + " and Experience Level = " + experienceLevel);
+					startActivityForResult(new Intent(CommunicationAid.instance, Joystick.class), 0);
+					finish();
+				}
+				catch(Exception e)
+				{
+					Log.e(CommunicationAid.LOG_TAG, "Failed to create profile with Name = " + nameText.getText() + ", Input Type = " + inputType + " and Experience Level = " + experienceLevel);
+				}
 			}
         	
         });
