@@ -16,6 +16,7 @@ public class Paddles extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.paddles);
         
+        // load and initialize screen widgets
         usernameText = (TextView) this.findViewById(R.id.username);
         usernameText.setText(CommunicationAid.instance.profileManager.getCurrentProfile().getName());
     }

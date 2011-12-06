@@ -26,7 +26,6 @@ public class Joystick extends Activity {
         super.onCreate(savedInstanceState);
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //Log.i(CommunicationAid.LOG_TAG, "Opening Joystick screen");
         setContentView(R.layout.joystick);
         
         Tree t = new DictionaryParser().parse();

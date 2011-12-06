@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Communication Aid</string>
+    <string name="create_profile">Create Profile</string>
+    <string name="create_new_profile">Create New Profile</string>
+    <string name="select_profile_prompt">Select a profile:</string>
+    <string name="existing_profile">Use Existing Profile</string>
+    <string name="name_prompt">Name:</string>
+    <string name="joystick">Joystick</string>
+    <string name="paddles">Paddles</string>
+    <string name="straw">Straw</string>
     
-    <string name="input_device_prompt">Input Device: </string>
+    <string name="input_device_prompt">Input Device:</string>
      <string-array name="input_device_types">
     	<item>Joystick</item>
     	<item>Paddles</item>
     	<item>Straw</item>
     </string-array>
     
-    <string name="experience_level_prompt">Experience Level: </string>
+    <string name="experience_level_prompt">Experience Level:</string>
      <string-array name="experience_level_types">
     	<item>Beginner</item>
     	<item>Intermediate</item>

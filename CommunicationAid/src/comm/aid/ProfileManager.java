@@ -6,6 +6,8 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import java.io.*;
 
+import android.util.Log;
+
 public class ProfileManager {
 	private static String profileFileNameSuffix = "-comm-aid.txt";
 	private static String profileNameStr = "name";
@@ -80,7 +82,7 @@ public class ProfileManager {
 			}
 			catch(IOException e)
 			{
-				// Log it?
+				Log.e(CommunicationAid.LOG_TAG, e.getMessage());
 				continue;
 			}
 			inputMap.put(key.trim(), value.trim());
@@ -119,7 +121,7 @@ public class ProfileManager {
 			boolean result = file.delete();
 			if (!result)
 			{
-				// Log failure?
+				Log.e( CommunicationAid.LOG_TAG, "Could not delete file " + file.getAbsolutePath() );
 			}
 		}
 		file.createNewFile();
@@ -156,7 +158,7 @@ public class ProfileManager {
 				currentProfile = profiles.get(i);
 			}
 		}
-		// Log error or exception?
+		// TODO: Log error or exception?
 	}
 	
 	// Assumes profile exists

@@ -10,13 +10,13 @@
 	   	android:layout_height="wrap_content"
 	   	android:textColor="@android:color/white"
 	   	android:textSize="28dp"
-	   	android:text="Select a profile:"
+	   	android:text="@string/select_profile_prompt"
 	   	android:background="@android:color/transparent"
    />
 		    
   <Button android:id="@+id/createNewAccount"
 	    android:layout_alignParentBottom="true"
-	    android:text="Create New Profile"
+	    android:text="@string/create_new_profile"
 	    android:layout_width="wrap_content"
   		android:layout_height="wrap_content"
 	    android:textSize="28dp"
@@ -25,7 +25,7 @@
 	    
  <Button android:id="@+id/createNewAccount2"
 	    android:layout_alignParentBottom="true"
-	    android:text="Create New Profile"
+	    android:text="@string/create_new_profile"
 	    android:layout_width="wrap_content"
   		android:layout_height="wrap_content"
 	    android:textSize="28dp"
@@ -35,7 +35,7 @@
 	    
   <Button android:id="@+id/loginAccount"
 	    android:layout_alignParentBottom="true"
-	    android:text="Use Existing Profile"
+	    android:text="@string/existing_profile"
 	    android:layout_width="wrap_content"
   		android:layout_height="wrap_content"
 	    android:textSize="28dp"

@@ -26,6 +26,8 @@ public class CommunicationAid extends Activity {
 	private AlertDialog selectAccountDialog;
 	public ProfileManager profileManager;
 	
+	private OnClickListener OpenCreateProfileOnClickListener;
+	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,64 +44,36 @@ public class CommunicationAid extends Activity {
         }
         
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //Log.i(LOG_TAG, "Opening Login screen");
         setContentView(R.layout.login);
         
-        newAccountButton = (Button) this.findViewById(R.id.createNewAccount);
-        newAccountButton.setOnClickListener(new OnClickListener(){
-
-			public void onClick(View v) {
+        OpenCreateProfileOnClickListener = new OnClickListener()
+        {
+        	public void onClick(View v) {
 				// start Create New Account activity
 				startActivityForResult(new Intent(CommunicationAid.instance, CreateAccount.class), 0);
 			}
-        	
-        });
+        };
+        
+        newAccountButton = (Button) this.findViewById(R.id.createNewAccount);
+        newAccountButton.setOnClickListener(OpenCreateProfileOnClickListener);
         
         newAccountButton2 = (Button) this.findViewById(R.id.createNewAccount2);
-        newAccountButton2.setOnClickListener(new OnClickListener(){
-
-			public void onClick(View v) {
-				// start Create New Account activity
-				startActivityForResult(new Intent(CommunicationAid.instance, CreateAccount.class), 0);
-			}
-        	
-        });
+        newAccountButton2.setOnClickListener(OpenCreateProfileOnClickListener);
         
         existingAccountButton = (Button) this.findViewById(R.id.loginAccount);
         existingAccountButton.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
-				// create ListView with all accounts
+				// create ListView with all existing accounts
 				Builder builder = new AlertDialog.Builder(CommunicationAid.instance);
 				ListView list = new ListView(CommunicationAid.instance);
 				final String[] accountNames = profileManager.getProfileNames();	// TODO(VL): Make the list alphabetic order?
 				ArrayAdapter<String> listadapter = new ArrayAdapter<String>(CommunicationAid.instance, android.R.layout.simple_list_item_1, accountNames);
-//				{
-//			
-//			            /* (non-Javadoc)
-//			             * @see android.widget.ArrayAdapter#getView(int,
-//			             * android.view.View, android.view.ViewGroup)
-//			             */
-//			            @Override
-//			            public View getView( int position, View convertView, ViewGroup parent )
-//			            {
-//			            	TextView text = (TextView) super.getView(position, convertView, parent);
-//			            	if (text != null){
-//			            		text.setTextSize(18);
-//			            		text.setMaxLines(1);
-//				                text.setHorizontallyScrolling(true);
-//			            		text.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-//			            	}
-//			            	return text;
-//			            }
-//			
-//			    };
 			    
 			    list.setAdapter(listadapter);
-				builder.setTitle("Select Profile");
+				builder.setTitle(R.string.select_profile_prompt);
 				builder.setItems(accountNames, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						Log.i(LOG_TAG, "Selected " + which);
 						selectAccountDialog.dismiss();
 						
 						// set the current profile and load screen of profile's input type
@@ -121,8 +95,8 @@ public class CommunicationAid extends Activity {
 //				});
 				selectAccountDialog = builder.show();
 				
-				// TODO(VL): Handle suspend behavior of alert dialog. When the tablet is put to sleep while
-				// the dialog is still up, it throws and exception and the dialog is no longer up
+				// TODO: Handle suspend behavior of alert dialog. When the tablet is put to sleep while
+				// the dialog is still up, it throws and exception (see logs) and the dialog is no longer up
 				// when the application is resumed.
 			}
         	
@@ -132,20 +106,19 @@ public class CommunicationAid extends Activity {
     
     public void update()
     {
-      int num_profiles = profileManager.getProfileNames().length;
-      Log.i(CommunicationAid.LOG_TAG, "UPDATE: Checking account number");
-      if ( num_profiles <= 0 )
-      {
-      	newAccountButton.setVisibility(View.GONE);
-      	existingAccountButton.setVisibility(View.GONE);
-      	newAccountButton2.setVisibility(View.VISIBLE);
-      }
-      else
-      {
-      	newAccountButton2.setVisibility(View.GONE);
-      	newAccountButton.setVisibility(View.VISIBLE);
-      	existingAccountButton.setVisibility(View.VISIBLE);
-      }
+    	int num_profiles = profileManager.getProfileNames().length;
+    	if ( num_profiles <= 0 )
+    	{
+    		newAccountButton.setVisibility(View.GONE);
+    		existingAccountButton.setVisibility(View.GONE);
+    		newAccountButton2.setVisibility(View.VISIBLE);
+    	}
+    	else
+    	{
+    		newAccountButton2.setVisibility(View.GONE);
+    		newAccountButton.setVisibility(View.VISIBLE);
+    		existingAccountButton.setVisibility(View.VISIBLE);
+      	}
     }
     
     // start input activity of current profile's input type

@@ -29,6 +29,7 @@ public class CreateAccount extends Activity {
         
         setContentView(R.layout.create_account);
         
+        // load and initialize screen widgets
         nameText = (EditText) this.findViewById(R.id.account_name);
         
         inputDeviceSpinner = (Spinner) findViewById(R.id.input_device_spinner);
@@ -69,7 +70,7 @@ public class CreateAccount extends Activity {
 				try
 				{
 					CommunicationAid.instance.profileManager.createProfile(nameText.getText().toString(), inputType, experienceLevel);
-					Log.i(CommunicationAid.LOG_TAG, "Created profile with Name = " + nameText.getText() + ", Input Type = " + inputType + " and Experience Level = " + experienceLevel);
+					// Log.i(CommunicationAid.LOG_TAG, "Created profile with Name = " + nameText.getText() + ", Input Type = " + inputType + " and Experience Level = " + experienceLevel);
 					
 					// set the current profile and display screen of profile's input type 
 					CommunicationAid.instance.profileManager.setCurrentProfile(nameText.getText().toString());
@@ -78,6 +79,7 @@ public class CreateAccount extends Activity {
 				}
 				catch(Exception e)
 				{
+					Log.e(CommunicationAid.LOG_TAG, e.getMessage());
 					Log.e(CommunicationAid.LOG_TAG, "Failed to create profile with Name = " + nameText.getText() + ", Input Type = " + inputType + " and Experience Level = " + experienceLevel);
 				}
 			}

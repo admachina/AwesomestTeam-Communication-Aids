@@ -9,14 +9,12 @@
 	    android:layout_width="fill_parent" 
 	    android:layout_height="wrap_content"
 	    android:minHeight="70dp" 
-	    android:text="ABCD"
 	    android:textSize="28dp" />
 
 	<Button android:id="@+id/charButtonUp"
 	    android:layout_width="95dp"
 	    android:layout_height="70dp"
 	    android:layout_alignParentBottom="true"
-	    android:text="A"
 	    android:textSize="28dp"
 	    android:layout_marginLeft="300dp" />
 	    
@@ -31,7 +29,6 @@
 		    android:layout_alignParentBottom="true"
 		    android:layout_marginTop="45dp"
 		    android:layout_marginLeft="165dp"
-		    android:text="D"
 		    android:textSize="28dp" />
 
         <ImageView android:id="@+id/joystick_cross"
@@ -44,7 +41,6 @@
 		    android:layout_height="70dp"
 		    android:layout_alignParentBottom="true"
 		    android:layout_marginTop="45dp"
-		    android:text="B"
 		    android:textSize="28dp" />
 	</LinearLayout>
 	
@@ -57,7 +53,6 @@
 	    android:layout_width="95dp"
 	    android:layout_height="70dp"
 	    android:layout_alignParentBottom="true"
-	    android:text="C"
 	    android:textSize="28dp"
 	    android:layout_marginLeft="300dp" />
     
