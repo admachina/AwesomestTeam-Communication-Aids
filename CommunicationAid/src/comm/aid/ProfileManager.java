@@ -113,7 +113,7 @@ public class ProfileManager {
 	}
 	
 	private void writeProfile(Profile profile) throws IOException{
-		File file = new File(startDir + getFileName(profile));
+		File file = new File(startDir + "/" + getFileName(profile));
 		if (file.exists())
 		{
 			boolean result = file.delete();
