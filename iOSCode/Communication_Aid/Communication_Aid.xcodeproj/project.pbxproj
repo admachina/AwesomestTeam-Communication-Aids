@@ -35,6 +35,7 @@
 		98F2A3D5156C17A100431E1D /* TextInputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextInputViewController.h; path = ../TextInputViewController.h; sourceTree = "<group>"; };
 		98F2A3D6156C17A100431E1D /* TextInputViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextInputViewController.m; path = ../TextInputViewController.m; sourceTree = "<group>"; };
 		98F2A3D7156C17A100431E1D /* TextInputViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextInputViewController.xib; sourceTree = "<group>"; };
+		B468C3D715A49E8C005B192D /* DictionaryParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictionaryParser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +58,7 @@
 				98F2A3D5156C17A100431E1D /* TextInputViewController.h */,
 				98F2A3D6156C17A100431E1D /* TextInputViewController.m */,
 				1D3623240D0F684500981E51 /* Communication_AidAppDelegate.h */,
+				B468C3D715A49E8C005B192D /* DictionaryParser.h */,
 				1D3623250D0F684500981E51 /* Communication_AidAppDelegate.m */,
 			);
 			path = Classes;
