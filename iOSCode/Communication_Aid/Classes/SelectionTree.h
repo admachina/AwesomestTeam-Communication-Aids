@@ -13,6 +13,9 @@
     
     NSString* _printValue;
     NSString* _displayValue;
+    
+    Boolean isRoot;
+    Boolean isUpOneLevel;
 }
 
 //Constructors
@@ -20,17 +23,19 @@
 -(SelectionTree*) init: (NSString*) displayValue;
 -(SelectionTree*) init: (NSString*) displayValue: (NSString*) printValue;
 
--(SelectionTree*) clone;
-
 // Accessors
 -(SelectionTree*) next: (int) branch;
 
 -(NSString*) displayValue;
 -(NSString*) printValue;
 -(Boolean) isLeaf;
+-(Boolean) isRoot;
+-(Boolean) isUpOneLevel; //Used to pass a root on the stack (advance backwards through menus)
+-(int) branchCount;
 
 //Mutators
--(void) addNode: (SelectionTree*) addedTree: (int) location;
 -(SelectionTree*) addNode: (SelectionTree*) addedTree;
+-(void) setRoot: (Boolean) rootState;
+-(void) setUpOneLevel: (Boolean) upOneLevelState;
 
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1473829D15A4AF6C009AB9B7 /* TreeNavigator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1473829C15A4AF6C009AB9B7 /* TreeNavigator.m */; };
 		14DF37F715A34EEA00424701 /* SelectionTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DF37F615A34EEA00424701 /* SelectionTree.m */; };
 		1D3623260D0F684500981E51 /* Communication_AidAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* Communication_AidAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -22,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1473829B15A4AF6C009AB9B7 /* TreeNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeNavigator.h; sourceTree = "<group>"; };
+		1473829C15A4AF6C009AB9B7 /* TreeNavigator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeNavigator.m; sourceTree = "<group>"; };
 		14DF37F515A34EEA00424701 /* SelectionTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionTree.h; sourceTree = "<group>"; };
 		14DF37F615A34EEA00424701 /* SelectionTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectionTree.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -68,6 +71,8 @@
 				1D3623250D0F684500981E51 /* Communication_AidAppDelegate.m */,
 				14DF37F515A34EEA00424701 /* SelectionTree.h */,
 				14DF37F615A34EEA00424701 /* SelectionTree.m */,
+				1473829B15A4AF6C009AB9B7 /* TreeNavigator.h */,
+				1473829C15A4AF6C009AB9B7 /* TreeNavigator.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -191,6 +196,7 @@
 				98F2A3D8156C17A100431E1D /* TextInputViewController.m in Sources */,
 				14DF37F715A34EEA00424701 /* SelectionTree.m in Sources */,
 				B468C3E415A4A8D6005B192D /* DictionaryParser.m in Sources */,
+				1473829D15A4AF6C009AB9B7 /* TreeNavigator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

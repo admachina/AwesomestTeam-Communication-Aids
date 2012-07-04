@@ -39,3 +39,13 @@ Thumbs.db
 */bin/*
 */gen/*
 .metadata*
+
+# Temp Files #
+##############
+.*
+*.tmp
+
+# User Settings Files #
+#######################
+*.xcworkspace*
+xcuserdata
