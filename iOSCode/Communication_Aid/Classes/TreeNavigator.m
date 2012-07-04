@@ -38,12 +38,6 @@
     {
         return NULL;
     }
-       
-    // Add to root stack
-    if([currentLocation isRoot])
-    {
-        [rootStack addObject:(currentLocation)];
-    }
     
     currentLocation = nextNode;
     
@@ -63,6 +57,12 @@
         [rootStack removeLastObject];
     }
     
+    if([currentLocation isRoot])
+    {
+        [rootStack addObject:(currentLocation)];
+    }
+    
+    // Populate subsequent menu items
     for (int i = 0; i < [currentLocation branchCount]; i++) {
         [valuesToDisplay addObject:([[currentLocation next:(i)] displayValue])];
     }
