@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14DF37F715A34EEA00424701 /* SelectionTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DF37F615A34EEA00424701 /* SelectionTree.m */; };
 		1D3623260D0F684500981E51 /* Communication_AidAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* Communication_AidAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -20,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		14DF37F515A34EEA00424701 /* SelectionTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionTree.h; sourceTree = "<group>"; };
+		14DF37F615A34EEA00424701 /* SelectionTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectionTree.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* Communication_AidAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Communication_AidAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* Communication_AidAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Communication_AidAppDelegate.m; sourceTree = "<group>"; };
@@ -58,6 +61,8 @@
 				98F2A3D6156C17A100431E1D /* TextInputViewController.m */,
 				1D3623240D0F684500981E51 /* Communication_AidAppDelegate.h */,
 				1D3623250D0F684500981E51 /* Communication_AidAppDelegate.m */,
+				14DF37F515A34EEA00424701 /* SelectionTree.h */,
+				14DF37F615A34EEA00424701 /* SelectionTree.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -179,6 +184,7 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* Communication_AidAppDelegate.m in Sources */,
 				98F2A3D8156C17A100431E1D /* TextInputViewController.m in Sources */,
+				14DF37F715A34EEA00424701 /* SelectionTree.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
