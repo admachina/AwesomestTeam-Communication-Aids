@@ -31,6 +31,6 @@
 
 //Mutators
 -(void) addNode: (SelectionTree*) addedTree: (int) location;
--(void) addNode: (SelectionTree*) addedTree;
+-(SelectionTree*) addNode: (SelectionTree*) addedTree;
 
 @end

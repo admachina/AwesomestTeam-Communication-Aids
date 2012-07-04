@@ -74,9 +74,10 @@
     return [_branches count] == 0;
 }
 
--(void)addNode:(SelectionTree *)addedTree
+-(SelectionTree*)addNode:(SelectionTree *)addedTree
 {
     [_branches addObject:(addedTree)];
+    return addedTree;
 }
 
 -(void)addNode:(SelectionTree *)addedTree :(int)location
