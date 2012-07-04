@@ -20,6 +20,9 @@
     _printValue = @"";
     _displayValue = @"";
     
+    isRoot = false;
+    isUpOneLevel = false;
+    
     return self;
 }
 
@@ -31,6 +34,9 @@
     
     _printValue = @"";
     _displayValue = displayValue;
+    
+    isRoot = false;
+    isUpOneLevel = false;
     
     return self;
 }
@@ -44,19 +50,20 @@
     _printValue = printValue;
     _displayValue = displayValue;
     
+    isRoot = false;
+    isUpOneLevel = false;
+    
     return self;
 }
 
-/*-(SelectionTree*)clone
-{
-    SelectionTree* copy = [[SelectionTree alloc] init];
-    
-    copy.
-}*/
-
 -(SelectionTree*)next :(int)branch
 {
-    return [_branches objectAtIndex:branch];
+    if(branch < [_branches count])
+    {
+        return [_branches objectAtIndex:branch];
+    }
+    
+    return NULL;
 }
 
 -(NSString*)displayValue
@@ -74,13 +81,34 @@
     return [_branches count] == 0;
 }
 
+-(Boolean)isRoot
+{
+    return isRoot;
+}
+
+-(Boolean)isUpOneLevel
+{
+    return isUpOneLevel;
+}
+
+-(int)branchCount
+{
+    return [_branches count];
+}
+
 -(void)addNode:(SelectionTree *)addedTree
 {
     [_branches addObject:(addedTree)];
 }
 
--(void)addNode:(SelectionTree *)addedTree :(int)location
+-(void)setRoot:(Boolean)rootState
 {
-    [_branches insertObject:(addedTree) atIndex:(location)];
+    isRoot = rootState;
 }
+
+-(void)setUpOneLevel:(Boolean)upOneLevelState
+{
+    isUpOneLevel = upOneLevelState;
+}
+
 @end
