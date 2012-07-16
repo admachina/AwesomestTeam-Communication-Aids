@@ -17,7 +17,7 @@
     NSMutableArray* rootStack;
 }
 
--(TreeNavigator*) init : (SelectionTree*) tree;
+-(TreeNavigator*) initWithTree : (SelectionTree*) tree;
 
 // "choose" takes integer choice and empty array for values to be displayed next on menu, returns value added to text stream or NULL if an invalid choice was provided (empty button)
 -(NSString*) choose : (int) choice : (NSMutableArray*) valuesToDisplay;

@@ -7,6 +7,9 @@
 
 #import "Communication_AidAppDelegate.h"
 #import "TextInputViewController.h"
+#import "DictionaryParser.h"
+#import "SelectionTree.h"
+#import "TreeNavigator.h"
 
 @implementation Communication_AidAppDelegate
 
@@ -19,7 +22,17 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     
     // Override point for customization after application launch.
-    TextInputViewController *aTextInputViewController = [[TextInputViewController alloc] initWithNibName:@"TextInputViewController" bundle:[NSBundle mainBundle]];
+    
+    // Init data
+    NSString* configFileName = @"fakeFilePath";
+    NSString* dictionaryFileName = @"fakeFilePath2";
+    
+    DictionaryParser* parser = [[DictionaryParser alloc] initWithName:configFileName];
+    SelectionTree* tree = [parser parse:dictionaryFileName];
+    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:tree];
+    
+    // Init view
+    TextInputViewController *aTextInputViewController = [[TextInputViewController alloc] initWithNavigator:@"TextInputViewController" bundle:[NSBundle mainBundle] navigator:navigator];
 	[self setTextInputViewController:aTextInputViewController];
 	[aTextInputViewController release];
 	UIView *controllersView = [textInputViewController view];

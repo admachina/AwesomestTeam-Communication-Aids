@@ -6,6 +6,7 @@
 //
 
 #import "TextInputViewController.h"
+#import "TreeNavigator.h"
 
 @implementation TextInputViewController
 
@@ -27,6 +28,13 @@
 }
 */
 
+- (id)initWithNavigator:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil navigator:(TreeNavigator *)navigator
+{
+    self = [self initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    internalNavigator = navigator;
+    return self;
+}
+
 /*
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
@@ -36,14 +44,15 @@
 
 - (IBAction)setText:(id)sender {
 	NSString* newChar = nil;
+    NSMutableArray* newButtonsArray = [[NSMutableArray alloc] init];
 	if (sender == charButtonLeft)
-		newChar = charButtonLeft.titleLabel.text;
+        newChar = [internalNavigator choose:0 :newButtonsArray];
 	else if (sender == charButtonUp)
-		newChar = charButtonUp.titleLabel.text;
+		newChar = [internalNavigator choose:0 :newButtonsArray];
 	else if (sender == charButtonRight)
-		newChar = charButtonRight.titleLabel.text;
+		newChar = [internalNavigator choose:0 :newButtonsArray];
 	else if (sender == charButtonDown)
-		newChar = @"_"; //charButtonDown.titleLabel.text;
+		newChar = [internalNavigator choose:0 :newButtonsArray];
 	/*else
 		// throw exception
 	 */
@@ -53,6 +62,29 @@
 		NSString* newMessage = [NSString stringWithFormat:@"%@%@", textView.text, newChar];
 		textView.text = newMessage;
 	}
+    
+    for (int i=0; i < 4 && i < [newButtonsArray count]; i++) { // Must be set up diferently for multiple sizes
+        switch (i) {
+            case 0:
+                [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+                break;
+                
+            case 1:
+                [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+                break;
+                
+            case 2:
+                [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+                break;
+                
+            case 3:
+                [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+                break;
+                
+            default:
+                break;
+        }
+    }
 	
 }
 

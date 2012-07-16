@@ -11,7 +11,7 @@
 
 @implementation DictionaryParser
 
--(DictionaryParser*) init:(NSString *)configFileName {
+-(DictionaryParser*) initWithName:(NSString *)configFileName {
     self = [super init];
     
     //TODO: find a configFile within the user's documents on the ipad rather than from package

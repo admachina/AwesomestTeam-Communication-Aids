@@ -23,7 +23,7 @@
     
 }
 
--(DictionaryParser*) init : (NSString*) configFileName;
+-(DictionaryParser*) initWithName : (NSString*) configFileName;
 -(DictionaryParser*) init ;
 
 -(void) loadConfig;

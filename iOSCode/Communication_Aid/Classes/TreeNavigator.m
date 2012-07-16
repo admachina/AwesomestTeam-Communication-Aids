@@ -11,7 +11,7 @@
 
 @implementation TreeNavigator
 
--(TreeNavigator*) init:(SelectionTree *)tree
+-(TreeNavigator*) initWithTree:(SelectionTree *)tree
 {
     self = [super init];
     
