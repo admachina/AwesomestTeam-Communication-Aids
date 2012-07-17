@@ -13,32 +13,12 @@
     
 -(SelectionTree *)init
 {
-    self = [super init];
-    
-    _branches = [[NSMutableArray alloc] init];
-    
-    _printValue = @"";
-    _displayValue = @"";
-    
-    isRoot = false;
-    isUpOneLevel = false;
-    
-    return self;
+    return [self init: @"": @""];
 }
 
 -(SelectionTree *)init :(NSString *)displayValue
 {
-    self = [super init];
-    
-    _branches = [[NSMutableArray alloc] init];
-    
-    _printValue = @"";
-    _displayValue = displayValue;
-    
-    isRoot = false;
-    isUpOneLevel = false;
-    
-    return self;
+    return [self init: displayValue: @""];
 }
 
 -(SelectionTree *)init :(NSString *)displayValue :(NSString *)printValue
@@ -47,8 +27,8 @@
     
     _branches = [[NSMutableArray alloc] init];
     
-    _printValue = printValue;
-    _displayValue = displayValue;
+    _printValue = [[NSString alloc] initWithString:printValue];
+    _displayValue = [[NSString alloc] initWithString:displayValue];
     
     isRoot = false;
     isUpOneLevel = false;
@@ -60,6 +40,7 @@
 {
     if(branch < [_branches count])
     {
+        SelectionTree* b = [_branches objectAtIndex:branch];
         return [_branches objectAtIndex:branch];
     }
     

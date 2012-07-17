@@ -32,7 +32,7 @@
 {
     self = [self initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     internalNavigator = navigator;
-    
+    [self view];
     // Set up initial view
     SelectionTree* treeRoot = [navigator currentTree];
     for (int i=0; i < 4; i++) { // Must be set up diferently for multiple sizes

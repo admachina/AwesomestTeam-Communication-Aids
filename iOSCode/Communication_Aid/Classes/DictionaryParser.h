@@ -15,8 +15,6 @@
     NSString* DEFAULT_CONFIG;
     NSString* NODES_KEY;
     
-    SelectionTree* DOWN_NODE;
-    
     int nodesPerLevel;
     
     NSData* configFileData;
@@ -30,6 +28,6 @@
 
 -(SelectionTree*) parse : (NSString*) dictionaryFileName;
 
-
++(SelectionTree*) downNode;
 
 @end

@@ -15,6 +15,7 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
+		987E6D4915B6004C004DE229 /* dictonary in Resources */ = {isa = PBXBuildFile; fileRef = 987E6D4815B6004C004DE229 /* dictonary */; };
 		98F2A374156C11A400431E1D /* joystick_cross_1.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 98F2A373156C11A400431E1D /* joystick_cross_1.PNG */; };
 		98F2A376156C144800431E1D /* button_grey_background.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 98F2A375156C144800431E1D /* button_grey_background.PNG */; };
 		98F2A3D8156C17A100431E1D /* TextInputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98F2A3D6156C17A100431E1D /* TextInputViewController.m */; };
@@ -37,6 +38,7 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Communication_Aid_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Communication_Aid_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Communication_Aid-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Communication_Aid-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		987E6D4815B6004C004DE229 /* dictonary */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dictonary; sourceTree = "<group>"; };
 		98F2A373156C11A400431E1D /* joystick_cross_1.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = joystick_cross_1.PNG; sourceTree = "<group>"; };
 		98F2A375156C144800431E1D /* button_grey_background.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_grey_background.PNG; sourceTree = "<group>"; };
 		98F2A3D5156C17A100431E1D /* TextInputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextInputViewController.h; path = ../TextInputViewController.h; sourceTree = "<group>"; };
@@ -67,8 +69,8 @@
 				98F2A3D6156C17A100431E1D /* TextInputViewController.m */,
 				B468C3E215A4A8D6005B192D /* DictionaryParser.h */,
 				B468C3E315A4A8D6005B192D /* DictionaryParser.m */,
-				1D3623240D0F684500981E51 /* Communication_AidAppDelegate.h */,
 				1D3623250D0F684500981E51 /* Communication_AidAppDelegate.m */,
+				1D3623240D0F684500981E51 /* Communication_AidAppDelegate.h */,
 				14DF37F515A34EEA00424701 /* SelectionTree.h */,
 				14DF37F615A34EEA00424701 /* SelectionTree.m */,
 				1473829B15A4AF6C009AB9B7 /* TreeNavigator.h */,
@@ -88,6 +90,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				987E6D4815B6004C004DE229 /* dictonary */,
 				98F2A375156C144800431E1D /* button_grey_background.PNG */,
 				98F2A373156C11A400431E1D /* joystick_cross_1.PNG */,
 				080E96DDFE201D6D7F000001 /* Classes */,
@@ -181,6 +184,7 @@
 				98F2A374156C11A400431E1D /* joystick_cross_1.PNG in Resources */,
 				98F2A376156C144800431E1D /* button_grey_background.PNG in Resources */,
 				98F2A3D9156C17A100431E1D /* TextInputViewController.xib in Resources */,
+				987E6D4915B6004C004DE229 /* dictonary in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -20,6 +20,7 @@
                        
     [self loadConfig];
     
+    
     return self;
 }
 
@@ -32,8 +33,8 @@
     NSError ** error;
     NSData* plistData = [NSPropertyListSerialization dataWithPropertyList:configFileData format:NSPropertyListOpenStepFormat options:NSPropertyListImmutable error:error];
     
-    printf("printing the plist");
-    printf(plistData);
+    printf("printing the plist\n");
+    //printf(plistData);
     
     //TODO: fix static declaration of config
     nodesPerLevel = 4;
@@ -41,19 +42,22 @@
 }
 
 -(SelectionTree*) parse:(NSString *)dictionaryFileName {
-    
-    NSString* displayVal;
-    NSString* printVal;
+
     SelectionTree* treeHead = [[SelectionTree alloc] init];
+    [treeHead setRoot:true];
+    
+    NSString* displayVal = [[NSString alloc] init];
+    NSString* printVal = [[NSString alloc] init];
     
     NSError ** error;
-    NSString* dictionaryData = [NSString stringWithContentsOfFile:dictionaryFileName encoding:NSStringEncodingConversionAllowLossy error:error];
+    NSString *file = [[NSBundle mainBundle] pathForResource:dictionaryFileName ofType:@""];
+    NSString* dictionaryData = [NSString stringWithContentsOfFile:file encoding:NSASCIIStringEncoding error:error];
     
-    
+    NSCharacterSet* chars = [NSCharacterSet characterSetWithCharactersInString:@",\n"]; 
     NSScanner* parser = [NSScanner scannerWithString:dictionaryData];
+    [parser setCharactersToBeSkipped:chars];
     
-    NSCharacterSet* chars = [NSCharacterSet characterSetWithCharactersInString:@",\\n"];
-    //[parser setCharactersToBeSkipped:chars]; 
+    
     
     SelectionTree* currentNode = treeHead;
     
@@ -63,13 +67,13 @@
             
             
             if( [parser isAtEnd] ) {
-                break; 
+                goto exiting; 
             }
             
-            NSString* displayVal = [NSString alloc];
-            NSString* printVal = [NSString alloc];
+
             
             [parser scanUpToCharactersFromSet:chars intoString:&displayVal];
+            //[parser scanCharactersFromSet:chars intoString:&printVal];
             [parser scanUpToCharactersFromSet:chars intoString:&printVal];
             
             SelectionTree *newNode = [[SelectionTree alloc]  init:displayVal :printVal];
@@ -78,11 +82,19 @@
             [currentNode addNode:newNode]; 
             
         }
-        currentNode = [currentNode addNode:DOWN_NODE];
+        currentNode = [currentNode addNode:[DictionaryParser downNode]];
     }
-    
+exiting:
     return treeHead;
     
 }
+
++(SelectionTree*) downNode {
+    
+    SelectionTree *toReturn = [[SelectionTree alloc] init:@"More" :@""];
+    
+    return toReturn;
+}
+
 
 @end
