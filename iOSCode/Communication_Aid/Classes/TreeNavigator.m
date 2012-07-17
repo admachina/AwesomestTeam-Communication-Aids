@@ -31,6 +31,11 @@
         printf("TreeNavigator.choose passed non-empty array");
     }
     
+    if([currentLocation isRoot])
+    {
+        [rootStack addObject:(currentLocation)];
+    }
+    
     SelectionTree* nextNode = [currentLocation next:(choice)];
     
     // Invalid Choice (Can be for empty button press, not a code failure)
@@ -57,10 +62,7 @@
         [rootStack removeLastObject];
     }
     
-    if([currentLocation isRoot])
-    {
-        [rootStack addObject:(currentLocation)];
-    }
+    
     
     // Populate subsequent menu items
     for (int i = 0; i < [currentLocation branchCount]; i++) {
@@ -68,6 +70,11 @@
     }
     
     return printVal;
+}
+
+-(SelectionTree*)currentTree
+{
+    return currentLocation;
 }
 
 @end

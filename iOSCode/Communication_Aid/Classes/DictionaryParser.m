@@ -25,7 +25,7 @@
 
 -(DictionaryParser*) init {
     DEFAULT_CONFIG = @"parserConfig.properties";
-    return [self init:DEFAULT_CONFIG];
+    return [self initWithName:DEFAULT_CONFIG];
 }
 
 -(void) loadConfig {

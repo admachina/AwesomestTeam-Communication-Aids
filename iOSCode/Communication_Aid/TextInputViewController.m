@@ -32,6 +32,32 @@
 {
     self = [self initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     internalNavigator = navigator;
+    
+    // Set up initial view
+    SelectionTree* treeRoot = [navigator currentTree];
+    for (int i=0; i < 4; i++) { // Must be set up diferently for multiple sizes
+        switch (i) {
+            case 0:
+                [charButtonLeft setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+                break;
+                
+            case 1:
+                [charButtonUp setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+                break;
+                
+            case 2:
+                [charButtonRight setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+                break;
+                
+            case 3:
+                [charButtonDown setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
     return self;
 }
 
@@ -48,11 +74,11 @@
 	if (sender == charButtonLeft)
         newChar = [internalNavigator choose:0 :newButtonsArray];
 	else if (sender == charButtonUp)
-		newChar = [internalNavigator choose:0 :newButtonsArray];
+		newChar = [internalNavigator choose:1 :newButtonsArray];
 	else if (sender == charButtonRight)
-		newChar = [internalNavigator choose:0 :newButtonsArray];
+		newChar = [internalNavigator choose:2 :newButtonsArray];
 	else if (sender == charButtonDown)
-		newChar = [internalNavigator choose:0 :newButtonsArray];
+		newChar = [internalNavigator choose:3 :newButtonsArray];
 	/*else
 		// throw exception
 	 */
@@ -63,22 +89,27 @@
 		textView.text = newMessage;
 	}
     
-    for (int i=0; i < 4 && i < [newButtonsArray count]; i++) { // Must be set up diferently for multiple sizes
+    for (int i=0; i < 4; i++) { // Must be set up diferently for multiple sizes
+        if(i < [newButtonsArray count])
+        {
+            [newButtonsArray addObject:@""];
+        }
+        
         switch (i) {
             case 0:
                 [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
                 break;
                 
             case 1:
-                [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+                [charButtonUp setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
                 break;
                 
             case 2:
-                [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+                [charButtonRight setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
                 break;
                 
             case 3:
-                [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+                [charButtonDown setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
                 break;
                 
             default:

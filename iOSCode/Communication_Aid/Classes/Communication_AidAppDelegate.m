@@ -29,6 +29,18 @@
     
     DictionaryParser* parser = [[DictionaryParser alloc] initWithName:configFileName];
     SelectionTree* tree = [parser parse:dictionaryFileName];
+    
+    //Test code
+    /*SelectionTree* tree = [[SelectionTree alloc]init : @"" : @""];
+    [tree setRoot:true];
+    [tree addNode:[[SelectionTree alloc] init:@"A" :@"A"]];
+    [tree addNode:[[SelectionTree alloc] init:@"S" :@"S"]];
+    [tree addNode:[[SelectionTree alloc] init:@"D" :@"D"]];
+    SelectionTree* next = [tree addNode:[[SelectionTree alloc] init:@"more" :@""]];
+    [next addNode:[[SelectionTree alloc] init:@"J" :@"J"]];
+    [next addNode:[[SelectionTree alloc] init:@"K" :@"K"]];
+    [next addNode:[[SelectionTree alloc] init:@"L" :@"L"]];*/
+    //End test code
     TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:tree];
     
     // Init view
