@@ -25,7 +25,7 @@
     
     // Init data
     NSString* configFileName = @"fakeFilePath";
-    NSString* dictionaryFileName = @"dictonary";
+    NSString* dictionaryFileName = @"dictionary.txt";
     
     DictionaryParser* parser = [[DictionaryParser alloc] init];
     SelectionTree* tree = [parser parse:dictionaryFileName];
