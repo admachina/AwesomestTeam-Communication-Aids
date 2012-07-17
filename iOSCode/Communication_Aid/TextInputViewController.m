@@ -82,6 +82,12 @@
 	/*else
 		// throw exception
 	 */
+    
+    if(newChar == NULL)
+    {
+        return;
+    }
+    
 	
 	if (newChar != nil && [newChar length] > 0)
 	{

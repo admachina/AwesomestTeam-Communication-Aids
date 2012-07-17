@@ -40,7 +40,6 @@
 {
     if(branch < [_branches count])
     {
-        SelectionTree* b = [_branches objectAtIndex:branch];
         return [_branches objectAtIndex:branch];
     }
     
