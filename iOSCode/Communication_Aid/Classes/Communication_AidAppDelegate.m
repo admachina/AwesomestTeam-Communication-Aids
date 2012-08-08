@@ -29,7 +29,8 @@
     NSString* basicTreeFile = @"dictionary.txt";
     NSString* coreWordsTreeFile = @"coreWordsDict.txt";
     
-    [self copyFileFromBundleToDocs : dictionaryFileName];
+    [self copyFileFromBundleToDocs : basicTreeFile];
+    [self copyFileFromBundleToDocs : coreWordsTreeFile];
     [self copyFileFromBundleToDocs:@"defaultTree.xml"];
     
     //SelectionTree* tree = [XMLTreeCreator createTree:@"defaultTree.xml"];
