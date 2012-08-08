@@ -272,6 +272,7 @@
 				987E6EB315B62674004DE229 /* dictionary.txt in Resources */,
 				144A4E2315D2F190001CDD9F /* defaultTree.xml in Resources */,
 				B410FCF415D2F06400137CAB /* coreWordsDict.txt in Resources */,
+<<<<<<< HEAD
 				140C63BC15D3128D00F50318 /* OpenEars1.dic in Resources */,
 				140C63BD15D3128D00F50318 /* OpenEars1.gram in Resources */,
 				140C63BE15D3128D00F50318 /* OpenEars1.languagemodel in Resources */,
@@ -284,6 +285,8 @@
 				140C63C515D3128D00F50318 /* sendump in Resources */,
 				140C63C615D3128D00F50318 /* transition_matrices in Resources */,
 				140C63C715D3128D00F50318 /* variances in Resources */,
+=======
+>>>>>>> 261b427f80c49a1cccc4e529af12745df20a034f
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
