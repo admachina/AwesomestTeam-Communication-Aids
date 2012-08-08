@@ -26,14 +26,22 @@
     
     // Init data
     NSString* configFileName = @"fakeFilePath";
-    NSString* dictionaryFileName = @"dictionary.txt";
+    NSString* basicTreeFile = @"dictionary.txt";
+    NSString* coreWordsTreeFile = @"coreWordsDict.txt";
     
     [self copyFileFromBundleToDocs : dictionaryFileName];
     [self copyFileFromBundleToDocs:@"defaultTree.xml"];
     
-    //DictionaryParser* parser = [[DictionaryParser alloc] init];
-    //SelectionTree* tree = [parser parse:dictionaryFileName];
-    SelectionTree* tree = [XMLTreeCreator createTree:@"defaultTree.xml"];
+    //SelectionTree* tree = [XMLTreeCreator createTree:@"defaultTree.xml"];
+    DictionaryParser* parser = [[DictionaryParser alloc] init];
+    SelectionTree* basicTree = [parser parse:basicTreeFile:@"Basic"];
+    SelectionTree* coreWordsTree = [parser parse:coreWordsTreeFile:@"Core"];
+    
+    SelectionTree* mainMenu = [[SelectionTree alloc] init];
+    [mainMenu setRoot:TRUE];
+    
+    [mainMenu addNode:basicTree];
+    [mainMenu addNode:coreWordsTree];
     
     //Test code
     /*SelectionTree* tree = [[SelectionTree alloc]init : @"" : @""];
@@ -46,7 +54,7 @@
     [next addNode:[[SelectionTree alloc] init:@"K" :@"K"]];
     [next addNode:[[SelectionTree alloc] init:@"L" :@"L"]];*/
     //End test code
-    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:tree];
+    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:mainMenu];
     
     // Init view
     TextInputViewController *aTextInputViewController = [[TextInputViewController alloc] initWithNavigator:@"TextInputViewController" bundle:[NSBundle mainBundle] navigator:navigator];

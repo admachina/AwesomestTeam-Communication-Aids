@@ -41,9 +41,9 @@
     
 }
 
--(SelectionTree*) parse:(NSString *)dictionaryFileName {
+-(SelectionTree*) parse:(NSString *)dictionaryFileName : (NSString*) treeName {
 
-    SelectionTree* treeHead = [[SelectionTree alloc] init];
+    SelectionTree* treeHead = [[SelectionTree alloc] init:treeName];
     [treeHead setRoot:true];
     
     NSString* displayVal = [[NSString alloc] init];
@@ -60,17 +60,20 @@
     
     
     SelectionTree* currentNode = treeHead;
+    bool first = true;
     
     while(true) {
         
+        if( [parser isAtEnd] ) {
+            goto exiting; 
+        }
+        
+        if (!first ) {
+            currentNode = [currentNode addNode:[DictionaryParser  downNode]];
+        }
+        
         for( int i = 1; ( i< nodesPerLevel); i++) {
-            
-            
-            if( [parser isAtEnd] ) {
-                goto exiting; 
-            }
-            
-
+            first=FALSE;
             
             [parser scanUpToCharactersFromSet:chars intoString:&displayVal];
             //[parser scanCharactersFromSet:chars intoString:&printVal];
@@ -82,9 +85,9 @@
             [currentNode addNode:newNode]; 
             
         }
-        currentNode = [currentNode addNode:[DictionaryParser downNode]];
     }
 exiting:
+    [currentNode addNode:[DictionaryParser goBackNode]];
     return treeHead;
     
 }
@@ -92,6 +95,14 @@ exiting:
 +(SelectionTree*) downNode {
     
     SelectionTree *toReturn = [[SelectionTree alloc] init:@"More" :@""];
+    
+    return toReturn;
+}
+
++(SelectionTree*) goBackNode {
+    
+    SelectionTree *toReturn = [[SelectionTree alloc] init:@"Go Back" : @""];
+    [toReturn setUpOneLevel:TRUE]; 
     
     return toReturn;
 }
