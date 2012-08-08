@@ -25,6 +25,7 @@
 		98F2A3D9156C17A100431E1D /* TextInputViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 98F2A3D7156C17A100431E1D /* TextInputViewController.xib */; };
 		B40C705915D2FE57009D70A4 /* XMLFromTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B40C705815D2FE57009D70A4 /* XMLFromTree.m */; };
 		B410FCF415D2F06400137CAB /* coreWordsDict.txt in Resources */ = {isa = PBXBuildFile; fileRef = B410FCF315D2F06400137CAB /* coreWordsDict.txt */; };
+		B464219215D309CD000ABA0F /* KissXML in Resources */ = {isa = PBXBuildFile; fileRef = B464219115D309CD000ABA0F /* KissXML */; };
 		B468C3E415A4A8D6005B192D /* DictionaryParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B468C3E315A4A8D6005B192D /* DictionaryParser.m */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +58,7 @@
 		B40C705715D2FE57009D70A4 /* XMLFromTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLFromTree.h; sourceTree = "<group>"; };
 		B40C705815D2FE57009D70A4 /* XMLFromTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLFromTree.m; sourceTree = "<group>"; };
 		B410FCF315D2F06400137CAB /* coreWordsDict.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coreWordsDict.txt; sourceTree = "<group>"; };
+		B464219115D309CD000ABA0F /* KissXML */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KissXML; path = "../../../../Downloads/robbiehanson-KissXML-092aef8/KissXML"; sourceTree = "<group>"; };
 		B468C3E215A4A8D6005B192D /* DictionaryParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictionaryParser.h; sourceTree = "<group>"; };
 		B468C3E315A4A8D6005B192D /* DictionaryParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DictionaryParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,6 +111,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				B464219115D309CD000ABA0F /* KissXML */,
 				144A4E2215D2F190001CDD9F /* defaultTree.xml */,
 				987E6EB215B62674004DE229 /* dictionary.txt */,
 				B410FCF315D2F06400137CAB /* coreWordsDict.txt */,
@@ -208,6 +211,7 @@
 				987E6EB315B62674004DE229 /* dictionary.txt in Resources */,
 				144A4E2315D2F190001CDD9F /* defaultTree.xml in Resources */,
 				B410FCF415D2F06400137CAB /* coreWordsDict.txt in Resources */,
+				B464219215D309CD000ABA0F /* KissXML in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
