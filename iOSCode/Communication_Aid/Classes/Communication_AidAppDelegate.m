@@ -27,6 +27,8 @@
     NSString* configFileName = @"fakeFilePath";
     NSString* dictionaryFileName = @"dictionary.txt";
     
+    [self copyFileFromBundleToDocs : dictionaryFileName];
+    
     DictionaryParser* parser = [[DictionaryParser alloc] init];
     SelectionTree* tree = [parser parse:dictionaryFileName];
     
@@ -52,6 +54,38 @@
     [self.window makeKeyAndVisible];
     
     return YES;
+}
+
+-(void)copyFileFromBundleToDocs:(NSString*)fileName {
+    
+    NSFileManager *filemgr = [NSFileManager defaultManager];
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDir = [documentPaths objectAtIndex:0];
+    NSLog(@"documentsDir:%@",documentsDir);
+    
+    NSError *error = nil;
+    
+    if ([filemgr fileExistsAtPath: [documentsDir stringByAppendingPathComponent:fileName] ] == YES) {
+        
+        NSLog (@"File exists, done");
+        
+    } else {
+        
+        NSLog (@"File not found, copying next.");
+        
+        if([filemgr copyItemAtPath:[[NSBundle mainBundle] pathForResource:fileName ofType:@""] toPath:[documentsDir stringByAppendingPathComponent:fileName] error:&error]){
+            
+            NSLog(@"File successfully copied to:%@",documentsDir);
+            
+        } else {
+            
+            NSLog(@"Error description - %@ \n", [error localizedDescription]);
+            NSLog(@"Error reason - %@", [error localizedFailureReason]);
+            
+        }
+        
+    }
+    
 }
 
 

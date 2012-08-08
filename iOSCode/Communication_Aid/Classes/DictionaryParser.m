@@ -31,7 +31,7 @@
 
 -(void) loadConfig {
     NSError ** error;
-    NSData* plistData = [NSPropertyListSerialization dataWithPropertyList:configFileData format:NSPropertyListOpenStepFormat options:NSPropertyListImmutable error:error];
+    //NSData* plistData = [NSPropertyListSerialization dataWithPropertyList:configFileData format:NSPropertyListOpenStepFormat options:NSPropertyListImmutable error:error];
     
     printf("printing the plist\n");
     //printf(plistData);
