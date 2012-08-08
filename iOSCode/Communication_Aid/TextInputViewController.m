@@ -16,6 +16,7 @@
 @synthesize charButtonRight;
 @synthesize charButtonDown;
 @synthesize messageText;
+@synthesize fliteController;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
@@ -27,6 +28,19 @@
     return self;
 }
 */
+
+- (FliteController *)fliteController {
+    if (fliteController == nil) {
+        fliteController = [[FliteController alloc] init]; // OpenEars instructions say to use this style of lazy accessor to instantiate the object
+        
+        // set parameters
+        self.fliteController.duration_stretch = 1.2;    // Change the speed
+//        self.fliteController.target_mean = 1.2;       // Change the pitch
+//        self.fliteController.target_stddev = 1.5;     // Change the variance
+    }
+    return fliteController;
+}
+
 
 - (id)initWithNavigator:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil navigator:(TreeNavigator *)navigator
 {
@@ -93,6 +107,7 @@
 	{
 		NSString* newMessage = [NSString stringWithFormat:@"%@%@", textView.text, newChar];
 		textView.text = newMessage;
+        [self.fliteController say:newMessage withVoice:@"cmu_us_awb8k"];
 	}
     
     for (int i=0; i < 4; i++) { // Must be set up diferently for multiple sizes
@@ -147,6 +162,7 @@
 
 
 - (void)dealloc {
+    [fliteController release];
 	[textView dealloc];
 	[charButtonLeft dealloc];
 	[charButtonUp dealloc];
