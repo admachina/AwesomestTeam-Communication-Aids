@@ -1,0 +1,9 @@
+it,it 
+the,the 
+eat,eat 
+drink,drink 
+sleep,sleep 
+play,play 
+no,no 
+stop,stop 
+don't,don't 
