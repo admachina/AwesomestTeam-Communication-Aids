@@ -20,6 +20,8 @@
 		98F2A376156C144800431E1D /* button_grey_background.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 98F2A375156C144800431E1D /* button_grey_background.PNG */; };
 		98F2A3D8156C17A100431E1D /* TextInputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98F2A3D6156C17A100431E1D /* TextInputViewController.m */; };
 		98F2A3D9156C17A100431E1D /* TextInputViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 98F2A3D7156C17A100431E1D /* TextInputViewController.xib */; };
+		B40C705915D2FE57009D70A4 /* XMLFromTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B40C705815D2FE57009D70A4 /* XMLFromTree.m */; };
+		B410FCF415D2F06400137CAB /* coreWordsDict.txt in Resources */ = {isa = PBXBuildFile; fileRef = B410FCF315D2F06400137CAB /* coreWordsDict.txt */; };
 		B468C3E415A4A8D6005B192D /* DictionaryParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B468C3E315A4A8D6005B192D /* DictionaryParser.m */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +46,9 @@
 		98F2A3D5156C17A100431E1D /* TextInputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextInputViewController.h; path = ../TextInputViewController.h; sourceTree = "<group>"; };
 		98F2A3D6156C17A100431E1D /* TextInputViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextInputViewController.m; path = ../TextInputViewController.m; sourceTree = "<group>"; };
 		98F2A3D7156C17A100431E1D /* TextInputViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextInputViewController.xib; sourceTree = "<group>"; };
+		B40C705715D2FE57009D70A4 /* XMLFromTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLFromTree.h; sourceTree = "<group>"; };
+		B40C705815D2FE57009D70A4 /* XMLFromTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLFromTree.m; sourceTree = "<group>"; };
+		B410FCF315D2F06400137CAB /* coreWordsDict.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coreWordsDict.txt; sourceTree = "<group>"; };
 		B468C3E215A4A8D6005B192D /* DictionaryParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictionaryParser.h; sourceTree = "<group>"; };
 		B468C3E315A4A8D6005B192D /* DictionaryParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DictionaryParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -75,6 +80,8 @@
 				14DF37F615A34EEA00424701 /* SelectionTree.m */,
 				1473829B15A4AF6C009AB9B7 /* TreeNavigator.h */,
 				1473829C15A4AF6C009AB9B7 /* TreeNavigator.m */,
+				B40C705715D2FE57009D70A4 /* XMLFromTree.h */,
+				B40C705815D2FE57009D70A4 /* XMLFromTree.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -91,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				987E6EB215B62674004DE229 /* dictionary.txt */,
+				B410FCF315D2F06400137CAB /* coreWordsDict.txt */,
 				98F2A375156C144800431E1D /* button_grey_background.PNG */,
 				98F2A373156C11A400431E1D /* joystick_cross_1.PNG */,
 				080E96DDFE201D6D7F000001 /* Classes */,
@@ -185,6 +193,7 @@
 				98F2A376156C144800431E1D /* button_grey_background.PNG in Resources */,
 				98F2A3D9156C17A100431E1D /* TextInputViewController.xib in Resources */,
 				987E6EB315B62674004DE229 /* dictionary.txt in Resources */,
+				B410FCF415D2F06400137CAB /* coreWordsDict.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,6 +210,7 @@
 				14DF37F715A34EEA00424701 /* SelectionTree.m in Sources */,
 				B468C3E415A4A8D6005B192D /* DictionaryParser.m in Sources */,
 				1473829D15A4AF6C009AB9B7 /* TreeNavigator.m in Sources */,
+				B40C705915D2FE57009D70A4 /* XMLFromTree.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

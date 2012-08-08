@@ -26,8 +26,9 @@
 
 -(void) loadConfig;
 
--(SelectionTree*) parse : (NSString*) dictionaryFileName;
+-(SelectionTree*) parse : (NSString*) dictionaryFileName : (NSString*) treeName;
 
 +(SelectionTree*) downNode;
++(SelectionTree*) goBackNode;
 
 @end
