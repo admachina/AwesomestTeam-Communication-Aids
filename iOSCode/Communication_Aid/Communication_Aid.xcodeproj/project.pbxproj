@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		144A4E2015D2F117001CDD9F /* SMXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 144A4E1F15D2F117001CDD9F /* SMXMLDocument.m */; };
+		144A4E2315D2F190001CDD9F /* defaultTree.xml in Resources */ = {isa = PBXBuildFile; fileRef = 144A4E2215D2F190001CDD9F /* defaultTree.xml */; };
+		144A4E2915D2F4BD001CDD9F /* XMLTreeCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 144A4E2815D2F4BC001CDD9F /* XMLTreeCreator.m */; };
 		1473829D15A4AF6C009AB9B7 /* TreeNavigator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1473829C15A4AF6C009AB9B7 /* TreeNavigator.m */; };
 		14DF37F715A34EEA00424701 /* SelectionTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DF37F615A34EEA00424701 /* SelectionTree.m */; };
 		1D3623260D0F684500981E51 /* Communication_AidAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* Communication_AidAppDelegate.m */; };
@@ -26,6 +29,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		144A4E1E15D2F117001CDD9F /* SMXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMLDocument.h; sourceTree = "<group>"; };
+		144A4E1F15D2F117001CDD9F /* SMXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMLDocument.m; sourceTree = "<group>"; };
+		144A4E2215D2F190001CDD9F /* defaultTree.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = defaultTree.xml; sourceTree = "<group>"; };
+		144A4E2715D2F4BC001CDD9F /* XMLTreeCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTreeCreator.h; sourceTree = "<group>"; };
+		144A4E2815D2F4BC001CDD9F /* XMLTreeCreator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLTreeCreator.m; sourceTree = "<group>"; };
 		1473829B15A4AF6C009AB9B7 /* TreeNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeNavigator.h; sourceTree = "<group>"; };
 		1473829C15A4AF6C009AB9B7 /* TreeNavigator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeNavigator.m; sourceTree = "<group>"; };
 		14DF37F515A34EEA00424701 /* SelectionTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionTree.h; sourceTree = "<group>"; };
@@ -70,6 +78,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				144A4E1E15D2F117001CDD9F /* SMXMLDocument.h */,
+				144A4E1F15D2F117001CDD9F /* SMXMLDocument.m */,
 				98F2A3D5156C17A100431E1D /* TextInputViewController.h */,
 				98F2A3D6156C17A100431E1D /* TextInputViewController.m */,
 				B468C3E215A4A8D6005B192D /* DictionaryParser.h */,
@@ -80,6 +90,8 @@
 				14DF37F615A34EEA00424701 /* SelectionTree.m */,
 				1473829B15A4AF6C009AB9B7 /* TreeNavigator.h */,
 				1473829C15A4AF6C009AB9B7 /* TreeNavigator.m */,
+				144A4E2715D2F4BC001CDD9F /* XMLTreeCreator.h */,
+				144A4E2815D2F4BC001CDD9F /* XMLTreeCreator.m */,
 				B40C705715D2FE57009D70A4 /* XMLFromTree.h */,
 				B40C705815D2FE57009D70A4 /* XMLFromTree.m */,
 			);
@@ -97,6 +109,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				144A4E2215D2F190001CDD9F /* defaultTree.xml */,
 				987E6EB215B62674004DE229 /* dictionary.txt */,
 				B410FCF315D2F06400137CAB /* coreWordsDict.txt */,
 				98F2A375156C144800431E1D /* button_grey_background.PNG */,
@@ -193,6 +206,7 @@
 				98F2A376156C144800431E1D /* button_grey_background.PNG in Resources */,
 				98F2A3D9156C17A100431E1D /* TextInputViewController.xib in Resources */,
 				987E6EB315B62674004DE229 /* dictionary.txt in Resources */,
+				144A4E2315D2F190001CDD9F /* defaultTree.xml in Resources */,
 				B410FCF415D2F06400137CAB /* coreWordsDict.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -210,6 +224,8 @@
 				14DF37F715A34EEA00424701 /* SelectionTree.m in Sources */,
 				B468C3E415A4A8D6005B192D /* DictionaryParser.m in Sources */,
 				1473829D15A4AF6C009AB9B7 /* TreeNavigator.m in Sources */,
+				144A4E2015D2F117001CDD9F /* SMXMLDocument.m in Sources */,
+				144A4E2915D2F4BD001CDD9F /* XMLTreeCreator.m in Sources */,
 				B40C705915D2FE57009D70A4 /* XMLFromTree.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

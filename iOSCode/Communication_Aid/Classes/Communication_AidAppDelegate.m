@@ -10,6 +10,7 @@
 #import "DictionaryParser.h"
 #import "SelectionTree.h"
 #import "TreeNavigator.h"
+#import "XMLTreeCreator.h"
 
 @implementation Communication_AidAppDelegate
 
@@ -29,7 +30,9 @@
     NSString* coreWordsTreeFile = @"coreWordsDict.txt";
     
     [self copyFileFromBundleToDocs : dictionaryFileName];
+    [self copyFileFromBundleToDocs:@"defaultTree.xml"];
     
+    //SelectionTree* tree = [XMLTreeCreator createTree:@"defaultTree.xml"];
     DictionaryParser* parser = [[DictionaryParser alloc] init];
     SelectionTree* basicTree = [parser parse:basicTreeFile:@"Basic"];
     SelectionTree* coreWordsTree = [parser parse:coreWordsTreeFile:@"Core"];
