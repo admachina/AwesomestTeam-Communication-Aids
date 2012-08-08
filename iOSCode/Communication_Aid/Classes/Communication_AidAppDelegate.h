@@ -17,5 +17,7 @@
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) TextInputViewController *textInputViewController;
 
+-(void) copyFileFromBundleToDocs : (NSString*) fileName;
+
 @end
 
