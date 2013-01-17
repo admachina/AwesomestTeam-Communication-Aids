@@ -1,0 +1,33 @@
+﻿body {
+}
+
+#drawingCanvas {
+    width: 100%;
+    height: 90%;
+    top: 10%;
+    position: absolute;
+}
+
+#save {
+    top: 5%;
+    position: absolute;
+    left: 5%;
+}
+
+#load {
+    top: 5%;
+    position: absolute;
+    right: 5%;
+}
+
+@media screen and (-ms-view-state: fullscreen-landscape) {
+}
+
+@media screen and (-ms-view-state: filled) {
+}
+
+@media screen and (-ms-view-state: snapped) {
+}
+
+@media screen and (-ms-view-state: fullscreen-portrait) {
+}

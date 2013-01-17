@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>App1</title>
+
+    <!-- WinJS references -->
+    <link href="//Microsoft.WinJS.1.0/css/ui-dark.css" rel="stylesheet" />
+    <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
+    <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>
+
+    <!-- App1 references -->
+    <link href="/css/default.css" rel="stylesheet" />
+    <script src="/js/model.js"></script>
+    <script src="/js/view.js"></script>
+    <script src="/js/file.js"></script>
+    <script src="/js/default.js"></script>
+    <script>
+        function save() {
+        }
+        function load() {
+            File.openFile().then(function (result) {
+                if (result !== null) {
+                    View.drawTree(Model.generateTreeFromXmlString(result));
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <canvas id="drawingCanvas"></canvas>
+    <button id="save" onclick="save()">Save</button>
+    <button id="load" onclick="load()">Load</button>
+</body>
+</html>
