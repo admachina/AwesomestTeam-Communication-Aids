@@ -61,8 +61,9 @@
     TextInputViewController *aTextInputViewController = [[TextInputViewController alloc] initWithNavigator:@"TextInputViewController" bundle:[NSBundle mainBundle] navigator:navigator];
 	[self setTextInputViewController:aTextInputViewController];
 	[aTextInputViewController release];
-	UIView *controllersView = [textInputViewController view];
-	[window addSubview:controllersView];
+//	UIView *controllersView = [textInputViewController view];
+    [window setRootViewController:textInputViewController];
+//	[window addSubview:controllersView];
     [self.window makeKeyAndVisible];
     
     return YES;

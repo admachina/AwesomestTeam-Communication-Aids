@@ -7,15 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TextInputViewController.h"
 
 @interface UIKeyInputExampleView : UIView <UIKeyInput> {
     NSMutableString *textStore;
-    TextInputViewController* textInputViewController;
+    SEL insertTextMethod;
+    UIViewController* viewController;
 }
 
 @property (nonatomic, retain) NSMutableString *textStore;
-@property (nonatomic, retain) TextInputViewController *textInputViewController;
+@property SEL insertTextMethod;
+@property (nonatomic, assign) UIViewController *viewController;
 
 - (void) addText:(NSString*) text;
 @end

@@ -6,18 +6,21 @@
 //
 
 #import "TextInputViewController.h"
+#import "CalibrationViewController.h"
 #import "TreeNavigator.h"
 #import "EditingView.h"
 
 @implementation TextInputViewController
 
 @synthesize textView;
+@synthesize calibViewController;
 @synthesize charButtonLeft;
 @synthesize charButtonUp;
 @synthesize charButtonRight;
 @synthesize charButtonDown;
 @synthesize messageText;
 @synthesize fliteController;
+@synthesize slt;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
@@ -31,29 +34,27 @@
 */
 
 - (FliteController *)fliteController {
-    if (fliteController == nil) {
-        fliteController = [[FliteController alloc] init]; // OpenEars instructions say to use this style of lazy accessor to instantiate the object
-        
-        // set parameters
-        self.fliteController.duration_stretch = 1.2;    // Change the speed
-//        self.fliteController.target_mean = 1.2;       // Change the pitch
-//        self.fliteController.target_stddev = 1.5;     // Change the variance
-    }
-    return fliteController;
+	if (fliteController == nil) {
+		fliteController = [[FliteController alloc] init];
+	}
+	return fliteController;
+}
+
+- (Slt *)slt {
+	if (slt == nil) {
+		slt = [[Slt alloc] init];
+	}
+	return slt;
 }
 
 
 - (id)initWithNavigator:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil navigator:(TreeNavigator *)navigator
 {
     self = [self initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil];
     internalNavigator = navigator;
     [self view];
-    [textView setTextInputViewController:self];
-    [textView becomeFirstResponder];
-    charButtonLeft.titleLabel.adjustsFontSizeToFitWidth = TRUE;
-    charButtonRight.titleLabel.adjustsFontSizeToFitWidth = TRUE;
-    charButtonUp.titleLabel.adjustsFontSizeToFitWidth = TRUE;
-    charButtonDown.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    
     // Set up initial view
     SelectionTree* treeRoot = [navigator currentTree];
     for (int i=0; i < 4; i++) { // Must be set up diferently for multiple sizes
@@ -82,31 +83,52 @@
     return self;
 }
 
-/*
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    // additional setup on custom editing text view in nib
+    [textView setInsertTextMethod:@selector(keyPress:)];
+    [textView setViewController:self];
+    [textView becomeFirstResponder];
+    
+    charButtonLeft.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButtonRight.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButtonUp.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButtonDown.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    
+    [calibViewController setTextInputViewController:self];
 }
-*/
+
 
 - (void) keyPress:(char) c
 {
-    if (c == 'q')
+    if (c == [calibViewController leftKeyChar])
     {
         [self setText:charButtonLeft];
     }
-    else if (c == 'e')
+    else if (c == [calibViewController upKeyChar])
     {
         [self setText:charButtonUp];
     }
-    else if (c == 'c')
+    else if (c == [calibViewController rightKeyChar])
     {
         [self setText:charButtonRight];
     }
-    else if (c == 'z')
+    else if (c == [calibViewController downKeyChar])
     {
         [self setText:charButtonDown];
     }
+}
+
+- (IBAction)calibrateJoystick:(id)sender {
+    [self.view addSubview:[calibViewController view]];
+}
+
+- (void) exitJoystickCalibration
+{
+    [[calibViewController view] removeFromSuperview];
+    [textView becomeFirstResponder];
 }
 
 - (IBAction)setText:(id)sender {
@@ -132,9 +154,8 @@
 	
 	if (newChar != nil && [newChar length] > 0)
 	{
-//		NSString* newMessage = [NSString stringWithFormat:@"%@%@", textView.text, newChar];
         [textView addText:[NSString stringWithFormat:@"%@", newChar]];
-        [self.fliteController say:[textView textStore] withVoice:@"cmu_us_awb8k"];
+        [self.fliteController say:[textView textStore] withVoice:self.slt];
 	}
     
     for (int i=0; i < 4; i++) { // Must be set up diferently for multiple sizes
@@ -185,7 +206,6 @@
 - (void)viewDidUnload {
     [textView release];
     textView = nil;
-//    [self setTextView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -200,7 +220,6 @@
 	[charButtonRight dealloc];
 	[charButtonDown dealloc];
 	[messageText dealloc];
-//    [textView release];
     [super dealloc];
 }
 

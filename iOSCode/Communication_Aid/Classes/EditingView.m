@@ -11,7 +11,8 @@
 @implementation UIKeyInputExampleView
 
 @synthesize textStore;
-@synthesize textInputViewController;
+@synthesize insertTextMethod;
+@synthesize viewController;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
@@ -66,8 +67,8 @@
 }
 
 - (void)insertText:(NSString *)theText {
-    if ([theText length] == 1)
-        [textInputViewController keyPress:[theText characterAtIndex:0]];
+    if ([theText length] == 1 && insertTextMethod != NULL)
+        [viewController performSelector:insertTextMethod withObject:[theText characterAtIndex:0]];
     
     //    [self.textStore appendString:theText];
     //    [self setNeedsDisplay];
