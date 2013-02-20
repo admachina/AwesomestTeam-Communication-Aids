@@ -185,6 +185,23 @@
                 break;
         }
     }
+
+    if ([[[charButtonDown titleLabel] text] compare:@"More"] == NSOrderedSame)
+    {
+        [charButtonDown setTitleColor:[UIColor colorWithRed:0.0 green:0.5 blue:0.0 alpha:1.0] forState:UIControlStateNormal];
+        [charButtonDown setTitleColor:[UIColor colorWithRed:0.0 green:0.5 blue:0.0 alpha:1.0] forState:UIControlStateHighlighted];
+    }
+    else if ([[[charButtonDown titleLabel] text] compare:@"Go Back"] == NSOrderedSame)
+    {
+        [charButtonDown setTitleColor:[UIColor colorWithRed:224.0/256.0 green:0.0 blue:0.0 alpha:1.0] forState:UIControlStateNormal];
+        [charButtonDown setTitleColor:[UIColor colorWithRed:224.0/256.0 green:0.0 blue:0.0 alpha:1.0] forState:UIControlStateHighlighted];
+    }
+    else
+    {
+        [charButtonDown setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [charButtonDown setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    }
+    
     [textView becomeFirstResponder];
 	
 }
