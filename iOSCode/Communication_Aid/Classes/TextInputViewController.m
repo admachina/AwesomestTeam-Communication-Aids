@@ -155,7 +155,7 @@
 	if (newChar != nil && [newChar length] > 0)
 	{
         [textView addText:[NSString stringWithFormat:@"%@", newChar]];
-        [self.fliteController say:[textView textStore] withVoice:self.slt];
+//        [self.fliteController say:[textView textStore] withVoice:self.slt];
 	}
     
     for (int i=0; i < 4; i++) { // Must be set up diferently for multiple sizes
@@ -200,6 +200,12 @@
     {
         [charButtonDown setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [charButtonDown setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    }
+    
+    if ([[[charButtonUp titleLabel] text] compare:@"Core"] == NSOrderedSame &&
+        [[textView textStore] length] > 0)
+    {
+        [self.fliteController say:[textView textStore] withVoice:self.slt];
     }
     
     [textView becomeFirstResponder];
