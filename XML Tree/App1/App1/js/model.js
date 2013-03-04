@@ -14,11 +14,12 @@
     }
 
     function generateTreeFromXmlString(xml) {
-        var root;
         var xmlParsed = new DOMParser().parseFromString(xml, "text/xml");
         for (var i = 0; i < xmlParsed.childNodes.length; i++) {
             if (xmlParsed.childNodes[i].nodeName === "Tree") {
-                return _generateTreeFromDomObject(xmlParsed.childNodes[i]);
+                var thisTree = _generateTreeFromDomObject(xmlParsed.childNodes[i]);
+                setTree(0, thisTree);
+                return thisTree;
             }
         }
     }
@@ -53,6 +54,10 @@
 
     function setTree(index, tree) {
         roots[index] = tree;
+    }
+
+    function getTree(index) {
+        return roots[index];
     }
 
     function generateTree(root) {
@@ -170,5 +175,6 @@
         generateTreeFromXmlString: generateTreeFromXmlString,
         tree: tree,
         setTree: setTree,
+        getTree: getTree,
     });
 })();

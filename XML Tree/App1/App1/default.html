@@ -14,9 +14,11 @@
     <script src="/js/model.js"></script>
     <script src="/js/view.js"></script>
     <script src="/js/file.js"></script>
+    <script src="/js/action.js"></script>
     <script src="/js/default.js"></script>
     <script>
         function save() {
+            File.saveFile(Model.generateXmlString(), "tree.xml");
         }
         function load() {
             File.openFile().then(function (result) {
@@ -25,10 +27,26 @@
                 }
             });
         }
+        function canvasMouseDown(eventInfo) {
+            var subtreeInfo = View.getSubtree(eventInfo.offsetX, eventInfo.offsetY);
+            if (subtreeInfo.tree instanceof Model.tree) {
+                Actions.setSelected(subtreeInfo.tree, eventInfo.offsetX, eventInfo.offsetY, subtreeInfo.parent, subtreeInfo.parentIndex);
+            }
+        }
+        function canvasMouseMove(eventInfo) {
+            Actions.moveTo(eventInfo.offsetX, eventInfo.offsetY);
+        }
+        function canvasMouseUp(eventInfo) {
+            Actions.drop(eventInfo.offsetX, eventInfo.offsetY);
+        }
+        function canvasMouseOut(eventInfo) {
+            Actions.reset();
+        }
+
     </script>
 </head>
 <body>
-    <canvas id="drawingCanvas"></canvas>
+    <canvas id="drawingCanvas" width="1920" height="1080" onmousedown="canvasMouseDown(event)" onmousemove="canvasMouseMove(event)" onmouseup="canvasMouseUp(event)" onmouseout="canvasMouseOut(event)"></canvas>
     <button id="save" onclick="save()">Save</button>
     <button id="load" onclick="load()">Load</button>
 </body>
