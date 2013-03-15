@@ -19,10 +19,10 @@
     NSString* filePath = [documentsDirectory stringByAppendingPathComponent:xmlFileNameInDocuments];
     NSData* fileData = [[[NSData alloc] initWithContentsOfFile:filePath] autorelease];
     
-    NSError *error;
+    NSError *error = nil;
     SMXMLDocument *document = [SMXMLDocument documentWithData:fileData error:&error];
     
-    if (error)
+    if ( error )
     {
         NSLog(@"Error while parsing the document: %@", error);
         return NULL;

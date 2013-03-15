@@ -25,24 +25,28 @@
     // Override point for customization after application launch.
     
     // Init data
-    NSString* configFileName = @"fakeFilePath";
+    //NSString* configFileName = @"fakeFilePath";
     NSString* basicTreeFile = @"dictionary.txt";
     NSString* coreWordsTreeFile = @"coreWordsDict.txt";
+    NSString* xmlFile = @"defaultTree.xml";
     
     [self copyFileFromBundleToDocs : basicTreeFile];
     [self copyFileFromBundleToDocs : coreWordsTreeFile];
-    [self copyFileFromBundleToDocs:@"defaultTree.xml"];
+    [self copyFileFromBundleToDocs:xmlFile];
     
     //SelectionTree* tree = [XMLTreeCreator createTree:@"defaultTree.xml"];
     DictionaryParser* parser = [[DictionaryParser alloc] init];
     SelectionTree* basicTree = [parser parse:basicTreeFile:@"Basic"];
     SelectionTree* coreWordsTree = [parser parse:coreWordsTreeFile:@"Core"];
     
+    SelectionTree* xmlParsedTree = [XMLTreeCreator createTree : xmlFile];
+    
     SelectionTree* mainMenu = [[SelectionTree alloc] init];
     [mainMenu setRoot:TRUE];
     
     [mainMenu addNode:basicTree];
     [mainMenu addNode:coreWordsTree];
+    [mainMenu addNode:xmlParsedTree];
     
     //Test code
     /*SelectionTree* tree = [[SelectionTree alloc]init : @"" : @""];
@@ -69,15 +73,16 @@
 }
 
 -(void)copyFileFromBundleToDocs:(NSString*)fileName {
-    
+    NSLog(@"Copying File to Docs: %@", fileName);
     NSFileManager *filemgr = [NSFileManager defaultManager];
     NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDir = [documentPaths objectAtIndex:0];
+    NSString* fullFilePath = [documentsDir stringByAppendingPathComponent:fileName];
     NSLog(@"documentsDir:%@",documentsDir);
     
     NSError *error = nil;
     
-    if ([filemgr fileExistsAtPath: [documentsDir stringByAppendingPathComponent:fileName] ] == YES) {
+    if ([filemgr fileExistsAtPath: fullFilePath ] == YES) {
         
         NSLog (@"File exists, done");
         
@@ -85,7 +90,7 @@
         
         NSLog (@"File not found, copying next.");
         
-        if([filemgr copyItemAtPath:[[NSBundle mainBundle] pathForResource:fileName ofType:@""] toPath:[documentsDir stringByAppendingPathComponent:fileName] error:&error]){
+        if([filemgr copyItemAtPath:[[NSBundle mainBundle] pathForResource:fileName ofType:@""] toPath:fullFilePath error:&error]){
             
             NSLog(@"File successfully copied to:%@",documentsDir);
             
