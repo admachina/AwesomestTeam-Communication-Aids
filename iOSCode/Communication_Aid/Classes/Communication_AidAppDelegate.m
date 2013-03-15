@@ -7,6 +7,7 @@
 
 #import "Communication_AidAppDelegate.h"
 #import "TextInputViewController.h"
+#import "ProfileViewController.h"
 #import "DictionaryParser.h"
 #import "SelectionTree.h"
 #import "TreeNavigator.h"
@@ -16,6 +17,7 @@
 
 @synthesize window;
 @synthesize textInputViewController;
+@synthesize profileViewController;
 
 #pragma mark -
 #pragma mark Application lifecycle
@@ -63,10 +65,17 @@
     
     // Init view
     TextInputViewController *aTextInputViewController = [[TextInputViewController alloc] initWithNavigator:@"TextInputViewController" bundle:[NSBundle mainBundle] navigator:navigator];
+    ProfileViewController* aProfileViewController = [[ProfileViewController alloc] initWithTextInputView:@"ProfileViewController" bundle:[NSBundle mainBundle] textInputViewController:aTextInputViewController];
+    
 	[self setTextInputViewController:aTextInputViewController];
+    [self setProfileViewController:aProfileViewController];
+    [aProfileViewController release];
 	[aTextInputViewController release];
-	UIView *controllersView = [textInputViewController view];
-	[window addSubview:controllersView];
+//	UIView *controllersView = [textInputViewController view];
+    //[window setRootViewController:textInputViewController];
+    [window setRootViewController:profileViewController];
+
+    //	[window addSubview:controllersView];
     [self.window makeKeyAndVisible];
     
     return YES;
@@ -140,6 +149,7 @@
 
 - (void)dealloc {
 	[textInputViewController release];
+    [profileViewController release];
     [window release];
     [super dealloc];
 }
