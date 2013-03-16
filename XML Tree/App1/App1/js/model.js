@@ -122,11 +122,11 @@
 
             set: function isRootSet(value) {
                 if(value === true){
-                    isRootSet("TRUE");
+                    this.isRootSet = "TRUE";
                 }
 
                 if(value === false){
-                    isRootSet("FALSE");
+                    this.isRootSet = "FALSE";
                 }
 
                 this._isRoot = value;
@@ -140,14 +140,14 @@
 
             set: function isGoUpSet(value) {
                 if(value === true){
-                    isGoUpSet("TRUE");
+                    this.isGoUp = "TRUE";
                 }
 
                 if(value === false){
-                    isGoUpSet("FALSE");
+                    this.isGoUp = "FALSE";
                 }
 
-                this._isGoUpSet = value;
+                this._isGoUp = value;
             }
         },
 

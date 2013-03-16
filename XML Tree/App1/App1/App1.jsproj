@@ -53,6 +53,7 @@
     <AppxManifest Include="package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="css\modaldbox.css" />
     <Content Include="default.html" />
     <Content Include="images\logo.png" />
     <Content Include="images\smalllogo.png" />
@@ -62,7 +63,9 @@
     <Content Include="js\default.js" />
     <Content Include="css\default.css" />
     <Content Include="js\file.js" />
+    <Content Include="js\modaldbox.js" />
     <Content Include="js\model.js" />
+    <Content Include="js\base.js" />
     <Content Include="js\view.js" />
     <None Include="App1_TemporaryKey.pfx" />
   </ItemGroup>

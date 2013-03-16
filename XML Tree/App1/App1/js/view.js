@@ -15,8 +15,8 @@
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
         context = canvas.getContext("2d");
-        context.strokeStyle = "#FFFFFF";
-        context.fillStyle = "#FFFFFF";
+        context.strokeStyle = "#000000";
+        context.fillStyle = "#000000";
         context.translate(0.5, 0.5);
         context.font = "14px sans-serif";
     }

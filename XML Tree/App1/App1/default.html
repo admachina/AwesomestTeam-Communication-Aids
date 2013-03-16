@@ -5,29 +5,33 @@
     <title>App1</title>
 
     <!-- WinJS references -->
-    <link href="//Microsoft.WinJS.1.0/css/ui-dark.css" rel="stylesheet" />
+    <!--<link href="//Microsoft.WinJS.1.0/css/ui-dark.css" rel="stylesheet" />
     <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
-    <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>
+    <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>-->
 
     <!-- App1 references -->
-    <link href="/css/default.css" rel="stylesheet" />
-    <script src="/js/model.js"></script>
-    <script src="/js/view.js"></script>
-    <script src="/js/file.js"></script>
-    <script src="/js/action.js"></script>
-    <script src="/js/default.js"></script>
+    <link href="./css/default.css" rel="stylesheet" />
+    <link href="./css/modaldbox.css" rel="stylesheet" />
+    <script src="./js/base.js"></script>
+    <script src="./js/modaldbox.js"></script>
+    <script src="./js/model.js"></script>
+    <script src="./js/view.js"></script>
+    <script src="./js/file.js"></script>
+    <script src="./js/action.js"></script>
+    <!--<script src="./js/default.js"></script>-->
     <script>
         var moved = false;
         var out = false;
         function save() {
-            File.saveFile(Model.generateXmlString(), "tree.xml");
+            //File.saveFile(Model.generateXmlString(), "tree.xml");
         }
         function load() {
-            File.openFile().then(function (result) {
+            /*File.openFile().then(function (result) {
                 if (result !== null) {
                     View.drawTree(Model.generateTreeFromXmlString(result));
                 }
-            });
+            });*/
+            View.drawTree(Model.generateTreeFromXmlString("<Tree>\r\n    <DisplayValue></DisplayValue>\r\n    <PrintValue></PrintValue>\r\n    <IsRoot>TRUE</IsRoot>\r\n    <IsGoUp>FALSE</IsGoUp>\r\n    <Children>\r\n        <Tree>\r\n            <DisplayValue>A</DisplayValue>\r\n            <PrintValue>A</PrintValue>\r\n            <IsRoot>FALSE</IsRoot>\r\n            <IsGoUp>FALSE</IsGoUp>\r\n            <Children></Children>\r\n        </Tree>\r\n        <Tree>\r\n            <DisplayValue>B</DisplayValue>\r\n            <PrintValue>B</PrintValue>\r\n            <IsRoot>FALSE</IsRoot>\r\n            <IsGoUp>FALSE</IsGoUp>\r\n            <Children></Children>\r\n        </Tree>\r\n        <Tree>\r\n            <DisplayValue>C</DisplayValue>\r\n            <PrintValue>C</PrintValue>\r\n            <IsRoot>FALSE</IsRoot>\r\n            <IsGoUp>FALSE</IsGoUp>\r\n            <Children></Children>\r\n        </Tree>\r\n        <Tree>\r\n            <DisplayValue>More...</DisplayValue>\r\n            <PrintValue></PrintValue>\r\n            <IsRoot>FALSE</IsRoot>\r\n            <IsGoUp>FALSE</IsGoUp>\r\n            <Children>\r\n                <Tree>\r\n                    <DisplayValue>D</DisplayValue>\r\n                    <PrintValue>D</PrintValue>\r\n                    <IsRoot>FALSE</IsRoot>\r\n                    <IsGoUp>FALSE</IsGoUp>\r\n                    <Children></Children>\r\n                </Tree>\r\n                <Tree>\r\n                    <DisplayValue>E</DisplayValue>\r\n                    <PrintValue>E</PrintValue>\r\n                    <IsRoot>FALSE</IsRoot>\r\n                    <IsGoUp>FALSE</IsGoUp>\r\n                    <Children></Children>\r\n                </Tree>\r\n                <Tree>\r\n                    <DisplayValue>F</DisplayValue>\r\n                    <PrintValue>F</PrintValue>\r\n                    <IsRoot>FALSE</IsRoot>\r\n                    <IsGoUp>FALSE</IsGoUp>\r\n                    <Children></Children>\r\n                </Tree>\r\n                <Tree>\r\n                    <DisplayValue>More...</DisplayValue>\r\n                    <PrintValue></PrintValue>\r\n                    <IsRoot>FALSE</IsRoot>\r\n                    <IsGoUp>FALSE</IsGoUp>\r\n                    <Children>\r\n                        <Tree>\r\n                            <DisplayValue>G</DisplayValue>\r\n                            <PrintValue>G</PrintValue>\r\n                            <IsRoot>FALSE</IsRoot>\r\n                            <IsGoUp>FALSE</IsGoUp>\r\n                            <Children></Children>\r\n                        </Tree>\r\n                        <Tree>\r\n                            <DisplayValue>H</DisplayValue>\r\n                            <PrintValue>H</PrintValue>\r\n                            <IsRoot>FALSE</IsRoot>\r\n                            <IsGoUp>FALSE</IsGoUp>\r\n                            <Children></Children>\r\n                        </Tree>\r\n                        <Tree>\r\n                            <DisplayValue>I</DisplayValue>\r\n                            <PrintValue>I</PrintValue>\r\n                            <IsRoot>FALSE</IsRoot>\r\n                            <IsGoUp>FALSE</IsGoUp>\r\n                            <Children></Children>\r\n                        </Tree>\r\n                        <Tree>\r\n                            <DisplayValue>GoUp</DisplayValue>\r\n                            <PrintValue></PrintValue>\r\n                            <IsRoot>FALSE</IsRoot>\r\n                            <IsGoUp>TRUE</IsGoUp>\r\n                            <Children></Children>\r\n                        </Tree>\r\n                    </Children>\r\n                </Tree>\r\n            </Children>\r\n        </Tree>\r\n    </Children>\r\n</Tree>"));
         }
         function canvasMouseDown(eventInfo) {
             moved = false;
@@ -53,17 +57,31 @@
         function canvasMouseClick(eventInfo) {
             if (moved || out) return;
 
-            var popup = new Windows.UI.Popups.PopupMenu();
-            popup.commands.append(new Windows.UI.Popups.UICommand("Text"));
-            popup.showAsync();
+            var subtree = View.getSubtree(eventInfo.offsetX, eventInfo.offsetY);
+            if (subtree.tree instanceof Model.tree) {
+                Actions.changeNode(subtree.tree);
+            }
+        }
 
-
-            //window.prompt("Add Which Letter?", "A");
+        function start() {
+            View.initView();
+            View.clearCanvas();
         }
 
     </script>
 </head>
-<body>
+<body onload="start();initmb();">
+    <div id="options" class="dialog">
+        <div style="text-align:center"><span id="txt">What do you want to do?</span><br>
+            <button onclick="hm('options');addChild()">Add Child</button>
+            <button onclick="hm('options');rename()">Rename</button>
+            <button onclick="hm('options');setRoot()">Set as Root</button>
+            <button onclick="hm('options');setGoBack()">Set to Go Up a Menu</button>
+            <button onclick="hm('options');clearSettings()">Clear Advanced Settings</button>
+            <button onclick="hm('options');cancel()">Cancel</button>
+        </div>
+    </div>
+
     <canvas id="drawingCanvas" width="1920" height="1080" onmousedown="canvasMouseDown(event)" onmousemove="canvasMouseMove(event)" onmouseup="canvasMouseUp(event)" onmouseout="canvasMouseOut(event)" onclick="canvasMouseClick(event)"></canvas>
     <button id="save" onclick="save()">Save</button>
     <button id="load" onclick="load()">Load</button>
