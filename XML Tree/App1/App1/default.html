@@ -17,6 +17,8 @@
     <script src="/js/action.js"></script>
     <script src="/js/default.js"></script>
     <script>
+        var moved = false;
+        var out = false;
         function save() {
             File.saveFile(Model.generateXmlString(), "tree.xml");
         }
@@ -28,25 +30,41 @@
             });
         }
         function canvasMouseDown(eventInfo) {
+            moved = false;
+            out = false;
             var subtreeInfo = View.getSubtree(eventInfo.offsetX, eventInfo.offsetY);
             if (subtreeInfo.tree instanceof Model.tree) {
                 Actions.setSelected(subtreeInfo.tree, eventInfo.offsetX, eventInfo.offsetY, subtreeInfo.parent, subtreeInfo.parentIndex);
             }
         }
         function canvasMouseMove(eventInfo) {
+            moved = true;
             Actions.moveTo(eventInfo.offsetX, eventInfo.offsetY);
         }
         function canvasMouseUp(eventInfo) {
-            Actions.drop(eventInfo.offsetX, eventInfo.offsetY);
+            if (moved && !out) Actions.drop(eventInfo.offsetX, eventInfo.offsetY);
+            if (!moved) Actions.reset();
         }
         function canvasMouseOut(eventInfo) {
+            out = true;
+            moved = true;
             Actions.reset();
+        }
+        function canvasMouseClick(eventInfo) {
+            if (moved || out) return;
+
+            var popup = new Windows.UI.Popups.PopupMenu();
+            popup.commands.append(new Windows.UI.Popups.UICommand("Text"));
+            popup.showAsync();
+
+
+            //window.prompt("Add Which Letter?", "A");
         }
 
     </script>
 </head>
 <body>
-    <canvas id="drawingCanvas" width="1920" height="1080" onmousedown="canvasMouseDown(event)" onmousemove="canvasMouseMove(event)" onmouseup="canvasMouseUp(event)" onmouseout="canvasMouseOut(event)"></canvas>
+    <canvas id="drawingCanvas" width="1920" height="1080" onmousedown="canvasMouseDown(event)" onmousemove="canvasMouseMove(event)" onmouseup="canvasMouseUp(event)" onmouseout="canvasMouseOut(event)" onclick="canvasMouseClick(event)"></canvas>
     <button id="save" onclick="save()">Save</button>
     <button id="load" onclick="load()">Load</button>
 </body>
