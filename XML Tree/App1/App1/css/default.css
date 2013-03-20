@@ -8,16 +8,26 @@
     position: absolute;
 }
 
-#save {
+#login, #logout {
     top: 5%;
     position: absolute;
     left: 5%;
 }
 
-#load {
+#choosetree {
     top: 5%;
     position: absolute;
     right: 5%;
+}
+
+#savetree {
+    top: 5%;
+    position: absolute;
+    right: 10%;
+}
+
+.invisibleButton {
+    visibility: hidden;
 }
 
 @media screen and (-ms-view-state: fullscreen-landscape) {
