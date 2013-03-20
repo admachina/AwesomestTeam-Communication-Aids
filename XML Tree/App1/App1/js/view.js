@@ -4,11 +4,12 @@
     var canvas = null;
     var context = null;
 
-    var boxWidth = 60;
-    var boxHeight = 30;
-    var boxPadding = 5;
-    var boxGapX = 10;
-    var boxGapY = 8;
+    var boxWidth = 30;
+    var boxWidth1c = 7;
+    var boxHeight = 20;
+    var boxPadding = 4;
+    var boxGapX = 8;
+    var boxGapY = 6;
 
     function initView() {
         canvas = document.getElementById("drawingCanvas");
@@ -18,7 +19,7 @@
         context.strokeStyle = "#000000";
         context.fillStyle = "#000000";
         context.translate(0.5, 0.5);
-        context.font = "14px sans-serif";
+        context.font = "10px sans-serif";
     }
 
     function clearCanvas() {
@@ -52,7 +53,7 @@
         var right;
 
         if (rootxNextLevel.length === 0) {
-            _drawBox(leftBound, rooty, tree.printValue);
+            _drawBox(leftBound, rooty, tree.displayValue);
             rootx = leftBound + boxWidth / 2;
             right = leftBound + boxWidth + boxGapX;
         } else {

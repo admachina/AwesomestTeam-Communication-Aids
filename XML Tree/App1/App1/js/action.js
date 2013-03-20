@@ -126,7 +126,7 @@ function setRoot() {
     Actions.reset();
 };
 
-function setIsGoBack() {
+function setGoBack() {
     treeToChange.isGoUp = true;
 
     treeToChange.printValue = "";
