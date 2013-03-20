@@ -81,6 +81,19 @@ var tempIndex;
         sm('options', 500, 75);
     }
 
+    function clear() {
+        treeToChange = null;
+        tempx = null;
+        tempy = null;
+        tempParent = null;
+        tempIndex = null;
+        selectedTree = null;
+        parent = null;
+        currentX = null;
+        currentY = null;
+        index = null;
+    }
+
     WinJS.Namespace.define("Actions",
         {
             setSelected: setSelected,
@@ -88,6 +101,7 @@ var tempIndex;
             reset: reset,
             drop: drop,
             changeNode: changeNode,
+            clear: clear,
         }
     );
 })();

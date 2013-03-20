@@ -8,9 +8,9 @@ function pageWidth() { return window.innerWidth != null ? window.innerWidth : do
 function pageHeight() { return window.innerHeight != null ? window.innerHeight : document.documentElement && document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body != null ? document.body.clientHeight : null; }
 function posLeft() { return typeof window.pageXOffset != 'undefined' ? window.pageXOffset : document.documentElement && document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ? document.body.scrollLeft : 0; }
 function posTop() { return typeof window.pageYOffset != 'undefined' ? window.pageYOffset : document.documentElement && document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ? document.body.scrollTop : 0; }
-function $(x) { return document.getElementById(x); }
-function scrollFix() { var obol = $('ol'); obol.style.top = posTop() + 'px'; obol.style.left = posLeft() + 'px' }
-function sizeFix() { var obol = $('ol'); obol.style.height = pageHeight() + 'px'; obol.style.width = pageWidth() + 'px'; }
+//function $(x) { return document.getElementById(x); }
+function scrollFix() { var obol = $('#ol')[0]; obol.style.top = posTop() + 'px'; obol.style.left = posLeft() + 'px' }
+function sizeFix() { var obol = $('#ol')[0]; obol.style.height = pageHeight() + 'px'; obol.style.width = pageWidth() + 'px'; }
 function kp(e) { ky = e ? e.which : event.keyCode; if (ky == 88 || ky == 120) hm(); return false }
 function inf(h) {
     tag = document.getElementsByTagName('select');
@@ -29,13 +29,13 @@ function inf(h) {
     for (i = tag.length - 1; i >= 0; i--) tag[i].style.visibility = h;
     if ('hidden' === h)
     {
-        tag = $('mbox').getElementsByTagName('input');
+        tag = $('#mbox')[0].getElementsByTagName('input');
         for (i = tag.length - 1; i >= 0; i--)
             tag[i].style.visibility = 'visible';
-        tag = $('mbox').getElementsByTagName('textarea');
+        tag = $('#mbox')[0].getElementsByTagName('textarea');
         for (i = tag.length - 1; i >= 0; i--)
             tag[i].style.visibility = 'visible';
-        tag = $('mbox').getElementsByTagName('select');
+        tag = $('#mbox')[0].getElementsByTagName('select');
         for (i = tag.length - 1; i >= 0; i--)
             tag[i].style.visibility = 'visible';
     }
@@ -44,9 +44,9 @@ function sm(obl, wd, ht) {
     var h = 'hidden';
     var b = 'block';
     var p = 'px';
-    var obol = $('ol');
-    var obbxd = $('mbd');
-    obbxd.innerHTML = $(obl).innerHTML;
+    var obol = $('#ol')[0];
+    var obbxd = $('#mbd')[0];
+    obbxd.innerHTML = $("#" + obl)[0].innerHTML;
     obol.style.height = pageHeight() + p;
     obol.style.width = pageWidth() + p;
     obol.style.top = posTop() + p;
@@ -54,7 +54,7 @@ function sm(obl, wd, ht) {
     obol.style.display = b;
     var tp = posTop() + ((pageHeight() - ht) / 2) - 12;
     var lt = posLeft() + ((pageWidth() - wd) / 2) - 12;
-    var obbx = $('mbox');
+    var obbx = $('#mbox')[0];
     obbx.style.top = (tp < 0 ? 0 : tp) + p;
     obbx.style.left = (lt < 0 ? 0 : lt) + p;
     obbx.style.width = wd + p;
@@ -67,8 +67,8 @@ function hm()
 {
     var v = 'visible';
     var n = 'none';
-    $('ol').style.display = n;
-    $('mbox').style.display = n;
+    $('#ol')[0].style.display = n;
+    $('#mbox')[0].style.display = n;
     inf(v);
     document.onkeypress = '';
 }

@@ -20,6 +20,10 @@
     right: 5%;
 }
 
+.invisibleButton {
+    visibility: hidden;
+}
+
 @media screen and (-ms-view-state: fullscreen-landscape) {
 }
 

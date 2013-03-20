@@ -3,8 +3,13 @@
 
     var roots = [];
 
+    function removeTrees() {
+        roots = [];
+    }
+
     function generateXmlString() {
-        var string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        //var string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        var string = "";
 
         for (var i = 0; i < roots.length; i++) {
             string += generateTree(roots[i]);
@@ -176,5 +181,6 @@
         tree: tree,
         setTree: setTree,
         getTree: getTree,
+        removeTrees: removeTrees,
     });
 })();
