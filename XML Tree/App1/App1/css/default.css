@@ -23,7 +23,13 @@
 #savetree {
     top: 5%;
     position: absolute;
-    right: 10%;
+    right: 15%;
+}
+
+#adduser {
+    top: 5%;
+    position: absolute;
+    right: 25%;
 }
 
 .invisibleButton {

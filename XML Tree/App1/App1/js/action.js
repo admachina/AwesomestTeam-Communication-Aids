@@ -73,6 +73,7 @@ var tempIndex;
     }
 
     function changeNode(tree) {
+        $("#mbd").empty();
         treeToChange = tree;
         tempx = originalX;
         tempy = originalY;

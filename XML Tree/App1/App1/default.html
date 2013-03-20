@@ -90,6 +90,7 @@
             $("#logout").removeClass("invisibleButton");
             $("#login").addClass("invisibleButton");
             $("#choosetree").removeClass("invisibleButton");
+            $("#adduser").removeClass("invisibleButton");
             confirmDropdownSelection = null;
         }
 
@@ -120,6 +121,7 @@
             $("#login").removeClass("invisibleButton");
             $("#choosetree").addClass("invisibleButton");
             $("#savetree").addClass("invisibleButton");
+            $("#adduser").addClass("invisibleButton");
         }
 
         function savetree() {
@@ -133,6 +135,17 @@
                 type: "POST",
                 headers: {
                     "Content-Type": "text/json",
+                },
+            });
+        }
+
+        function adduser() {
+            var name = window.prompt("New User's Name", "Alan");
+            jQuery.ajax({
+                dataType: "json",
+                url: "http://commaid-1.cloudapp.net:8000/addProfile/" + currentTherapist + "/" + name,
+                success: function loadXmlSuccess(xmlData) {
+                    alert("User Created Successfully");
                 },
             });
         }
@@ -202,5 +215,6 @@
     <button id="savetree" onclick="savetree()" class="invisibleButton">Save</button>
     <button id="choosetree" onclick="choosetree()" class="invisibleButton">Select User</button>
     <button id="logout" onclick="logout()" class="invisibleButton">Logout</button>
+    <button id="adduser" onclick="adduser()" class="invisibleButton">Add User</button>
 </body>
 </html>

@@ -180,12 +180,17 @@ namespace MvcApplication1.Controllers
         public void addEmptyProfile(string therapist, string name)
         {
             string sqlitePath = rootPath + therapist + "\\profiles.sqlite";
+            
 
             var conn = new SQLiteConnection("Data Source=" + sqlitePath + ";");
             conn.Open();
             var transaction = conn.BeginTransaction();
             var maxCommand = new SQLiteCommand("select max(profile_id) from profiles", conn, transaction);
             var result = maxCommand.ExecuteScalar();
+            if (result == DBNull.Value)
+            {
+                result = (long)0;
+            }
             long profileNum = (long)result + 1;
 
             var xmlPath = therapist + "\\" + profileNum + "start.xml";
