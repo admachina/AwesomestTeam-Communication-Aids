@@ -468,9 +468,10 @@
 
         [self sendEmail :subject : bodyText];
         
-    } else if ( [string compare: @"#!Calibrate" ] == NSOrderedSame) {
+    } else if ( [string compare: @"#!Speak" ] == NSOrderedSame) {
         
-        [self calibrateJoystick: (id)NULL];
+        //[self calibrateJoystick: (id)NULL];
+        [self.fliteController say:[textView textStore] withVoice:self.slt];
     } else if ( [string compare:@"#!Export" ] == NSOrderedSame ) {
         
         [self exportData];
