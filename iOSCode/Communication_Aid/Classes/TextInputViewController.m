@@ -67,7 +67,7 @@
     profile = [aProfile retain];
     int num_inputs = [profile dimensions];
     calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil num_inputs:num_inputs];
-    calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil];
+//    calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil];
     emailView = [[EmailViewController alloc] init];
     internalNavigator = navigator;
     [self view];
@@ -261,18 +261,20 @@
 {
     bool isLeaf = [isLeafStr compare:@"yes"] == NSOrderedSame;
     
-    if ([[[charButtonDown titleLabel] text] compare:@"Go Back"] == NSOrderedSame)
+    if ([[[button titleLabel] text] compare:@"Go Back"] == NSOrderedSame ||
+        [[[button titleLabel] text] compare:@"Go back"] == NSOrderedSame)
     {
-        [charButtonDown setTitle:@"GO BACK" forState:UIControlStateNormal];
+        [button setTitle:@"GO BACK" forState:UIControlStateNormal];
         
         [button setTitleColor:[UIColor colorWithRed:232.0/256.0 green:0.0 blue:0.0 alpha:1.0] forState:UIControlStateNormal];
         [button setTitleColor:[UIColor colorWithRed:232.0/256.0 green:0.0 blue:0.0 alpha:1.0] forState:UIControlStateHighlighted];
     }
     else if (!isLeaf)
     {
-        if ([[[charButtonDown titleLabel] text] compare:@"More"] == NSOrderedSame)
+        if ([[[button titleLabel] text] compare:@"More"] == NSOrderedSame ||
+            [[[button titleLabel] text] compare:@"More..."] == NSOrderedSame)
         {
-            [charButtonDown setTitle:@"MORE" forState:UIControlStateNormal];
+            [button setTitle:@"MORE" forState:UIControlStateNormal];
         }
         
         [button setTitleColor:[UIColor colorWithRed:67.0/255.0 green:161.0/255.0 blue:41.0/255.0 alpha:1.0] forState:UIControlStateNormal];
