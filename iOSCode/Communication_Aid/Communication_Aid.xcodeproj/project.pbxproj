@@ -25,6 +25,7 @@
 		62660A1A16DB1B5B00587D0B /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 62660A1916DB1B5B00587D0B /* Profile.m */; };
 		627BDBCB16FB201800B253FB /* 2-tree.xml in Resources */ = {isa = PBXBuildFile; fileRef = 627BDBC916FB201800B253FB /* 2-tree.xml */; };
 		627BDBCC16FB201800B253FB /* 8-tree.xml in Resources */ = {isa = PBXBuildFile; fileRef = 627BDBCA16FB201800B253FB /* 8-tree.xml */; };
+		627BDBCF16FB306B00B253FB /* FileUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 627BDBCE16FB306B00B253FB /* FileUploader.m */; };
 		62BFE8ED16FA1D5300A43A45 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62BFE8EC16FA1D5300A43A45 /* CFNetwork.framework */; };
 		62DC739316E0EF250082BCDF /* profiles.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 62DC739216E0EF250082BCDF /* profiles.sqlite */; };
 		62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DC739616E0F68F0082BCDF /* libsqlite3.dylib */; };
@@ -86,6 +87,8 @@
 		62660A1916DB1B5B00587D0B /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
 		627BDBC916FB201800B253FB /* 2-tree.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "2-tree.xml"; sourceTree = "<group>"; };
 		627BDBCA16FB201800B253FB /* 8-tree.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "8-tree.xml"; sourceTree = "<group>"; };
+		627BDBCD16FB306A00B253FB /* FileUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUploader.h; sourceTree = "<group>"; };
+		627BDBCE16FB306B00B253FB /* FileUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUploader.m; sourceTree = "<group>"; };
 		62BFE8EC16FA1D5300A43A45 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		62DC739216E0EF250082BCDF /* profiles.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = profiles.sqlite; sourceTree = "<group>"; };
 		62DC739616E0F68F0082BCDF /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
@@ -170,6 +173,8 @@
 				982A76DC15D3E17F00D89C0E /* EditingView.m */,
 				62660A1316DB088500587D0B /* ProfileViewController.h */,
 				62660A1416DB088500587D0B /* ProfileViewController.m */,
+				627BDBCD16FB306A00B253FB /* FileUploader.h */,
+				627BDBCE16FB306B00B253FB /* FileUploader.m */,
 				62660A1516DB088500587D0B /* ProfileViewController.xib */,
 				62660A1816DB1B5B00587D0B /* Profile.h */,
 				62660A1916DB1B5B00587D0B /* Profile.m */,
@@ -371,6 +376,7 @@
 				98B95BBB16869704002424BC /* CalibrationViewController.m in Sources */,
 				62660A1616DB088500587D0B /* ProfileViewController.m in Sources */,
 				62660A1A16DB1B5B00587D0B /* Profile.m in Sources */,
+				627BDBCF16FB306B00B253FB /* FileUploader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
