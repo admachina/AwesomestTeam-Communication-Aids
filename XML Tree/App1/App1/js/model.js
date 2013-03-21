@@ -3,8 +3,13 @@
 
     var roots = [];
 
+    function removeTrees() {
+        roots = [];
+    }
+
     function generateXmlString() {
-        var string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        //var string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        var string = "";
 
         for (var i = 0; i < roots.length; i++) {
             string += generateTree(roots[i]);
@@ -122,11 +127,11 @@
 
             set: function isRootSet(value) {
                 if(value === true){
-                    isRootSet("TRUE");
+                    this.isRootSet = "TRUE";
                 }
 
                 if(value === false){
-                    isRootSet("FALSE");
+                    this.isRootSet = "FALSE";
                 }
 
                 this._isRoot = value;
@@ -140,14 +145,14 @@
 
             set: function isGoUpSet(value) {
                 if(value === true){
-                    isGoUpSet("TRUE");
+                    this.isGoUp = "TRUE";
                 }
 
                 if(value === false){
-                    isGoUpSet("FALSE");
+                    this.isGoUp = "FALSE";
                 }
 
-                this._isGoUpSet = value;
+                this._isGoUp = value;
             }
         },
 
@@ -176,5 +181,6 @@
         tree: tree,
         setTree: setTree,
         getTree: getTree,
+        removeTrees: removeTrees,
     });
 })();

@@ -5,30 +5,151 @@
     <title>App1</title>
 
     <!-- WinJS references -->
-    <link href="//Microsoft.WinJS.1.0/css/ui-dark.css" rel="stylesheet" />
+    <!--<link href="//Microsoft.WinJS.1.0/css/ui-dark.css" rel="stylesheet" />
     <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
-    <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>
+    <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>-->
 
     <!-- App1 references -->
-    <link href="/css/default.css" rel="stylesheet" />
-    <script src="/js/model.js"></script>
-    <script src="/js/view.js"></script>
-    <script src="/js/file.js"></script>
-    <script src="/js/action.js"></script>
-    <script src="/js/default.js"></script>
+    <link href="./css/default.css" rel="stylesheet" />
+    <link href="./css/modaldbox.css" rel="stylesheet" />
+    <script src="./js/base.js"></script>
+    <script src="./js/jquery-1.9.1.js"></script>
+    <script src="./js/modaldbox.js"></script>
+    <script src="./js/model.js"></script>
+    <script src="./js/view.js"></script>
+    <script src="./js/file.js"></script>
+    <script src="./js/action.js"></script>
+    <!--<script src="./js/default.js"></script>-->
     <script>
         var moved = false;
         var out = false;
-        function save() {
-            File.saveFile(Model.generateXmlString(), "tree.xml");
-        }
-        function load() {
-            File.openFile().then(function (result) {
-                if (result !== null) {
-                    View.drawTree(Model.generateTreeFromXmlString(result));
-                }
+
+        var currentTherapist = null;
+        var currentProfileId = null;
+
+        var confirmDropdownSelection = null;
+
+        function login() {
+            $("#mbd").empty();
+            jQuery.ajax({
+                dataType: "json",
+                url: "http://commaid-1.cloudapp.net:8000/therapists",
+                success: function loadTherapistListSuccess(therapists) {
+                    $("#dropdowntxt").text("Select Therapist Name");
+
+                    $("option").remove();
+                    for (var i = 0; i < therapists.length; i++) {
+                        //$("#dropdownbox")[0].innerHTML += "<option value=" + therapists[i] + (i == 0 ? " selected" : "") + ">" + therapists[i] + "</option>";
+                        var newObj = document.createElement("option");
+                        newObj.setAttribute("value", therapists[i]);
+                        newObj.innerText = therapists[i];
+                        $("#dropdownbox").append(newObj);
+                    }
+
+                    confirmDropdownSelection = confirmTherapist;
+
+                    sm("dropdown", 300, 70);
+                },
+                type: "GET",
             });
         }
+
+        function choosetree() {
+            $("#mbd").empty();
+            if (currentTherapist === null) {
+                alert("Must log in as therapist first");
+            } else {
+                jQuery.ajax({
+                    dataType: "json",
+                    url: "http://commaid-1.cloudapp.net:8000/therapists/" + currentTherapist,
+                    success: function loadProfileListSuccess(profiles) {
+                        $("#dropdowntxt").text("Select User Name");
+                        //alert($("#dropdownbox")[0].innerHTML);
+                        $("option").remove();
+                        //alert($("#dropdownbox")[0].innerHTML);
+                        for (var i = 0; i < profiles.length; i++) {
+                            //alert($("#dropdownbox")[0].innerHTML);
+                            //alert(profiles[i].name);
+                            //$("#dropdownbox")[0].innerHTML += "<option value=" + profiles[i].id + (i == 0 ? " selected" : "") + ">" + profiles[i].name + "</option>";
+                            var newObj = document.createElement("option");
+                            newObj.setAttribute("value", profiles[i].id);
+                            newObj.innerText = profiles[i].name;
+                            $("#dropdownbox").append(newObj);
+                        }
+                        confirmDropdownSelection = confirmProfile;
+
+                        sm("dropdown", 300, 70);
+                    },
+                    type: "GET",
+                });
+            }
+        }
+
+        function confirmTherapist() {
+            currentTherapist = $("#dropdownbox")[0].options[$("#dropdownbox")[0].selectedIndex].value;
+            $("#logout").removeClass("invisibleButton");
+            $("#login").addClass("invisibleButton");
+            $("#choosetree").removeClass("invisibleButton");
+            $("#adduser").removeClass("invisibleButton");
+            confirmDropdownSelection = null;
+        }
+
+        function confirmProfile() {
+            currentProfileId = $("#dropdownbox")[0].options[$("#dropdownbox")[0].selectedIndex].value;
+            
+            jQuery.ajax({
+                dataType: "json",
+                url: "http://commaid-1.cloudapp.net:8000/xml/" + currentTherapist + "/" + currentProfileId,
+                success: function loadXmlSuccess(xmlData) {
+                    alert("Login Successful");
+                    View.clearCanvas();
+                    View.drawTree(Model.generateTreeFromXmlString(xmlData));
+                },
+                type: "GET",
+            });
+
+            $("#savetree").removeClass("invisibleButton");
+        }
+
+        function logout() {
+            View.clearCanvas();
+            currentProfileId = null;
+            currentTherapist = null;
+            Actions.clear();
+            Model.removeTrees();
+            $("#logout").addClass("invisibleButton");
+            $("#login").removeClass("invisibleButton");
+            $("#choosetree").addClass("invisibleButton");
+            $("#savetree").addClass("invisibleButton");
+            $("#adduser").addClass("invisibleButton");
+        }
+
+        function savetree() {
+            jQuery.ajax({
+                dataType: "json",
+                url: "http://commaid-1.cloudapp.net:8000/xml/" + currentTherapist + "/" + currentProfileId,
+                success: function loadXmlSuccess(xmlData) {
+                    alert("Saved Successfully");
+                },
+                data: "{s:\"" + Model.generateXmlString() + "\"}",
+                type: "POST",
+                headers: {
+                    "Content-Type": "text/json",
+                },
+            });
+        }
+
+        function adduser() {
+            var name = window.prompt("New User's Name", "Alan");
+            jQuery.ajax({
+                dataType: "json",
+                url: "http://commaid-1.cloudapp.net:8000/addProfile/" + currentTherapist + "/" + name,
+                success: function loadXmlSuccess(xmlData) {
+                    alert("User Created Successfully");
+                },
+            });
+        }
+
         function canvasMouseDown(eventInfo) {
             moved = false;
             out = false;
@@ -53,19 +174,47 @@
         function canvasMouseClick(eventInfo) {
             if (moved || out) return;
 
-            var popup = new Windows.UI.Popups.PopupMenu();
-            popup.commands.append(new Windows.UI.Popups.UICommand("Text"));
-            popup.showAsync();
+            var subtree = View.getSubtree(eventInfo.offsetX, eventInfo.offsetY);
+            if (subtree.tree instanceof Model.tree) {
+                Actions.changeNode(subtree.tree);
+            }
+        }
 
-
-            //window.prompt("Add Which Letter?", "A");
+        function start() {
+            View.initView();
+            View.clearCanvas();
         }
 
     </script>
 </head>
-<body>
-    <canvas id="drawingCanvas" width="1920" height="1080" onmousedown="canvasMouseDown(event)" onmousemove="canvasMouseMove(event)" onmouseup="canvasMouseUp(event)" onmouseout="canvasMouseOut(event)" onclick="canvasMouseClick(event)"></canvas>
-    <button id="save" onclick="save()">Save</button>
-    <button id="load" onclick="load()">Load</button>
+<body onload="start();initmb();">
+    <div id="options" class="dialog">
+        <div style="text-align:center"><span id="txt">What do you want to do?</span><br />
+            <button onclick="hm('options');addChild()">Add Child</button>
+            <button onclick="hm('options');rename()">Rename</button>
+            <button onclick="hm('options');setRoot()">Set as Root</button>
+            <button onclick="hm('options');setGoBack()">Set to Go Up a Menu</button>
+            <button onclick="hm('options');clearSettings()">Clear Advanced Settings</button>
+            <button onclick="hm('options');cancel()">Cancel</button>
+        </div>
+    </div>
+    <div style="width:100px; height:100px; overflow:auto">
+    <canvas id="drawingCanvas" width="10000" height="1080" onmousedown="canvasMouseDown(event)" onmousemove="canvasMouseMove(event)" onmouseup="canvasMouseUp(event)" onmouseout="canvasMouseOut(event)" onclick="canvasMouseClick(event)"></canvas>
+    </div>
+
+    <div id="dropdown" class="dialog">
+        <div style="text-align:center">
+            <span id="dropdowntxt">PLACEHOLDER</span><br />
+            <select id="dropdownbox"></select><br />
+            <button onclick="hm('dropdown');confirmDropdownSelection()">Confirm</button>
+            <button onclick="hm('dropdown')">Cancel</button>
+        </div>
+    </div>
+
+    <button id="login" onclick="login()">Login</button>
+    <button id="savetree" onclick="savetree()" class="invisibleButton">Save</button>
+    <button id="choosetree" onclick="choosetree()" class="invisibleButton">Select User</button>
+    <button id="logout" onclick="logout()" class="invisibleButton">Logout</button>
+    <button id="adduser" onclick="adduser()" class="invisibleButton">Add User</button>
 </body>
 </html>
