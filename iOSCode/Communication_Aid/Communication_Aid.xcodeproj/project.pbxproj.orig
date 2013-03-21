@@ -25,12 +25,8 @@
 		62660A1A16DB1B5B00587D0B /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 62660A1916DB1B5B00587D0B /* Profile.m */; };
 		62DC739316E0EF250082BCDF /* profiles.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 62DC739216E0EF250082BCDF /* profiles.sqlite */; };
 		62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DC739616E0F68F0082BCDF /* libsqlite3.dylib */; };
-		981F8DA116F3A5F4009BE30D /* OptionsTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 981F8DA016F3A5F4009BE30D /* OptionsTree.m */; };
 		982A76DD15D3E17F00D89C0E /* EditingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 982A76DC15D3E17F00D89C0E /* EditingView.m */; };
-		9872A40916FAB141009986C3 /* EmailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9872A40816FAB141009986C3 /* EmailViewController.m */; };
-		9872A40B16FAC01D009986C3 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9872A40A16FAC01D009986C3 /* MessageUI.framework */; };
 		987E6EB315B62674004DE229 /* dictionary.txt in Resources */ = {isa = PBXBuildFile; fileRef = 987E6EB215B62674004DE229 /* dictionary.txt */; };
-		98A9717D16F4E83200D616C8 /* defaultOptions.txt in Resources */ = {isa = PBXBuildFile; fileRef = 98A9717C16F4E83200D616C8 /* defaultOptions.txt */; };
 		98B95BBB16869704002424BC /* CalibrationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98B95BB916869704002424BC /* CalibrationViewController.m */; };
 		98B95BBC16869704002424BC /* CalibrationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 98B95BBA16869704002424BC /* CalibrationViewController.xib */; };
 		98F2A374156C11A400431E1D /* joystick_cross_1.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 98F2A373156C11A400431E1D /* joystick_cross_1.PNG */; };
@@ -86,15 +82,9 @@
 		62DC739216E0EF250082BCDF /* profiles.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = profiles.sqlite; sourceTree = "<group>"; };
 		62DC739616E0F68F0082BCDF /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* Communication_Aid-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Communication_Aid-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
-		981F8D9F16F3A5F4009BE30D /* OptionsTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsTree.h; sourceTree = "<group>"; };
-		981F8DA016F3A5F4009BE30D /* OptionsTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsTree.m; sourceTree = "<group>"; };
 		982A76DB15D3E17F00D89C0E /* EditingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingView.h; sourceTree = "<group>"; };
 		982A76DC15D3E17F00D89C0E /* EditingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditingView.m; sourceTree = "<group>"; };
-		9872A40716FAB141009986C3 /* EmailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmailViewController.h; sourceTree = "<group>"; };
-		9872A40816FAB141009986C3 /* EmailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmailViewController.m; sourceTree = "<group>"; };
-		9872A40A16FAC01D009986C3 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		987E6EB215B62674004DE229 /* dictionary.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dictionary.txt; sourceTree = "<group>"; };
-		98A9717C16F4E83200D616C8 /* defaultOptions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = defaultOptions.txt; sourceTree = "<group>"; };
 		98B95BB816869704002424BC /* CalibrationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalibrationViewController.h; sourceTree = "<group>"; };
 		98B95BB916869704002424BC /* CalibrationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalibrationViewController.m; sourceTree = "<group>"; };
 		98B95BBA16869704002424BC /* CalibrationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CalibrationViewController.xib; path = Classes/CalibrationViewController.xib; sourceTree = "<group>"; };
@@ -130,7 +120,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9872A40B16FAC01D009986C3 /* MessageUI.framework in Frameworks */,
 				62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */,
 				140C63AB15D3123F00F50318 /* AVFoundation.framework in Frameworks */,
 				140C63A915D3123A00F50318 /* AudioToolbox.framework in Frameworks */,
@@ -154,15 +143,11 @@
 				144A4E1F15D2F117001CDD9F /* SMXMLDocument.m */,
 				98F2A3D5156C17A100431E1D /* TextInputViewController.h */,
 				98F2A3D6156C17A100431E1D /* TextInputViewController.m */,
-				9872A40716FAB141009986C3 /* EmailViewController.h */,
-				9872A40816FAB141009986C3 /* EmailViewController.m */,
 				B468C3E215A4A8D6005B192D /* DictionaryParser.h */,
 				B468C3E315A4A8D6005B192D /* DictionaryParser.m */,
 				1D3623250D0F684500981E51 /* Communication_AidAppDelegate.m */,
 				1D3623240D0F684500981E51 /* Communication_AidAppDelegate.h */,
-				981F8DA016F3A5F4009BE30D /* OptionsTree.m */,
 				14DF37F515A34EEA00424701 /* SelectionTree.h */,
-				981F8D9F16F3A5F4009BE30D /* OptionsTree.h */,
 				14DF37F615A34EEA00424701 /* SelectionTree.m */,
 				1473829B15A4AF6C009AB9B7 /* TreeNavigator.h */,
 				1473829C15A4AF6C009AB9B7 /* TreeNavigator.m */,
@@ -192,13 +177,11 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				9872A40A16FAC01D009986C3 /* MessageUI.framework */,
 				62DC739616E0F68F0082BCDF /* libsqlite3.dylib */,
 				140C63AA15D3123F00F50318 /* AVFoundation.framework */,
 				140C63A815D3123A00F50318 /* AudioToolbox.framework */,
 				144A4E2215D2F190001CDD9F /* defaultTree.xml */,
 				987E6EB215B62674004DE229 /* dictionary.txt */,
-				98A9717C16F4E83200D616C8 /* defaultOptions.txt */,
 				62DC739216E0EF250082BCDF /* profiles.sqlite */,
 				B410FCF315D2F06400137CAB /* coreWordsDict.txt */,
 				98F2A375156C144800431E1D /* button_grey_background.PNG */,
@@ -348,7 +331,6 @@
 				98F73DDE16D2BB4F0017F00E /* OpenEarsCorpus.txt in Resources */,
 				62660A1716DB088500587D0B /* ProfileViewController.xib in Resources */,
 				62DC739316E0EF250082BCDF /* profiles.sqlite in Resources */,
-				98A9717D16F4E83200D616C8 /* defaultOptions.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,8 +354,6 @@
 				98B95BBB16869704002424BC /* CalibrationViewController.m in Sources */,
 				62660A1616DB088500587D0B /* ProfileViewController.m in Sources */,
 				62660A1A16DB1B5B00587D0B /* Profile.m in Sources */,
-				981F8DA116F3A5F4009BE30D /* OptionsTree.m in Sources */,
-				9872A40916FAB141009986C3 /* EmailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +420,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
