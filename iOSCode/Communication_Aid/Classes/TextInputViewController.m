@@ -11,6 +11,7 @@
 #import "EditingView.h"
 #import "EmailViewController.h"
 #import "FileUploader.h"
+#import "ProfileViewController.h"
 
 @implementation TextInputViewController
 
@@ -474,7 +475,16 @@
         
         [self exportData];
         
-    
+    } else if ( [string compare:@"#!Profile"] == NSOrderedSame ) {
+        [[self view] removeFromSuperview];
+/*
+ ProfileViewController* aProfileViewController = [[ProfileViewController alloc] initWithTextInputView:@"ProfileViewController" bundle:[NSBundle mainBundle]];
+        
+        [self setProfileViewController:aProfileViewController];
+        [aProfileViewController release];
+
+        [window setRootViewController:profileViewController];
+ */
     } else {
         return false;
     }
