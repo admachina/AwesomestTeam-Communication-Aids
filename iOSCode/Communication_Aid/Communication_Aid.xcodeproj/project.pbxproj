@@ -20,6 +20,11 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
+		62660A1616DB088500587D0B /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62660A1416DB088500587D0B /* ProfileViewController.m */; };
+		62660A1716DB088500587D0B /* ProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 62660A1516DB088500587D0B /* ProfileViewController.xib */; };
+		62660A1A16DB1B5B00587D0B /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 62660A1916DB1B5B00587D0B /* Profile.m */; };
+		62DC739316E0EF250082BCDF /* profiles.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 62DC739216E0EF250082BCDF /* profiles.sqlite */; };
+		62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DC739616E0F68F0082BCDF /* libsqlite3.dylib */; };
 		982A76DD15D3E17F00D89C0E /* EditingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 982A76DC15D3E17F00D89C0E /* EditingView.m */; };
 		987E6EB315B62674004DE229 /* dictionary.txt in Resources */ = {isa = PBXBuildFile; fileRef = 987E6EB215B62674004DE229 /* dictionary.txt */; };
 		98B95BBB16869704002424BC /* CalibrationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98B95BB916869704002424BC /* CalibrationViewController.m */; };
@@ -69,6 +74,13 @@
 		28AD733E0D9D9553002E5188 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Communication_Aid_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Communication_Aid_Prefix.pch; sourceTree = "<group>"; };
+		62660A1316DB088500587D0B /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
+		62660A1416DB088500587D0B /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
+		62660A1516DB088500587D0B /* ProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProfileViewController.xib; sourceTree = "<group>"; };
+		62660A1816DB1B5B00587D0B /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
+		62660A1916DB1B5B00587D0B /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
+		62DC739216E0EF250082BCDF /* profiles.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = profiles.sqlite; sourceTree = "<group>"; };
+		62DC739616E0F68F0082BCDF /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* Communication_Aid-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Communication_Aid-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		982A76DB15D3E17F00D89C0E /* EditingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingView.h; sourceTree = "<group>"; };
 		982A76DC15D3E17F00D89C0E /* EditingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditingView.m; sourceTree = "<group>"; };
@@ -78,8 +90,8 @@
 		98B95BBA16869704002424BC /* CalibrationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CalibrationViewController.xib; path = Classes/CalibrationViewController.xib; sourceTree = "<group>"; };
 		98F2A373156C11A400431E1D /* joystick_cross_1.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = joystick_cross_1.PNG; sourceTree = "<group>"; };
 		98F2A375156C144800431E1D /* button_grey_background.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_grey_background.PNG; sourceTree = "<group>"; };
-		98F2A3D5156C17A100431E1D /* TextInputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextInputViewController.h; path = "../../../../../AwesomestTeam-Communication-Aids/iOSCode/Communication_Aid/Classes/TextInputViewController.h"; sourceTree = "<group>"; };
-		98F2A3D6156C17A100431E1D /* TextInputViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextInputViewController.m; path = "../../../../../AwesomestTeam-Communication-Aids/iOSCode/Communication_Aid/Classes/TextInputViewController.m"; sourceTree = "<group>"; };
+		98F2A3D5156C17A100431E1D /* TextInputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputViewController.h; sourceTree = "<group>"; };
+		98F2A3D6156C17A100431E1D /* TextInputViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextInputViewController.m; sourceTree = "<group>"; };
 		98F2A3D7156C17A100431E1D /* TextInputViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextInputViewController.xib; sourceTree = "<group>"; };
 		98F73DC116D2BB4F0017F00E /* cmu07a.dic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cmu07a.dic; sourceTree = "<group>"; };
 		98F73DC316D2BB4F0017F00E /* feat.params */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = feat.params; sourceTree = "<group>"; };
@@ -108,6 +120,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */,
 				140C63AB15D3123F00F50318 /* AVFoundation.framework in Frameworks */,
 				140C63A915D3123A00F50318 /* AudioToolbox.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
@@ -144,6 +157,11 @@
 				B40C705815D2FE57009D70A4 /* XMLFromTree.m */,
 				982A76DB15D3E17F00D89C0E /* EditingView.h */,
 				982A76DC15D3E17F00D89C0E /* EditingView.m */,
+				62660A1316DB088500587D0B /* ProfileViewController.h */,
+				62660A1416DB088500587D0B /* ProfileViewController.m */,
+				62660A1516DB088500587D0B /* ProfileViewController.xib */,
+				62660A1816DB1B5B00587D0B /* Profile.h */,
+				62660A1916DB1B5B00587D0B /* Profile.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -159,10 +177,12 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				62DC739616E0F68F0082BCDF /* libsqlite3.dylib */,
 				140C63AA15D3123F00F50318 /* AVFoundation.framework */,
 				140C63A815D3123A00F50318 /* AudioToolbox.framework */,
 				144A4E2215D2F190001CDD9F /* defaultTree.xml */,
 				987E6EB215B62674004DE229 /* dictionary.txt */,
+				62DC739216E0EF250082BCDF /* profiles.sqlite */,
 				B410FCF315D2F06400137CAB /* coreWordsDict.txt */,
 				98F2A375156C144800431E1D /* button_grey_background.PNG */,
 				98F2A373156C11A400431E1D /* joystick_cross_1.PNG */,
@@ -306,6 +326,8 @@
 				98F73DDC16D2BB4F0017F00E /* OpenEars1.languagemodel in Resources */,
 				98F73DDD16D2BB4F0017F00E /* OpenEars2.gram in Resources */,
 				98F73DDE16D2BB4F0017F00E /* OpenEarsCorpus.txt in Resources */,
+				62660A1716DB088500587D0B /* ProfileViewController.xib in Resources */,
+				62DC739316E0EF250082BCDF /* profiles.sqlite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,6 +349,8 @@
 				B40C705915D2FE57009D70A4 /* XMLFromTree.m in Sources */,
 				982A76DD15D3E17F00D89C0E /* EditingView.m in Sources */,
 				98B95BBB16869704002424BC /* CalibrationViewController.m in Sources */,
+				62660A1616DB088500587D0B /* ProfileViewController.m in Sources */,
+				62660A1A16DB1B5B00587D0B /* Profile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,6 +361,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -351,6 +376,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../providedCode/task\"",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Framework\"",
 				);
 				PRODUCT_NAME = Communication_Aid;
 			};
@@ -360,6 +387,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -372,6 +400,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../providedCode/task\"",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Framework\"",
 				);
 				PRODUCT_NAME = Communication_Aid;
 				VALIDATE_PRODUCT = YES;
@@ -381,7 +411,7 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -396,7 +426,7 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

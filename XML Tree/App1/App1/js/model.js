@@ -3,8 +3,13 @@
 
     var roots = [];
 
+    function removeTrees() {
+        roots = [];
+    }
+
     function generateXmlString() {
-        var string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        //var string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        var string = "";
 
         for (var i = 0; i < roots.length; i++) {
             string += generateTree(roots[i]);
@@ -14,11 +19,12 @@
     }
 
     function generateTreeFromXmlString(xml) {
-        var root;
         var xmlParsed = new DOMParser().parseFromString(xml, "text/xml");
         for (var i = 0; i < xmlParsed.childNodes.length; i++) {
             if (xmlParsed.childNodes[i].nodeName === "Tree") {
-                return _generateTreeFromDomObject(xmlParsed.childNodes[i]);
+                var thisTree = _generateTreeFromDomObject(xmlParsed.childNodes[i]);
+                setTree(0, thisTree);
+                return thisTree;
             }
         }
     }
@@ -53,6 +59,10 @@
 
     function setTree(index, tree) {
         roots[index] = tree;
+    }
+
+    function getTree(index) {
+        return roots[index];
     }
 
     function generateTree(root) {
@@ -117,11 +127,11 @@
 
             set: function isRootSet(value) {
                 if(value === true){
-                    isRootSet("TRUE");
+                    this.isRootSet = "TRUE";
                 }
 
                 if(value === false){
-                    isRootSet("FALSE");
+                    this.isRootSet = "FALSE";
                 }
 
                 this._isRoot = value;
@@ -135,14 +145,14 @@
 
             set: function isGoUpSet(value) {
                 if(value === true){
-                    isGoUpSet("TRUE");
+                    this.isGoUp = "TRUE";
                 }
 
                 if(value === false){
-                    isGoUpSet("FALSE");
+                    this.isGoUp = "FALSE";
                 }
 
-                this._isGoUpSet = value;
+                this._isGoUp = value;
             }
         },
 
@@ -170,5 +180,7 @@
         generateTreeFromXmlString: generateTreeFromXmlString,
         tree: tree,
         setTree: setTree,
+        getTree: getTree,
+        removeTrees: removeTrees,
     });
 })();
