@@ -11,6 +11,10 @@
 @interface SelectionTree : NSObject {
     NSMutableArray* _branches;
     
+    
+    //TODO:
+    int maxBranches; //this is determined by the calibration (ie degrees of motion)
+    
     NSString* _printValue;
     NSString* _displayValue;
     
@@ -32,10 +36,14 @@
 -(Boolean) isRoot;
 -(Boolean) isUpOneLevel; //Used to pass a root on the stack (advance backwards through menus)
 -(int) branchCount;
+-(int) maxBranchCount;
 
 //Mutators
 -(SelectionTree*) addNode: (SelectionTree*) addedTree;
 -(void) setRoot: (Boolean) rootState;
 -(void) setUpOneLevel: (Boolean) upOneLevelState;
+
+//removes the most recently inserted node from tree
+-(void) removeNode;
 
 @end

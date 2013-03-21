@@ -13,6 +13,18 @@
 @implementation CalibrationViewController
 
 @synthesize textInputViewController=_textInputViewController;
+@synthesize leftButton = _leftButton;
+@synthesize rightButton = _rightButton;
+@synthesize upButton = _upButton;
+@synthesize downButton = _downButton;
+@synthesize leftKeyChar = _leftKeyChar;
+@synthesize rightKeyChar = _rightKeyChar;
+@synthesize upKeyChar = _upKeyChar;
+@synthesize downKeyChar = _downKeyChar;
+@synthesize cancelButton = _cancelButton;
+@synthesize backButton = _backButton;
+@synthesize instructionLabel = _instructionLabel;
+@synthesize keyInputView = _keyInputView;
 
 - (void)disableAllJoystickButtons
 {

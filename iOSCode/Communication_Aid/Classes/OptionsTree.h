@@ -7,7 +7,21 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SelectionTree.h"
 
-@interface OptionsTree : NSObject
+@interface OptionsTree : NSObject {
+    SelectionTree* optionsTree;
+    NSString* optionsTreeFile;
+}
+
+
+
+//creates the options tree and returns
+-(OptionsTree*) init;
+
+-(void) createOptionsTree;
+
+//returns the selection treer] "baseTree" with the options added to its top level
+-(SelectionTree*) addOptionsTreeToSelectionTree : (SelectionTree*) baseTree;
 
 @end

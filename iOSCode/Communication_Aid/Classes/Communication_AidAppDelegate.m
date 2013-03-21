@@ -12,6 +12,7 @@
 #import "SelectionTree.h"
 #import "TreeNavigator.h"
 #import "XMLTreeCreator.h"
+#import "OptionsTree.h"
 
 @implementation Communication_AidAppDelegate
 
@@ -61,6 +62,10 @@
     [next addNode:[[SelectionTree alloc] init:@"K" :@"K"]];
     [next addNode:[[SelectionTree alloc] init:@"L" :@"L"]];*/
     //End test code
+    
+    //add options tree to the main menu
+    mainMenu = [[[OptionsTree alloc]init] addOptionsTreeToSelectionTree:mainMenu];
+    
     TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:mainMenu];
     
     // Init view

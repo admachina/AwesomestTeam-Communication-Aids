@@ -76,6 +76,11 @@
     return [_branches count];
 }
 
+-(int)maxBranchCount
+{
+    return maxBranches;
+}
+
 -(SelectionTree*)addNode:(SelectionTree *)addedTree
 {
     [_branches addObject:(addedTree)];
@@ -90,6 +95,10 @@
 -(void)setUpOneLevel:(Boolean)upOneLevelState
 {
     isUpOneLevel = upOneLevelState;
+}
+
+-(void) removeNode {
+    [_branches removeLastObject];
 }
 
 @end

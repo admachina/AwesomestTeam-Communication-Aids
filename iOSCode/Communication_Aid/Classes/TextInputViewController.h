@@ -9,6 +9,7 @@
 #include "TreeNavigator.h"
 #import <Slt/Slt.h>
 #import <OpenEars/FliteController.h>
+#import "EmailViewController.h"
 
 @class UIKeyInputExampleView;
 @class CalibrationViewController;
@@ -28,6 +29,7 @@
 
 @property (nonatomic, retain) IBOutlet UIKeyInputExampleView *textView;
 @property (nonatomic, retain) CalibrationViewController *calibViewController;
+@property (nonatomic, retain) EmailViewController* emailView;
 @property (nonatomic, retain) IBOutlet UIButton *charButtonLeft;
 @property (nonatomic, retain) IBOutlet UIButton *charButtonUp;
 @property (nonatomic, retain) IBOutlet UIButton *charButtonRight;
@@ -41,5 +43,12 @@
 - (void) keyPress:(char) c;
 - (IBAction)calibrateJoystick:(id)sender;
 - (void) exitJoystickCalibration;
+
+- (Boolean) handleIfAnOptionCall :(NSString*) string ;
+//here are the possible option calls' handlers:
+
+//email with subject and body
+- (void) sendEmail: ( NSString*) subject: (NSMutableString*) body;
+
 
 @end

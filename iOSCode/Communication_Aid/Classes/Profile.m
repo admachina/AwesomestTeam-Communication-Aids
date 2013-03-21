@@ -10,6 +10,11 @@
 
 @implementation Profile
 
+@synthesize profile_id = _profile_id;
+@synthesize name = _name;
+@synthesize treepaths = _treepaths;
+@synthesize difficulty = _difficulty;
+
 - (id)initWithId:(int)profile_id name:(NSString *)name treepaths:(NSMutableArray *)treepaths difficulty:(Difficulty)difficulty;{
     if ((self = [super init])) {
         self.profile_id = profile_id;

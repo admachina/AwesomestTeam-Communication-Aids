@@ -75,6 +75,10 @@
         for( int i = 1; ( i< nodesPerLevel); i++) {
             first=FALSE;
             
+            if( [parser isAtEnd] ) {
+                goto exiting; 
+            }
+            
             [parser scanUpToCharactersFromSet:chars intoString:&displayVal];
             //[parser scanCharactersFromSet:chars intoString:&printVal];
             [parser scanUpToCharactersFromSet:chars intoString:&printVal];

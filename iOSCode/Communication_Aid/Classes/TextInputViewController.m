@@ -9,6 +9,7 @@
 #import "CalibrationViewController.h"
 #import "TreeNavigator.h"
 #import "EditingView.h"
+#import "EmailViewController.h"
 
 @implementation TextInputViewController
 
@@ -21,6 +22,7 @@
 @synthesize messageText;
 @synthesize fliteController;
 @synthesize slt;
+@synthesize emailView;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
@@ -52,6 +54,7 @@
 {
     self = [self initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil];
+    emailView = [[EmailViewController alloc] init];
     internalNavigator = navigator;
     [self view];
     
@@ -151,6 +154,13 @@
         return;
     }
     
+    //TODO: here we should check for options text and delegate accordingly
+    
+    //if an option do not output text
+    // also handle any required actions.
+    if( [self handleIfAnOptionCall :newChar] ) {
+        
+    } else 
 	
 	if (newChar != nil && [newChar length] > 0)
 	{
@@ -209,6 +219,7 @@
     }
     
     [textView becomeFirstResponder];
+    
 	
 }
 
@@ -246,5 +257,34 @@
     [super dealloc];
 }
 
+//handles option if it recognizes them,
+// returns true if handled, false if not
+- (Boolean)handleIfAnOptionCall:(NSString *)string {
+
+    if( [string compare: @"#!Email"] == NSOrderedSame  ){
+        //subject will be static for now
+        NSString* subject = @"Communication Aid Email"; 
+        //body will be all text entered so far.
+        NSMutableString* bodyText = [textView textStore];
+
+        [self sendEmail :subject : bodyText];
+        
+    } else if ( [string compare: @"#!Calibrate" ] == NSOrderedSame) {
+        
+        [self calibrateJoystick: (id)NULL];
+    } else {
+        return false;
+    }
+
+    return true;
+}
+
+-(void) sendEmail:(NSString *)subject :(NSMutableString *)body {
+    //EmailViewController* evc = [[EmailViewController alloc ]init];
+    [emailView actionEmailComposer:subject: body];
+    //[self.view addSubview:[emailView view]];
+    //[evc actionEmailComposer: subject : body];
+    //[evc dealloc];
+}
 
 @end
