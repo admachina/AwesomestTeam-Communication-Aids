@@ -121,6 +121,8 @@
     /*NSString* emptyString = @"";
     [emptyString writeToFile:pathForFile atomically:YES encoding:NSUTF8StringEncoding error:&error];
     */
+    NSLog(pathForDirectory);
+    NSLog(pathForFile);
     
     if (![[NSFileManager defaultManager] createDirectoryAtPath:pathForDirectory
                                    withIntermediateDirectories:YES
@@ -169,7 +171,13 @@
     NSString* fileName = [file substringToIndex:dotIndex];
     NSString* fileExtension = [file substringFromIndex:dotIndex+1];
     //return [[NSBundle mainBundle] pathForResource:fileName ofType:fileExtension inDirectory:therapistName];
-    NSMutableString* filePath = [NSMutableString stringWithString:[[NSBundle mainBundle] bundlePath]];
+    //NSMutableString* filePath = [NSMutableString stringWithString:[[NSBundle mainBundle] bundlePath]];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains
+    (NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSMutableString* filePath = [NSMutableString stringWithString:documentsDirectory];
+    
+    
     [filePath appendString:@"/"];
     [filePath appendString:therapistName];
     [filePath appendString:@"/"];
@@ -181,7 +189,12 @@
 
 - (NSString*) getPathForDirectory {
     //return [[NSBundle mainBundle] pathForResource:fileName ofType:fileExtension inDirectory:therapistName];
-    NSMutableString* filePath = [NSMutableString stringWithString:[[NSBundle mainBundle] bundlePath]];
+    //NSMutableString* filePath = [NSMutableString stringWithString:[[NSBundle mainBundle] bundlePath]];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains
+    (NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSMutableString* filePath = [NSMutableString stringWithString:documentsDirectory];
+    
     [filePath appendString:@"/"];
     [filePath appendString:therapistName];
     NSString* str = [NSString stringWithString:filePath];
@@ -217,6 +230,7 @@
             } else if (bytesRead == 0) {
                 NSLog(@"No Bytes Read");
             } else {
+                NSLog(@"Read %d bytes",bytesRead);
                 if (listingFiles) {
                     assert(self.listData != nil);
                     
