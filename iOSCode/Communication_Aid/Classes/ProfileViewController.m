@@ -242,6 +242,7 @@
                         if (numFilesReceived == [self.listEntries count]) {
                             // Done downloading all files
                             NSLog(@"Done downloading all files");
+                            [self resetNetworkStream];
                             downloadingInProgress = false;
                         } else {
                             // Keep downloading more files
