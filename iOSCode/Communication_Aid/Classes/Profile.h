@@ -21,18 +21,19 @@ typedef enum {
     NSString* name;
     NSMutableArray* treepath;
     Difficulty difficulty;
+    int dimensions;
 }
 
 @property(nonatomic) int profile_id;
 @property(nonatomic, retain) NSString* name;
 @property(nonatomic, retain) NSMutableArray* treepaths;
+@property(nonatomic) int dimensions;
 
 @property(nonatomic) Difficulty difficulty;
 
-- (id)initWithId:(int)profile_id name:(NSString *)name treepaths:(NSMutableArray *)treepaths difficulty:(Difficulty)difficulty;
+- (id)initWithId:(int)profile_id name:(NSString *)name treepaths:(NSMutableArray *)treepaths difficulty:(Difficulty)difficulty dimensions:(int)dimensions;
 
 + (Difficulty)getDifficultyForString:(NSString*)str;
-
 
 - (void)addToTreePaths:(NSString *)path;
 

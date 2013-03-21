@@ -536,7 +536,7 @@
         self.profiles = [[NSMutableArray alloc] init];
         
         // Read sqlite file and store data
-        NSString *query = @"SELECT profiles.profile_id, profiles.name, profiles.difficulty, profile_tree.tree_path FROM profiles INNER JOIN profile_tree ON profiles.profile_id = profile_tree.profile_id ORDER BY profiles.profile_id ASC";
+        NSString *query = @"SELECT profiles.profile_id, profiles.name, profiles.difficulty, profiles.dimensions, profile_tree.tree_path FROM profiles INNER JOIN profile_tree ON profiles.profile_id = profile_tree.profile_id ORDER BY profiles.profile_id ASC";
         sqlite3_stmt *statement;
         if (sqlite3_prepare_v2(sqliteDb, [query UTF8String], -1, &statement, nil)
             == SQLITE_OK) {
@@ -545,7 +545,8 @@
                 int profileId = sqlite3_column_int(statement, 0);
                 char *nameChars = (char *) sqlite3_column_text(statement, 1);
                 char *difficultyChars = (char *) sqlite3_column_text(statement, 2);
-                char *treePathChars = (char *) sqlite3_column_text(statement, 3);
+                int profileDimensions = sqlite3_column_int(statement, 3);
+                char *treePathChars = (char *) sqlite3_column_text(statement, 4);
                 NSString *name = [[NSString alloc] initWithUTF8String:nameChars];
                 NSString *difficultyStr = [[NSString alloc] initWithUTF8String:difficultyChars];
                 NSString *treepath = [[NSString alloc] initWithUTF8String:treePathChars];
@@ -563,7 +564,7 @@
                     assert(info.difficulty == difficulty);
                 } else {
                 info = [[Profile alloc]
-                        initWithId:profileId name:name treepaths:treepaths difficulty:difficulty];
+                        initWithId:profileId name:name treepaths:treepaths difficulty:difficulty dimensions:profileDimensions];
                 }
                 [info addToTreePaths:treepath];
                 [self.profiles addObject:info];
