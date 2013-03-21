@@ -17,8 +17,12 @@
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString* documentsDirectory = [paths objectAtIndex:0];
     NSString* filePath = [documentsDirectory stringByAppendingPathComponent:xmlFileNameInDocuments];
-    NSData* fileData = [[[NSData alloc] initWithContentsOfFile:filePath] autorelease];
     
+    NSLog(filePath);
+    filePath = xmlFileNameInDocuments;
+    NSLog(filePath);
+    NSData* fileData = [[[NSData alloc] initWithContentsOfFile:filePath] autorelease];
+
     NSError *error = nil;
     SMXMLDocument *document = [SMXMLDocument documentWithData:fileData error:&error];
     

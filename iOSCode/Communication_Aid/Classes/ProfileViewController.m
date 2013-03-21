@@ -14,6 +14,7 @@
 #import "SelectionTree.h"
 #import "XMLTreeCreator.h"
 #import "FileUploader.h"
+#import "OptionsTree.h"
 
 
 @implementation ProfileViewController
@@ -502,6 +503,8 @@
 //    [mainMenu addNode:basicTree];
 //    [mainMenu addNode:coreWordsTree];
     
+
+    
     //Test code
     SelectionTree* tree = [[SelectionTree alloc]init : @"" : @""];
      [tree setRoot:true];
@@ -530,9 +533,18 @@
     [next2 addNode:[[SelectionTree alloc] init:@"77" :@"77"]];
     //End test code
 //    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:[XMLTreeCreator createTree:@"defaultTree.xml"]];
-    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:tree];
+    //TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:tree];
+
     
     Profile* profile = [profiles objectAtIndex:indexPath.row];
+
+    SelectionTree* xmltree = [XMLTreeCreator createTree:(NSString*)[[profile treepath] objectAtIndex:0]];    
+    
+    OptionsTree* opt = [[OptionsTree alloc] init];
+    //[opt 
+    
+    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:xmltree];
+    
     textInputViewController = [[TextInputViewController alloc] initWithNavigator:@"TextInputViewController" bundle:[NSBundle mainBundle] navigator:navigator profile:profile];
     
     
@@ -611,12 +623,15 @@
     // Setup sqlite db
     sqlite3* sqliteDb;
     NSString* sqlitePath = [self getPathForFile:@"profiles.sqlite"];
+    NSArray*path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString* documentsPath = [path objectAtIndex:0];
     //NSLog(sqlitePath);
-    NSString* bundlePath = [[NSBundle mainBundle] bundlePath];
+    //NSString* bundlePath = [[NSBundle mainBundle] bundlePath];
     //NSLog(bundlePath);
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:sqlitePath];
     if (!fileExists || sqlite3_open([sqlitePath UTF8String], &sqliteDb) != SQLITE_OK) {
         sqlitePath = [[NSBundle mainBundle] pathForResource:@"profiles"ofType:@"sqlite"];
+        documentsPath = [[NSBundle mainBundle] bundlePath];
         //NSLog(sqlitePath);
         fileExists = [[NSFileManager defaultManager] fileExistsAtPath:sqlitePath];
         if (!fileExists || sqlite3_open([sqlitePath UTF8String], &sqliteDb) != SQLITE_OK) {
@@ -645,9 +660,12 @@
                 
                 NSMutableString* fullTreePath = [NSMutableString stringWithString:treepath];
                 [fullTreePath insertString:@"/" atIndex:0];
-                [fullTreePath insertString:bundlePath atIndex:0];
+                [fullTreePath insertString:documentsPath atIndex:0];
+                
+                NSString* newString = [fullTreePath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+//                [fullTreePath replaceOccurrencesOfString:@"\\" :@"/" : NSCaseInsensitiveSearch : NSMakeRange(0,[fullTreePath length])];
                 //NSLog(fullTreePath);
-                NSString* fullTreePathImuutable = [NSString stringWithString:fullTreePath];
+                NSString* fullTreePathImuutable = [NSString stringWithString:newString];
                 //NSLog(fullTreePathImuutable);
                 
                 Difficulty difficulty = [Profile getDifficultyForString:difficultyStr];

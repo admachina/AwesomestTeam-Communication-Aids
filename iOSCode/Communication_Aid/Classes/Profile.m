@@ -15,6 +15,7 @@
 @synthesize name;
 @synthesize difficulty;
 @synthesize dimensions;
+@synthesize treepath;
 
 - (id)initWithId:(int)profile_id name:(NSString *)name treepath:(NSMutableArray *)treepath difficulty:(Difficulty)difficulty dimensions:(int)dimensions {
     if ((self = [super init])) {

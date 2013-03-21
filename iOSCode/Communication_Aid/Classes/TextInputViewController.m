@@ -65,7 +65,7 @@
 {
     self = [self initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     profile = [aProfile retain];
-    int num_inputs = 8; //[profile dimensions];
+    int num_inputs = [profile dimensions];
     calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil num_inputs:num_inputs];
     calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil];
     emailView = [[EmailViewController alloc] init];
@@ -111,8 +111,8 @@
     // Set up initial view
     SelectionTree* treeRoot = [navigator currentTree];
     for (int i=0; i < [buttons count]; i++) { // Must be set up diferently for multiple sizes
-        [self setButtonColour:buttons[i] isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
-        [buttons[i] setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+        [self setButtonColour: [buttons objectAtIndex : i] isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
+        [[buttons objectAtIndex :i] setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
 //        switch (i) {
 //            case 0:
 //                [self setButtonColour:[buttons] isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
@@ -184,65 +184,65 @@
     {
         if (c == [calibViewController upKeyChar])
         {
-            [self setText:buttons[0]];
+            [self setText:[buttons objectAtIndex :0]];
         }
         else if (c == [calibViewController downKeyChar])
         {
-            [self setText:buttons[1]];
+            [self setText:[buttons objectAtIndex :1]];
         }
     }
     else if (num_buttons == 4)
     {
         if (c == [calibViewController leftKeyChar])
         {
-            [self setText:buttons[0]];
+            [self setText:[buttons objectAtIndex :0]];
         }
         else if (c == [calibViewController upKeyChar])
         {
-            [self setText:buttons[1]];
+            [self setText:[buttons objectAtIndex :1]];
         }
         else if (c == [calibViewController rightKeyChar])
         {
-            [self setText:buttons[2]];
+            [self setText:[buttons objectAtIndex :2]];
         }
         else if (c == [calibViewController downKeyChar])
         {
-            [self setText:buttons[3]];
+            [self setText:[buttons objectAtIndex :3]];
         }
     }
     else if (num_buttons > 4 && num_buttons < 9)
     {
         if (c == [calibViewController keyChar1])
         {
-            [self setText:buttons[0]];
+            [self setText:[buttons objectAtIndex :0]];
         }
         else if (c == [calibViewController keyChar2])
         {
-            [self setText:buttons[1]];
+            [self setText:[buttons objectAtIndex :1]];
         }
         else if (c == [calibViewController keyChar3])
         {
-            [self setText:buttons[2]];
+            [self setText:[buttons objectAtIndex :2]];
         }
         else if (c == [calibViewController keyChar4])
         {
-            [self setText:buttons[3]];
+            [self setText:[buttons objectAtIndex :3]];
         }
         else if (c == [calibViewController keyChar5])
         {
-            [self setText:buttons[4]];
+            [self setText:[buttons objectAtIndex :4]];
         }
         else if (num_buttons >= 6 && c == [calibViewController keyChar6])
         {
-            [self setText:buttons[5]];
+            [self setText:[buttons objectAtIndex :5]];
         }
         else if (num_buttons >= 7 && c == [calibViewController keyChar7])
         {
-            [self setText:buttons[6]];
+            [self setText:[buttons objectAtIndex :6]];
         }
         else if (num_buttons >= 8 && c == [calibViewController keyChar8])
         {
-            [self setText:buttons[7]];
+            [self setText:[buttons objectAtIndex :7]];
         }
     }
 }
@@ -292,7 +292,7 @@
 
     for (int i = 0; i < [buttons count]; i++)
     {
-        if (sender == buttons[i])
+        if (sender == [buttons objectAtIndex :i])
         {
             newChar = [internalNavigator choose:i valuesToDisplay:newButtonsArray leafArray:leafArray];
             break;
@@ -348,8 +348,8 @@
             [leafArray addObject:@"yes"];
         }
         
-        [buttons[i] setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
-        [self setButtonColour:buttons[i] isLeaf:[leafArray objectAtIndex:i]];
+        [[buttons objectAtIndex :i] setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+        [self setButtonColour:[buttons objectAtIndex :i] isLeaf:[leafArray objectAtIndex:i]];
         
 //        switch (i) {
 //            case 0:

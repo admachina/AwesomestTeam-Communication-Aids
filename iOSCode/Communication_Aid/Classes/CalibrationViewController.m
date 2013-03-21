@@ -25,6 +25,26 @@
 @synthesize backButton = _backButton;
 @synthesize instructionLabel = _instructionLabel;
 @synthesize keyInputView = _keyInputView;
+@synthesize button1 = _button1;
+@synthesize button2 = _button2;
+@synthesize button3 = _button3;
+@synthesize button4 = _button4;
+@synthesize button5 = _button5;
+@synthesize button6 = _button6;
+@synthesize button7 = _button7;
+@synthesize button8 = _button8;
+@synthesize num_inputs = _num_inputs;
+@synthesize keyChar1 = _keyChar1;
+@synthesize keyChar2 = _keyChar2;
+@synthesize keyChar3 = _keyChar3;
+@synthesize keyChar4 = _keyChar4;
+@synthesize keyChar5 = _keyChar5;
+@synthesize keyChar6 = _keyChar6;
+@synthesize keyChar7 = _keyChar7;
+@synthesize keyChar8 = _keyChar8;
+@synthesize joystick_cross_2_states = _joystick_cross_2_states;
+@synthesize joystick_cross_4_states = _joystick_cross_4_states;
+
 
 - (void)disableAllJoystickButtons
 {
