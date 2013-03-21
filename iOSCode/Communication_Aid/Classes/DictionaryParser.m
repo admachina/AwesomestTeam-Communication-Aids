@@ -11,15 +11,15 @@
 
 @implementation DictionaryParser
 
--(DictionaryParser*) initWithName:(NSString *)configFileName {
+-(DictionaryParser*) initWithName:(NSString *)configFileName : (int) dimensions {
     self = [super init];
     
     //TODO: find a configFile within the user's documents on the ipad rather than from package
     
     configFileData = [NSData dataWithContentsOfFile:DEFAULT_CONFIG];
                        
-    [self loadConfig];
-    
+    //[self loadConfig];
+    nodesPerLevel = dimensions;
     
     return self;
 }

@@ -17,9 +17,9 @@
 
 
 //creates the options tree and returns
--(OptionsTree*) init;
+-(OptionsTree*) init : (int) dimensions;
 
--(void) createOptionsTree;
+-(void) createOptionsTree :(int) dimensions;
 
 //returns the selection treer] "baseTree" with the options added to its top level
 -(SelectionTree*) addOptionsTreeToSelectionTree : (SelectionTree*) baseTree;

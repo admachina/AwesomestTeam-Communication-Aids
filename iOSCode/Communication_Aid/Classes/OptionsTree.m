@@ -12,13 +12,13 @@
 
 @implementation OptionsTree
 
--(OptionsTree*) init {
+-(OptionsTree*) init : (int) dimensions {
 
     
     optionsTreeFile = @"defaultOptions.txt";
     
     
-    [self createOptionsTree];
+    [self createOptionsTree : dimensions];
     
 
     
@@ -27,12 +27,12 @@
 }
 
 
--(void) createOptionsTree {
+-(void) createOptionsTree : (int) dimensions{
     
     //TODO: create options tree using editor??
     
     //options in text file for easy creation
-    DictionaryParser* parser = [[DictionaryParser alloc] init];
+    DictionaryParser* parser = [[DictionaryParser alloc] initWithName: @"Options" :dimensions];
     SelectionTree* basicTree = [parser parse:optionsTreeFile:@"Options"];
     
     optionsTree = basicTree;

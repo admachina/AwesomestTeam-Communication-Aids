@@ -10,6 +10,7 @@
 #import "TreeNavigator.h"
 #import "EditingView.h"
 #import "EmailViewController.h"
+#import "FileUploader.h"
 
 @implementation TextInputViewController
 
@@ -67,7 +68,7 @@
     profile = [aProfile retain];
     int num_inputs = [profile dimensions];
     calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil num_inputs:num_inputs];
-    calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil];
+//    calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil];
     emailView = [[EmailViewController alloc] init];
     internalNavigator = navigator;
     [self view];
@@ -261,18 +262,20 @@
 {
     bool isLeaf = [isLeafStr compare:@"yes"] == NSOrderedSame;
     
-    if ([[[charButtonDown titleLabel] text] compare:@"Go Back"] == NSOrderedSame)
+    if ([[[button titleLabel] text] compare:@"Go Back"] == NSOrderedSame ||
+        [[[button titleLabel] text] compare:@"Go back"] == NSOrderedSame)
     {
-        [charButtonDown setTitle:@"GO BACK" forState:UIControlStateNormal];
+        [button setTitle:@"GO BACK" forState:UIControlStateNormal];
         
         [button setTitleColor:[UIColor colorWithRed:232.0/256.0 green:0.0 blue:0.0 alpha:1.0] forState:UIControlStateNormal];
         [button setTitleColor:[UIColor colorWithRed:232.0/256.0 green:0.0 blue:0.0 alpha:1.0] forState:UIControlStateHighlighted];
     }
     else if (!isLeaf)
     {
-        if ([[[charButtonDown titleLabel] text] compare:@"More"] == NSOrderedSame)
+        if ([[[button titleLabel] text] compare:@"More"] == NSOrderedSame ||
+            [[[button titleLabel] text] compare:@"More..."] == NSOrderedSame)
         {
-            [charButtonDown setTitle:@"MORE" forState:UIControlStateNormal];
+            [button setTitle:@"MORE" forState:UIControlStateNormal];
         }
         
         [button setTitleColor:[UIColor colorWithRed:67.0/255.0 green:161.0/255.0 blue:41.0/255.0 alpha:1.0] forState:UIControlStateNormal];
@@ -460,6 +463,11 @@
     } else if ( [string compare: @"#!Calibrate" ] == NSOrderedSame) {
         
         [self calibrateJoystick: (id)NULL];
+    } else if ( [string compare:@"#!Export" ] == NSOrderedSame ) {
+        
+        [self exportData];
+        
+    
     } else {
         return false;
     }
@@ -475,4 +483,36 @@
     //[evc dealloc];
 }
 
+-(void) exportData  {
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Connecting to server..." message:nil delegate:self cancelButtonTitle:nil otherButtonTitles: nil];
+    [alertView show];
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.center = CGPointMake(alertView.bounds.size.width * 0.5f, alertView.bounds.size.height * 0.5f+5.0f);
+    //spinner.center = CGPointMake(160, 240);
+    spinner.hidesWhenStopped = YES;
+    //[self.view addSubview:spinner];
+    [spinner startAnimating];
+    [alertView addSubview:spinner];
+    [spinner release];
+    
+    FileUploader *uploader = [[FileUploader alloc] initWithData:@"FileUploader" bundle:[NSBundle mainBundle] data:[textView textStore] therapistName:@"therapist1" fileNameOnServer:@"somenewfile.txt"];
+    dispatch_queue_t uploadQueue = dispatch_queue_create("uploader", NULL);
+    dispatch_async(uploadQueue, ^{// do our long running process here
+        //[NSThread sleepForTimeInterval:3];
+        
+        //CFWriteStreamRef writeStream =
+        while (![uploader isDone]) {
+            // busy wait
+        }
+        
+        // do any UI stuff on the main UI thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [spinner stopAnimating];
+            [alertView dismissWithClickedButtonIndex:0 animated:YES];
+        });
+    });
+    dispatch_release(uploadQueue);
+    [uploader release];
+    
+}
 @end

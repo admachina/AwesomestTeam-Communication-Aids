@@ -21,7 +21,7 @@
     
 }
 
--(DictionaryParser*) initWithName : (NSString*) configFileName;
+-(DictionaryParser*) initWithName : (NSString*) configFileName : (int) dimensions;
 -(DictionaryParser*) init ;
 
 -(void) loadConfig;

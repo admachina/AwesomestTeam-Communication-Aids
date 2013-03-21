@@ -540,7 +540,8 @@
 
     SelectionTree* xmltree = [XMLTreeCreator createTree:(NSString*)[[profile treepath] objectAtIndex:0]];    
     
-    OptionsTree* opt = [[OptionsTree alloc] init];
+    OptionsTree* opt = [[OptionsTree alloc] init : [profile dimensions]];
+    xmltree = [opt addOptionsTreeToSelectionTree:xmltree];
     //[opt 
     
     TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:xmltree];
