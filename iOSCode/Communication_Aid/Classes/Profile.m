@@ -10,39 +10,41 @@
 
 @implementation Profile
 
-@synthesize profile_id = _profile_id;
-@synthesize name = _name;
-@synthesize treepaths = _treepaths;
-@synthesize difficulty = _difficulty;
 
-- (id)initWithId:(int)profile_id name:(NSString *)name treepaths:(NSMutableArray *)treepaths difficulty:(Difficulty)difficulty;{
+@synthesize profile_id;
+@synthesize name;
+@synthesize difficulty;
+@synthesize dimensions;
+
+- (id)initWithId:(int)profile_id name:(NSString *)name treepath:(NSMutableArray *)treepath difficulty:(Difficulty)difficulty dimensions:(int)dimensions {
     if ((self = [super init])) {
         self.profile_id = profile_id;
         self.name = name;
-        self.treepaths = treepaths;
+        self.treepath = treepath;
         self.difficulty = difficulty;
+        self.dimensions = dimensions;
     }
     return self;
 }
 
 - (void) dealloc {
     self.name = nil;
-    self.treepaths = nil;
+    self.treepath = nil;
     // TODO: Free treepaths memory?
     [super dealloc];
 }
 
 
 - (void)addToTreePaths:(NSString *)path {
-    [self.treepaths addObject:path];
+    [self.treepath addObject:path];
 }
 
 + (Difficulty)getDifficultyForString:(NSString*)str {
-    if ([str isEqualToString:@"easy"]) {
+    if ([str caseInsensitiveCompare:@"easy"] == NSOrderedSame) {
         return EASY;
-    } else if ([str isEqualToString:@"medium"]) {
+    } else if ([str caseInsensitiveCompare:@"medium"] == NSOrderedSame) {
         return MEDIUM;
-    } else if ([str isEqualToString:@"hard"]) {
+    } else if ([str caseInsensitiveCompare:@"hard"] == NSOrderedSame) {
         return HARD;
     }
     return INVALID;

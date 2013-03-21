@@ -23,7 +23,7 @@
     return self;
 }
 
--(NSString*) choose:(int)choice :(NSMutableArray *)valuesToDisplay
+-(NSString*) choose : (int) choice valuesToDisplay: (NSMutableArray*) valuesToDisplay leafArray: (NSMutableArray*) leafArray
 {
     if([valuesToDisplay count] > 0)
     {
@@ -66,6 +66,7 @@
     
     // Populate subsequent menu items
     for (int i = 0; i < [currentLocation branchCount]; i++) {
+        [leafArray addObject:([[currentLocation next:(i)] isLeaf] ? @"yes" : @"no")];
         [valuesToDisplay addObject:([[currentLocation next:(i)] displayValue])];
     }
     
