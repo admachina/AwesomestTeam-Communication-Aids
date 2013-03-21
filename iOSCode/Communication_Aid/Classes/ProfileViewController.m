@@ -258,6 +258,12 @@
         } break;
         case NSStreamEventErrorOccurred: {
             NSLog(@"Event Error Occurred");
+            NSError* error = [self.networkStream streamError];
+            NSString* errorMessage = [NSString stringWithFormat:@"%@ (Code = %d)",
+                                      [error localizedDescription],
+                                      [error code]];
+            NSLog(errorMessage);
+            
             //[self stopReceiveWithStatus:@"Stream open error"];
         } break;
         case NSStreamEventEndEncountered: {
