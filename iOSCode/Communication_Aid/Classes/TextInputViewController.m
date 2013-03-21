@@ -335,7 +335,14 @@
 	
 	if (newChar != nil && [newChar length] > 0)
 	{
-        [textView addText:[NSString stringWithFormat:@"%@", newChar]];
+        if ([newChar compare:@"space"] == NSOrderedSame)
+        {
+            [textView addText:[NSString stringWithFormat:@"%@", @" "]];
+        }
+        else
+        {
+            [textView addText:[NSString stringWithFormat:@"%@", newChar]];
+        }
 //        [self.fliteController say:[textView textStore] withVoice:self.slt];
 	}
     
