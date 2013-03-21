@@ -9,6 +9,7 @@
 #import "ProfileViewController.h"
 #import <sqlite3.h>
 #import "Profile.h"
+#import "FileUploader.h"
 
 
 @implementation ProfileViewController
@@ -512,6 +513,25 @@
         [spinner startAnimating];
         [alertView addSubview:spinner];
         [spinner release];
+        
+        /*FileUploader *uploader = [[FileUploader alloc] initWithData:@"FileUploader" bundle:[NSBundle mainBundle] data:@"ABCDEFG" therapistName:@"therapist1" fileNameOnServer:@"somenewfile.txt"];
+        dispatch_queue_t uploadQueue = dispatch_queue_create("uploader", NULL);
+        dispatch_async(uploadQueue, ^{// do our long running process here
+            //[NSThread sleepForTimeInterval:3];
+            
+            //CFWriteStreamRef writeStream =
+            while (![uploader isDone]) {
+                // busy wait
+            }
+            
+            // do any UI stuff on the main UI thread
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [spinner stopAnimating];
+                [alertView dismissWithClickedButtonIndex:0 animated:YES];
+            });
+        });
+        dispatch_release(uploadQueue);*/
+        
         downloadingInProgress = true;
         [self downloadAllFilesForTherapist];
         
