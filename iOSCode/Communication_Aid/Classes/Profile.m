@@ -33,11 +33,11 @@
 }
 
 + (Difficulty)getDifficultyForString:(NSString*)str {
-    if ([str isEqualToString:@"easy"]) {
+    if ([str caseInsensitiveCompare:@"easy"] == NSOrderedSame) {
         return EASY;
-    } else if ([str isEqualToString:@"medium"]) {
+    } else if ([str caseInsensitiveCompare:@"medium"] == NSOrderedSame) {
         return MEDIUM;
-    } else if ([str isEqualToString:@"hard"]) {
+    } else if ([str caseInsensitiveCompare:@"hard"] == NSOrderedSame) {
         return HARD;
     }
     return INVALID;

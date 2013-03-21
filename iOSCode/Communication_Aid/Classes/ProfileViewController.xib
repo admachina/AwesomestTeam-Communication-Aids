@@ -12,6 +12,7 @@
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>IBProxyObject</string>
+			<string>IBUIButton</string>
 			<string>IBUITableView</string>
 		</array>
 		<array key="IBDocument.PluginDependencies">
@@ -33,14 +34,50 @@
 			<object class="IBUITableView" id="167582427">
 				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
+				<array class="NSMutableArray" key="NSSubviews">
+					<object class="IBUIButton" id="66898030">
+						<reference key="NSNextResponder" ref="167582427"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{0, 950.00006103515625}, {768, 54}}</string>
+						<reference key="NSSuperview" ref="167582427"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<bool key="IBUIOpaque">NO</bool>
+						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+						<int key="IBUIContentHorizontalAlignment">0</int>
+						<int key="IBUIContentVerticalAlignment">0</int>
+						<int key="IBUIButtonType">1</int>
+						<string key="IBUINormalTitle">Update Profiles List</string>
+						<object class="NSColor" key="IBUIHighlightedTitleColor" id="477667384">
+							<int key="NSColorSpace">3</int>
+							<bytes key="NSWhite">MQA</bytes>
+						</object>
+						<object class="NSColor" key="IBUINormalTitleColor">
+							<int key="NSColorSpace">1</int>
+							<bytes key="NSRGB">MC4xOTYwNzg0MzQ2IDAuMzA5ODAzOTMyOSAwLjUyMTU2ODY1NgA</bytes>
+						</object>
+						<object class="NSColor" key="IBUINormalTitleShadowColor">
+							<int key="NSColorSpace">3</int>
+							<bytes key="NSWhite">MC41AA</bytes>
+						</object>
+						<object class="IBUIFontDescription" key="IBUIFontDescription">
+							<int key="type">2</int>
+							<double key="pointSize">15</double>
+						</object>
+						<object class="NSFont" key="IBUIFont">
+							<string key="NSName">Helvetica-Bold</string>
+							<double key="NSSize">15</double>
+							<int key="NSfFlags">16</int>
+						</object>
+					</object>
+				</array>
 				<string key="NSFrameSize">{768, 1004}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="66898030"/>
 				<string key="NSReuseIdentifierKey">_NS:10</string>
-				<object class="NSColor" key="IBUIBackgroundColor">
-					<int key="NSColorSpace">3</int>
-					<bytes key="NSWhite">MQA</bytes>
-				</object>
+				<reference key="IBUIBackgroundColor" ref="477667384"/>
 				<bool key="IBUIClipsSubviews">YES</bool>
 				<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 				<bool key="IBUIAlwaysBounceVertical">YES</bool>
@@ -50,6 +87,7 @@
 				<float key="IBUIRowHeight">44</float>
 				<float key="IBUISectionHeaderHeight">22</float>
 				<float key="IBUISectionFooterHeight">22</float>
+				<reference key="IBUITableFooterView" ref="66898030"/>
 			</object>
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -61,6 +99,23 @@
 						<reference key="destination" ref="167582427"/>
 					</object>
 					<int key="connectionID">13</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">syncButton</string>
+						<reference key="source" ref="841351856"/>
+						<reference key="destination" ref="66898030"/>
+					</object>
+					<int key="connectionID">22</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">buttonPressed:</string>
+						<reference key="source" ref="66898030"/>
+						<reference key="destination" ref="841351856"/>
+						<int key="IBEventType">7</int>
+					</object>
+					<int key="connectionID">23</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -85,7 +140,15 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">10</int>
 						<reference key="object" ref="167582427"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="66898030"/>
+						</array>
 						<reference key="parent" ref="0"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">14</int>
+						<reference key="object" ref="66898030"/>
+						<reference key="parent" ref="167582427"/>
 					</object>
 				</array>
 			</object>
@@ -95,18 +158,41 @@
 				<string key="-2.CustomClassName">UIResponder</string>
 				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="10.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="14.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">13</int>
+			<int key="maxID">23</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<object class="IBPartialClassDescription">
 					<string key="className">ProfileViewController</string>
 					<string key="superclassName">UITableViewController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">buttonPressed:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">buttonPressed:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">buttonPressed:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">syncButton</string>
+						<string key="NS.object.0">UIButton</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">syncButton</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">syncButton</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/ProfileViewController.h</string>

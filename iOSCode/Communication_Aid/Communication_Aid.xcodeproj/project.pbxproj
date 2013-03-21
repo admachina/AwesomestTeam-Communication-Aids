@@ -23,6 +23,7 @@
 		62660A1616DB088500587D0B /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 62660A1416DB088500587D0B /* ProfileViewController.m */; };
 		62660A1716DB088500587D0B /* ProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 62660A1516DB088500587D0B /* ProfileViewController.xib */; };
 		62660A1A16DB1B5B00587D0B /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 62660A1916DB1B5B00587D0B /* Profile.m */; };
+		62BFE8ED16FA1D5300A43A45 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62BFE8EC16FA1D5300A43A45 /* CFNetwork.framework */; };
 		62DC739316E0EF250082BCDF /* profiles.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 62DC739216E0EF250082BCDF /* profiles.sqlite */; };
 		62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DC739616E0F68F0082BCDF /* libsqlite3.dylib */; };
 		982A76DD15D3E17F00D89C0E /* EditingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 982A76DC15D3E17F00D89C0E /* EditingView.m */; };
@@ -79,6 +80,7 @@
 		62660A1516DB088500587D0B /* ProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProfileViewController.xib; sourceTree = "<group>"; };
 		62660A1816DB1B5B00587D0B /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
 		62660A1916DB1B5B00587D0B /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
+		62BFE8EC16FA1D5300A43A45 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		62DC739216E0EF250082BCDF /* profiles.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = profiles.sqlite; sourceTree = "<group>"; };
 		62DC739616E0F68F0082BCDF /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* Communication_Aid-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Communication_Aid-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62BFE8ED16FA1D5300A43A45 /* CFNetwork.framework in Frameworks */,
 				62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */,
 				140C63AB15D3123F00F50318 /* AVFoundation.framework in Frameworks */,
 				140C63A915D3123A00F50318 /* AudioToolbox.framework in Frameworks */,
@@ -177,6 +180,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				62BFE8EC16FA1D5300A43A45 /* CFNetwork.framework */,
 				62DC739616E0F68F0082BCDF /* libsqlite3.dylib */,
 				140C63AA15D3123F00F50318 /* AVFoundation.framework */,
 				140C63A815D3123A00F50318 /* AudioToolbox.framework */,
