@@ -16,11 +16,11 @@
 @synthesize difficulty;
 @synthesize dimensions;
 
-- (id)initWithId:(int)profile_id name:(NSString *)name treepaths:(NSMutableArray *)treepaths difficulty:(Difficulty)difficulty dimensions:(int)dimensions {
+- (id)initWithId:(int)profile_id name:(NSString *)name treepath:(NSMutableArray *)treepath difficulty:(Difficulty)difficulty dimensions:(int)dimensions {
     if ((self = [super init])) {
         self.profile_id = profile_id;
         self.name = name;
-        self.treepaths = treepaths;
+        self.treepath = treepath;
         self.difficulty = difficulty;
         self.dimensions = dimensions;
     }
@@ -29,14 +29,14 @@
 
 - (void) dealloc {
     self.name = nil;
-    self.treepaths = nil;
+    self.treepath = nil;
     // TODO: Free treepaths memory?
     [super dealloc];
 }
 
 
 - (void)addToTreePaths:(NSString *)path {
-    [self.treepaths addObject:path];
+    [self.treepath addObject:path];
 }
 
 + (Difficulty)getDifficultyForString:(NSString*)str {

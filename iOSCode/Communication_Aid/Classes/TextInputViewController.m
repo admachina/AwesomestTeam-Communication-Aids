@@ -21,6 +21,7 @@
 @synthesize messageText;
 @synthesize fliteController;
 @synthesize slt;
+@synthesize profile;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
@@ -103,7 +104,16 @@
     
     [calibViewController setTextInputViewController:self];
 }
-
+/*
+- (void) setProfile:(Profile*)profile {
+    [profile retain];
+    if (self.profile != nil) {
+        [self.profile release];
+    }
+    self.profile = profile;
+    
+    // TODO: Reinitialize screen
+}*/
 
 - (void) keyPress:(char) c
 {

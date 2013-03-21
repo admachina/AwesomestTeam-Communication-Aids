@@ -473,6 +473,8 @@
 
 -(void) tableView:(UITableView*) tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // TODO: Make it initialize the TextInputViewController properly with the profile information.
+    Profile* profile = [profiles objectAtIndex:indexPath.row];
+    [textInputViewController setProfile:profile];
     
     [self.view addSubview:[textInputViewController view]];
 }
@@ -530,10 +532,13 @@
     // Setup sqlite db
     sqlite3* sqliteDb;
     NSString* sqlitePath = [self getPathForFile:@"profiles.sqlite"];
-    
+    //NSLog(sqlitePath);
+    NSString* bundlePath = [[NSBundle mainBundle] bundlePath];
+    //NSLog(bundlePath);
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:sqlitePath];
     if (!fileExists || sqlite3_open([sqlitePath UTF8String], &sqliteDb) != SQLITE_OK) {
         sqlitePath = [[NSBundle mainBundle] pathForResource:@"profiles"ofType:@"sqlite"];
+        //NSLog(sqlitePath);
         fileExists = [[NSFileManager defaultManager] fileExistsAtPath:sqlitePath];
         if (!fileExists || sqlite3_open([sqlitePath UTF8String], &sqliteDb) != SQLITE_OK) {
             NSLog(@"Failed to open database!");
@@ -559,6 +564,13 @@
                 NSString *treepath = [[NSString alloc] initWithUTF8String:treePathChars];
                 NSMutableArray* treepaths = [[NSMutableArray alloc] init];
                 
+                NSMutableString* fullTreePath = [NSMutableString stringWithString:treepath];
+                [fullTreePath insertString:@"/" atIndex:0];
+                [fullTreePath insertString:bundlePath atIndex:0];
+                //NSLog(fullTreePath);
+                NSString* fullTreePathImuutable = [NSString stringWithString:fullTreePath];
+                //NSLog(fullTreePathImuutable);
+                
                 Difficulty difficulty = [Profile getDifficultyForString:difficultyStr];
                 if (difficulty == INVALID) {
                     NSLog(@"%@, %@", @"Failed to process string", difficultyStr);
@@ -571,9 +583,9 @@
                     assert(info.difficulty == difficulty);
                 } else {
                 info = [[Profile alloc]
-                        initWithId:profileId name:name treepaths:treepaths difficulty:difficulty dimensions:profileDimensions];
+                        initWithId:profileId name:name treepath:treepaths difficulty:difficulty dimensions:profileDimensions];
                 }
-                [info addToTreePaths:treepath];
+                [info addToTreePaths:fullTreePathImuutable];
                 [self.profiles addObject:info];
                 [name release];
                 [treepath release];

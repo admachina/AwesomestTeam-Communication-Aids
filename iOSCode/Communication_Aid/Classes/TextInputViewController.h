@@ -9,6 +9,7 @@
 #include "TreeNavigator.h"
 #import <Slt/Slt.h>
 #import <OpenEars/FliteController.h>
+#include "Profile.h"
 
 @class UIKeyInputExampleView;
 @class CalibrationViewController;
@@ -24,6 +25,7 @@
     TreeNavigator* internalNavigator;
     FliteController *fliteController;
     Slt *slt;
+    Profile* profile;
 }
 
 @property (nonatomic, retain) IBOutlet UIKeyInputExampleView *textView;
@@ -35,11 +37,13 @@
 @property (nonatomic, copy) NSString* messageText;
 @property (nonatomic, retain) FliteController *fliteController;
 @property (strong, nonatomic) Slt *slt;
+@property (nonatomic, retain) Profile * profile;
 
 - (id)initWithNavigator:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil navigator:(TreeNavigator *)navigator;
 - (IBAction)setText:(id)sender;
 - (void) keyPress:(char) c;
 - (IBAction)calibrateJoystick:(id)sender;
 - (void) exitJoystickCalibration;
+//- (void) setProfile:(Profile*)profile;
 
 @end
