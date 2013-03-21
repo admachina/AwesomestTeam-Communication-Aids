@@ -9,6 +9,10 @@
 #import "ProfileViewController.h"
 #import <sqlite3.h>
 #import "Profile.h"
+#import "TreeNavigator.h"
+#import "DictionaryParser.h"
+#import "SelectionTree.h"
+#import "XMLTreeCreator.h"
 
 
 @implementation ProfileViewController
@@ -35,13 +39,13 @@
 }*/
 
 
-- (id)initWithTextInputView:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil textInputViewController:(TextInputViewController *)newTextInputViewController
+- (id)initWithTextInputView:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) { 
         profiles = nil;
         networkStream = nil;
-        textInputViewController = [newTextInputViewController retain];
+//        textInputViewController = [newTextInputViewController retain];
         therapistName =[[NSMutableString alloc ] initWithFormat:@"therapist1"];
         numBytesReceivedSoFar = [[NSNumber alloc ] initWithInt:0];
         //[self downloadAllFilesForTherapist];
@@ -487,8 +491,49 @@
 
 -(void) tableView:(UITableView*) tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // TODO: Make it initialize the TextInputViewController properly with the profile information.
+//    DictionaryParser* parser = [[DictionaryParser alloc] init];
+//    SelectionTree* basicTree = [parser parse:basicTreeFile:@"Basic"];
+//    SelectionTree* coreWordsTree = [parser parse:coreWordsTreeFile:@"Core"];
+//    
+//    SelectionTree* mainMenu = [[SelectionTree alloc] init];
+//    [mainMenu setRoot:TRUE];
+//    
+//    [mainMenu addNode:basicTree];
+//    [mainMenu addNode:coreWordsTree];
+    
+    //Test code
+    SelectionTree* tree = [[SelectionTree alloc]init : @"" : @""];
+     [tree setRoot:true];
+     [tree addNode:[[SelectionTree alloc] init:@"A" :@"A"]];
+     [tree addNode:[[SelectionTree alloc] init:@"S" :@"S"]];
+     [tree addNode:[[SelectionTree alloc] init:@"D" :@"D"]];
+    [tree addNode:[[SelectionTree alloc] init:@"E" :@"E"]];
+    [tree addNode:[[SelectionTree alloc] init:@"F" :@"F"]];
+    [tree addNode:[[SelectionTree alloc] init:@"G" :@"G"]];
+    [tree addNode:[[SelectionTree alloc] init:@"L" :@"L"]];
+     SelectionTree* next = [tree addNode:[[SelectionTree alloc] init:@"More" :@""]];
+    [next addNode:[[SelectionTree alloc] init:@"1" :@"1"]];
+    [next addNode:[[SelectionTree alloc] init:@"2" :@"2"]];
+    [next addNode:[[SelectionTree alloc] init:@"3" :@"3"]];
+    [next addNode:[[SelectionTree alloc] init:@"4" :@"4"]];
+    [next addNode:[[SelectionTree alloc] init:@"5" :@"5"]];
+    [next addNode:[[SelectionTree alloc] init:@"6" :@"6"]];
+    [next addNode:[[SelectionTree alloc] init:@"7" :@"7"]];
+    SelectionTree* next2 = [next addNode:[[SelectionTree alloc] init:@"More" :@""]];
+    [next2 addNode:[[SelectionTree alloc] init:@"11" :@"11"]];
+    [next2 addNode:[[SelectionTree alloc] init:@"22" :@"23"]];
+    [next2 addNode:[[SelectionTree alloc] init:@"33" :@"33"]];
+    [next2 addNode:[[SelectionTree alloc] init:@"44" :@"44"]];
+    [next2 addNode:[[SelectionTree alloc] init:@"55" :@"55"]];
+    [next2 addNode:[[SelectionTree alloc] init:@"66" :@"66"]];
+    [next2 addNode:[[SelectionTree alloc] init:@"77" :@"77"]];
+    //End test code
+//    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:[XMLTreeCreator createTree:@"defaultTree.xml"]];
+    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:tree];
+    
     Profile* profile = [profiles objectAtIndex:indexPath.row];
-    [textInputViewController setProfile:profile];
+    textInputViewController = [[TextInputViewController alloc] initWithNavigator:@"TextInputViewController" bundle:[NSBundle mainBundle] navigator:navigator profile:profile];
+    
     
     [self.view addSubview:[textInputViewController view]];
 }

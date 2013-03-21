@@ -30,6 +30,7 @@
 		62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DC739616E0F68F0082BCDF /* libsqlite3.dylib */; };
 		982A76DD15D3E17F00D89C0E /* EditingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 982A76DC15D3E17F00D89C0E /* EditingView.m */; };
 		9861611716FB171900D6697E /* text_input_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 9861611616FB171900D6697E /* text_input_background.png */; };
+		9861611916FB309400D6697E /* joystick_cross_2.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 9861611816FB309400D6697E /* joystick_cross_2.PNG */; };
 		987E6EB315B62674004DE229 /* dictionary.txt in Resources */ = {isa = PBXBuildFile; fileRef = 987E6EB215B62674004DE229 /* dictionary.txt */; };
 		98B95BBB16869704002424BC /* CalibrationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98B95BB916869704002424BC /* CalibrationViewController.m */; };
 		98B95BBC16869704002424BC /* CalibrationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 98B95BBA16869704002424BC /* CalibrationViewController.xib */; };
@@ -92,6 +93,7 @@
 		982A76DB15D3E17F00D89C0E /* EditingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingView.h; sourceTree = "<group>"; };
 		982A76DC15D3E17F00D89C0E /* EditingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditingView.m; sourceTree = "<group>"; };
 		9861611616FB171900D6697E /* text_input_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = text_input_background.png; sourceTree = "<group>"; };
+		9861611816FB309400D6697E /* joystick_cross_2.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = joystick_cross_2.PNG; sourceTree = "<group>"; };
 		987E6EB215B62674004DE229 /* dictionary.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dictionary.txt; sourceTree = "<group>"; };
 		98B95BB816869704002424BC /* CalibrationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalibrationViewController.h; sourceTree = "<group>"; };
 		98B95BB916869704002424BC /* CalibrationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalibrationViewController.m; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 			children = (
 				627BDBC916FB201800B253FB /* 2-tree.xml */,
 				627BDBCA16FB201800B253FB /* 8-tree.xml */,
+				9861611816FB309400D6697E /* joystick_cross_2.PNG */,
 				9861611616FB171900D6697E /* text_input_background.png */,
 				62BFE8EC16FA1D5300A43A45 /* CFNetwork.framework */,
 				62DC739616E0F68F0082BCDF /* libsqlite3.dylib */,
@@ -344,6 +347,7 @@
 				9861611716FB171900D6697E /* text_input_background.png in Resources */,
 				627BDBCB16FB201800B253FB /* 2-tree.xml in Resources */,
 				627BDBCC16FB201800B253FB /* 8-tree.xml in Resources */,
+				9861611916FB309400D6697E /* joystick_cross_2.PNG in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

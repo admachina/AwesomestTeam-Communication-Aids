@@ -55,7 +55,7 @@ typedef struct MyStreamInfo {
 @property(nonatomic) NSNumber* numBytesNeeding;*/
 //@property(nonatomic) MyStreamInfo streamInfo;
 
-- (id)initWithTextInputView:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil textInputViewController:(TextInputViewController *)newTextInputViewController;
+- (id)initWithTextInputView:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 - (void) repopulateProfiles;
 - (IBAction) buttonPressed:(id)sender;
 //- (void)readStreamCallback:(CFReadStreamRef)readStream event:(CFStreamEventType)eventType info:(MyStreamInfo*)info;

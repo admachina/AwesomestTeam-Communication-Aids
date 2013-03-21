@@ -18,6 +18,16 @@
 @synthesize charButtonUp;
 @synthesize charButtonRight;
 @synthesize charButtonDown;
+@synthesize charButton1;
+@synthesize charButton2;
+@synthesize charButton3;
+@synthesize charButton4;
+@synthesize charButton5;
+@synthesize charButton6;
+@synthesize charButton7;
+@synthesize charButton8;
+@synthesize joystick_cross_2_states;
+@synthesize joystick_cross_4_states;
 @synthesize messageText;
 @synthesize fliteController;
 @synthesize slt;
@@ -49,40 +59,80 @@
 }
 
 
-- (id)initWithNavigator:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil navigator:(TreeNavigator *)navigator
+- (id)initWithNavigator:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil navigator:(TreeNavigator *)navigator profile:(Profile*)aProfile
 {
     self = [self initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil];
+    profile = [aProfile retain];
+    int num_inputs = 8; //[profile dimensions];
+    calibViewController = [[CalibrationViewController alloc] initWithNibName:@"CalibrationViewController" bundle:nibBundleOrNil num_inputs:num_inputs];
     internalNavigator = navigator;
     [self view];
     
+    buttons = [[NSMutableArray alloc] init];
+    
+    if (num_inputs == 2)
+    {
+        [buttons addObject:charButtonUp];
+        [buttons addObject:charButtonDown];
+        [joystick_cross_2_states setHidden:FALSE];
+    }
+    else if (num_inputs == 4)
+    {
+        [buttons addObject:charButtonLeft];
+        [buttons addObject:charButtonUp];
+        [buttons addObject:charButtonRight];
+        [buttons addObject:charButtonDown];
+        [joystick_cross_4_states setHidden:FALSE];
+    }
+    else if (num_inputs > 4 && num_inputs < 9)
+    {
+        [buttons addObject:charButton1];
+        [buttons addObject:charButton2];
+        [buttons addObject:charButton3];
+        [buttons addObject:charButton4];
+        [buttons addObject:charButton5];
+        if (num_inputs >= 6)
+            [buttons addObject:charButton6];
+        if (num_inputs >= 7)
+            [buttons addObject:charButton7];
+        if (num_inputs >= 8)
+            [buttons addObject:charButton8];
+    }
+    
+    for (UIButton* button in buttons)
+    {
+        [button setHidden:FALSE];
+    }
+    
     // Set up initial view
     SelectionTree* treeRoot = [navigator currentTree];
-    for (int i=0; i < 4; i++) { // Must be set up diferently for multiple sizes
-        switch (i) {
-            case 0:
-                [self setButtonColour:charButtonLeft isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
-                [charButtonLeft setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
-                break;
-                
-            case 1:
-                [self setButtonColour:charButtonUp isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
-                [charButtonUp setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
-                break;
-                
-            case 2:
-                [self setButtonColour:charButtonRight isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
-                [charButtonRight setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
-                break;
-                
-            case 3:
-                [self setButtonColour:charButtonDown isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
-                [charButtonDown setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
-                break;
-                
-            default:
-                break;
-        }
+    for (int i=0; i < [buttons count]; i++) { // Must be set up diferently for multiple sizes
+        [self setButtonColour:buttons[i] isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
+        [buttons[i] setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+//        switch (i) {
+//            case 0:
+//                [self setButtonColour:[buttons] isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
+//                [charButtonLeft setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+//                break;
+//                
+//            case 1:
+//                [self setButtonColour:charButtonUp isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
+//                [charButtonUp setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+//                break;
+//                
+//            case 2:
+//                [self setButtonColour:charButtonRight isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
+//                [charButtonRight setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+//                break;
+//                
+//            case 3:
+//                [self setButtonColour:charButtonDown isLeaf:[[treeRoot next:i] isLeaf] ? @"yes" : @"no"];
+//                [charButtonDown setTitle:[[treeRoot next:i] displayValue] forState:UIControlStateNormal];
+//                break;
+//                
+//            default:
+//                break;
+//        }
     }
     
     return self;
@@ -101,6 +151,14 @@
     charButtonRight.titleLabel.adjustsFontSizeToFitWidth = TRUE;
     charButtonUp.titleLabel.adjustsFontSizeToFitWidth = TRUE;
     charButtonDown.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButton1.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButton2.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButton3.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButton4.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButton5.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButton6.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButton7.titleLabel.adjustsFontSizeToFitWidth = TRUE;
+    charButton8.titleLabel.adjustsFontSizeToFitWidth = TRUE;
     
     [calibViewController setTextInputViewController:self];
 }
@@ -117,21 +175,71 @@
 
 - (void) keyPress:(char) c
 {
-    if (c == [calibViewController leftKeyChar])
+    int num_buttons = [buttons count];
+    if (num_buttons == 2)
     {
-        [self setText:charButtonLeft];
+        if (c == [calibViewController upKeyChar])
+        {
+            [self setText:buttons[0]];
+        }
+        else if (c == [calibViewController downKeyChar])
+        {
+            [self setText:buttons[1]];
+        }
     }
-    else if (c == [calibViewController upKeyChar])
+    else if (num_buttons == 4)
     {
-        [self setText:charButtonUp];
+        if (c == [calibViewController leftKeyChar])
+        {
+            [self setText:buttons[0]];
+        }
+        else if (c == [calibViewController upKeyChar])
+        {
+            [self setText:buttons[1]];
+        }
+        else if (c == [calibViewController rightKeyChar])
+        {
+            [self setText:buttons[2]];
+        }
+        else if (c == [calibViewController downKeyChar])
+        {
+            [self setText:buttons[3]];
+        }
     }
-    else if (c == [calibViewController rightKeyChar])
+    else if (num_buttons > 4 && num_buttons < 9)
     {
-        [self setText:charButtonRight];
-    }
-    else if (c == [calibViewController downKeyChar])
-    {
-        [self setText:charButtonDown];
+        if (c == [calibViewController keyChar1])
+        {
+            [self setText:buttons[0]];
+        }
+        else if (c == [calibViewController keyChar2])
+        {
+            [self setText:buttons[1]];
+        }
+        else if (c == [calibViewController keyChar3])
+        {
+            [self setText:buttons[2]];
+        }
+        else if (c == [calibViewController keyChar4])
+        {
+            [self setText:buttons[3]];
+        }
+        else if (c == [calibViewController keyChar5])
+        {
+            [self setText:buttons[4]];
+        }
+        else if (num_buttons >= 6 && c == [calibViewController keyChar6])
+        {
+            [self setText:buttons[5]];
+        }
+        else if (num_buttons >= 7 && c == [calibViewController keyChar7])
+        {
+            [self setText:buttons[6]];
+        }
+        else if (num_buttons >= 8 && c == [calibViewController keyChar8])
+        {
+            [self setText:buttons[7]];
+        }
     }
 }
 
@@ -178,22 +286,30 @@
     NSMutableArray* newButtonsArray = [[NSMutableArray alloc] init];
     NSMutableArray* leafArray = [[NSMutableArray alloc] init];
 
-	if (sender == charButtonLeft)
+    for (int i = 0; i < [buttons count]; i++)
     {
-        newChar = [internalNavigator choose:0 valuesToDisplay:newButtonsArray leafArray:leafArray];
+        if (sender == buttons[i])
+        {
+            newChar = [internalNavigator choose:i valuesToDisplay:newButtonsArray leafArray:leafArray];
+            break;
+        }
     }
-	else if (sender == charButtonUp)
-    {
-		newChar = [internalNavigator choose:1 valuesToDisplay:newButtonsArray leafArray:leafArray];
-    }
-	else if (sender == charButtonRight)
-    {
-		newChar = [internalNavigator choose:2 valuesToDisplay:newButtonsArray leafArray:leafArray];
-    }
-	else if (sender == charButtonDown)
-    {
-		newChar = [internalNavigator choose:3 valuesToDisplay:newButtonsArray leafArray:leafArray];
-    }
+//	if (sender == charButtonLeft)
+//    {
+//        newChar = [internalNavigator choose:0 valuesToDisplay:newButtonsArray leafArray:leafArray];
+//    }
+//	else if (sender == charButtonUp)
+//    {
+//		newChar = [internalNavigator choose:1 valuesToDisplay:newButtonsArray leafArray:leafArray];
+//    }
+//	else if (sender == charButtonRight)
+//    {
+//		newChar = [internalNavigator choose:2 valuesToDisplay:newButtonsArray leafArray:leafArray];
+//    }
+//	else if (sender == charButtonDown)
+//    {
+//		newChar = [internalNavigator choose:3 valuesToDisplay:newButtonsArray leafArray:leafArray];
+//    }
 	/*else
 		// throw exception
 	 */
@@ -210,7 +326,7 @@
 //        [self.fliteController say:[textView textStore] withVoice:self.slt];
 	}
     
-    for (int i=0; i < 4; i++) { // Must be set up diferently for multiple sizes
+    for (int i=0; i < [buttons count]; i++) { // Must be set up diferently for multiple sizes
         if(i >= [newButtonsArray count])
         {
             [newButtonsArray addObject:@""];
@@ -221,37 +337,40 @@
             [leafArray addObject:@"yes"];
         }
         
-        switch (i) {
-            case 0:
-                [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
-                [self setButtonColour:charButtonLeft isLeaf:[leafArray objectAtIndex:i]];
-                break;
-                
-            case 1:
-                [charButtonUp setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
-                [self setButtonColour:charButtonUp isLeaf:[leafArray objectAtIndex:i]];
-                break;
-                
-            case 2:
-                [charButtonRight setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
-                [self setButtonColour:charButtonRight isLeaf:[leafArray objectAtIndex:i]];
-                break;
-                
-            case 3:
-                [charButtonDown setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
-                [self setButtonColour:charButtonDown isLeaf:[leafArray objectAtIndex:i]];
-                break;
-                
-            default:
-                break;
-        }
+        [buttons[i] setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+        [self setButtonColour:buttons[i] isLeaf:[leafArray objectAtIndex:i]];
+        
+//        switch (i) {
+//            case 0:
+//                [charButtonLeft setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+//                [self setButtonColour:charButtonLeft isLeaf:[leafArray objectAtIndex:i]];
+//                break;
+//                
+//            case 1:
+//                [charButtonUp setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+//                [self setButtonColour:charButtonUp isLeaf:[leafArray objectAtIndex:i]];
+//                break;
+//                
+//            case 2:
+//                [charButtonRight setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+//                [self setButtonColour:charButtonRight isLeaf:[leafArray objectAtIndex:i]];
+//                break;
+//                
+//            case 3:
+//                [charButtonDown setTitle:[newButtonsArray objectAtIndex:i] forState:UIControlStateNormal];
+//                [self setButtonColour:charButtonDown isLeaf:[leafArray objectAtIndex:i]];
+//                break;
+//                
+//            default:
+//                break;
+//        }
     }
     
-    if ([[[charButtonUp titleLabel] text] compare:@"Core"] == NSOrderedSame &&
-        [[textView textStore] length] > 0)
-    {
-        [self.fliteController say:[textView textStore] withVoice:self.slt];
-    }
+//    if ([[[charButtonUp titleLabel] text] compare:@"Core"] == NSOrderedSame &&
+//        [[textView textStore] length] > 0)
+//    {
+//        [self.fliteController say:[textView textStore] withVoice:self.slt];
+//    }
     
     [textView becomeFirstResponder];
 	
@@ -274,6 +393,17 @@
 - (void)viewDidUnload {
     [textView release];
     textView = nil;
+    [self setCharButton1:nil];
+    [self setCharButton2:nil];
+    [self setCharButton3:nil];
+    [self setCharButton4:nil];
+    [self setCharButton5:nil];
+    [self setCharButton6:nil];
+    [self setCharButton8:nil];
+    [self setCharButton7:nil];
+    [self setCharButton8:nil];
+    [self setJoystick_cross_2_states:nil];
+    [self setJoystick_cross_4_states:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -287,7 +417,19 @@
 	[charButtonUp dealloc];
 	[charButtonRight dealloc];
 	[charButtonDown dealloc];
+    [buttons dealloc];
 	[messageText dealloc];
+    [charButton1 release];
+    [charButton2 release];
+    [charButton3 release];
+    [charButton4 release];
+    [charButton5 release];
+    [charButton6 release];
+    [charButton8 release];
+    [charButton7 release];
+    [charButton8 release];
+    [joystick_cross_2_states release];
+    [joystick_cross_4_states release];
     [super dealloc];
 }
 

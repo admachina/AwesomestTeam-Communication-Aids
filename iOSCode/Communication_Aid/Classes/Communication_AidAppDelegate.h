@@ -12,7 +12,7 @@
 
 @interface Communication_AidAppDelegate : NSObject <UIApplicationDelegate> {
     UIWindow *window;
-	TextInputViewController* textInputViewController;
+//	TextInputViewController* textInputViewController;
     ProfileViewController* profileViewController;
 }
 

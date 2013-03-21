@@ -16,7 +16,7 @@
 @implementation Communication_AidAppDelegate
 
 @synthesize window;
-@synthesize textInputViewController;
+//@synthesize textInputViewController;
 @synthesize profileViewController;
 
 #pragma mark -
@@ -27,7 +27,7 @@
     // Override point for customization after application launch.
     
     // Init data
-    NSString* configFileName = @"fakeFilePath";
+//    NSString* configFileName = @"fakeFilePath";
     NSString* basicTreeFile = @"dictionary.txt";
     NSString* coreWordsTreeFile = @"coreWordsDict.txt";
     
@@ -36,37 +36,36 @@
     [self copyFileFromBundleToDocs:@"defaultTree.xml"];
     
     //SelectionTree* tree = [XMLTreeCreator createTree:@"defaultTree.xml"];
-    DictionaryParser* parser = [[DictionaryParser alloc] init];
-    SelectionTree* basicTree = [parser parse:basicTreeFile:@"Basic"];
-    SelectionTree* coreWordsTree = [parser parse:coreWordsTreeFile:@"Core"];
-    
-    SelectionTree* mainMenu = [[SelectionTree alloc] init];
-    [mainMenu setRoot:TRUE];
-    
-    [mainMenu addNode:basicTree];
-    [mainMenu addNode:coreWordsTree];
-    
-    //Test code
-    /*SelectionTree* tree = [[SelectionTree alloc]init : @"" : @""];
-    [tree setRoot:true];
-    [tree addNode:[[SelectionTree alloc] init:@"A" :@"A"]];
-    [tree addNode:[[SelectionTree alloc] init:@"S" :@"S"]];
-    [tree addNode:[[SelectionTree alloc] init:@"D" :@"D"]];
-    SelectionTree* next = [tree addNode:[[SelectionTree alloc] init:@"more" :@""]];
-    [next addNode:[[SelectionTree alloc] init:@"J" :@"J"]];
-    [next addNode:[[SelectionTree alloc] init:@"K" :@"K"]];
-    [next addNode:[[SelectionTree alloc] init:@"L" :@"L"]];*/
-    //End test code
-    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:mainMenu];
+//    DictionaryParser* parser = [[DictionaryParser alloc] init];
+//    SelectionTree* basicTree = [parser parse:basicTreeFile:@"Basic"];
+//    SelectionTree* coreWordsTree = [parser parse:coreWordsTreeFile:@"Core"];
+//    
+//    SelectionTree* mainMenu = [[SelectionTree alloc] init];
+//    [mainMenu setRoot:TRUE];
+//    
+//    [mainMenu addNode:basicTree];
+//    [mainMenu addNode:coreWordsTree];
+//    
+//    //Test code
+//    /*SelectionTree* tree = [[SelectionTree alloc]init : @"" : @""];
+//    [tree setRoot:true];
+//    [tree addNode:[[SelectionTree alloc] init:@"A" :@"A"]];
+//    [tree addNode:[[SelectionTree alloc] init:@"S" :@"S"]];
+//    [tree addNode:[[SelectionTree alloc] init:@"D" :@"D"]];
+//    SelectionTree* next = [tree addNode:[[SelectionTree alloc] init:@"more" :@""]];
+//    [next addNode:[[SelectionTree alloc] init:@"J" :@"J"]];
+//    [next addNode:[[SelectionTree alloc] init:@"K" :@"K"]];
+//    [next addNode:[[SelectionTree alloc] init:@"L" :@"L"]];*/
+//    //End test code
+//    TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:mainMenu];
     
     // Init view
-    TextInputViewController *aTextInputViewController = [[TextInputViewController alloc] initWithNavigator:@"TextInputViewController" bundle:[NSBundle mainBundle] navigator:navigator];
-    ProfileViewController* aProfileViewController = [[ProfileViewController alloc] initWithTextInputView:@"ProfileViewController" bundle:[NSBundle mainBundle] textInputViewController:aTextInputViewController];
+    ProfileViewController* aProfileViewController = [[ProfileViewController alloc] initWithTextInputView:@"ProfileViewController" bundle:[NSBundle mainBundle]];
     
-	[self setTextInputViewController:aTextInputViewController];
+//	[self setTextInputViewController:aTextInputViewController];
     [self setProfileViewController:aProfileViewController];
     [aProfileViewController release];
-	[aTextInputViewController release];
+//	[aTextInputViewController release];
 //	UIView *controllersView = [textInputViewController view];
     //[window setRootViewController:textInputViewController];
     [window setRootViewController:profileViewController];
@@ -143,7 +142,7 @@
 
 
 - (void)dealloc {
-	[textInputViewController release];
+//	[textInputViewController release];
     [profileViewController release];
     [window release];
     [super dealloc];
