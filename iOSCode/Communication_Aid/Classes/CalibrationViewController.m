@@ -20,6 +20,11 @@
     [_rightButton setEnabled:FALSE];
     [_upButton setEnabled:FALSE];
     [_downButton setEnabled:FALSE];
+    
+    [_leftButton setTitle:@"" forState:UIControlStateDisabled];
+    [_rightButton setTitle:@"" forState:UIControlStateDisabled];
+    [_upButton setTitle:@"" forState:UIControlStateDisabled];
+    [_downButton setTitle:@"" forState:UIControlStateDisabled];
 }
 
 - (void)enableAllJoystickButtons
@@ -129,31 +134,35 @@
 }
 
 - (IBAction)calibrateLeft:(id)sender {
-    [_instructionLabel setText:@"Move joystick left"];
-    [_keyInputView setInsertTextMethod:@selector(setLeftKeyChar:)];
-    [_leftButton setTitleColor:[UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:1.0] forState:UIControlStateDisabled];
     [self waitForCalibrationInput];
+    [_leftButton setTitle:@"left" forState:UIControlStateDisabled];
+    [_instructionLabel setText:@"Release joystick. Move joystick left."];
+    [_keyInputView setInsertTextMethod:@selector(setLeftKeyChar:)];
+    [_leftButton setTitleColor:[UIColor colorWithRed:67.0/255.0 green:161.0/255.0 blue:41.0/255.0 alpha:1.0] forState:UIControlStateDisabled];
 }
 
 - (IBAction)calibrateUp:(id)sender {
-    [_instructionLabel setText:@"Move joystick up"];
-    [_keyInputView setInsertTextMethod:@selector(setUpKeyChar:)];
-    [_upButton setTitleColor:[UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:1.0] forState:UIControlStateDisabled];
     [self waitForCalibrationInput];
+    [_upButton setTitle:@"up" forState:UIControlStateDisabled];
+    [_instructionLabel setText:@"Release joystick. Move joystick up."];
+    [_keyInputView setInsertTextMethod:@selector(setUpKeyChar:)];
+    [_upButton setTitleColor:[UIColor colorWithRed:67.0/255.0 green:161.0/255.0 blue:41.0/255.0 alpha:1.0] forState:UIControlStateDisabled];
 }
 
 - (IBAction)calibrateRight:(id)sender {
-    [_instructionLabel setText:@"Move joystick right"];
-    [_keyInputView setInsertTextMethod:@selector(setRightKeyChar:)];
-    [_rightButton setTitleColor:[UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:1.0] forState:UIControlStateDisabled];
     [self waitForCalibrationInput];
+    [_rightButton setTitle:@"right" forState:UIControlStateDisabled];
+    [_instructionLabel setText:@"Release joystick. Move joystick right."];
+    [_keyInputView setInsertTextMethod:@selector(setRightKeyChar:)];
+    [_rightButton setTitleColor:[UIColor colorWithRed:67.0/255.0 green:161.0/255.0 blue:41.0/255.0 alpha:1.0] forState:UIControlStateDisabled];
 }
 
 - (IBAction)calibrateDown:(id)sender {
-    [_instructionLabel setText:@"Move joystick down"];
-    [_keyInputView setInsertTextMethod:@selector(setDownKeyChar:)];
-    [_downButton setTitleColor:[UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:1.0] forState:UIControlStateDisabled];
     [self waitForCalibrationInput];
+    [_downButton setTitle:@"down" forState:UIControlStateDisabled];
+    [_instructionLabel setText:@"Release joystick. Move joystick down."];
+    [_keyInputView setInsertTextMethod:@selector(setDownKeyChar:)];
+    [_downButton setTitleColor:[UIColor colorWithRed:67.0/255.0 green:161.0/255.0 blue:41.0/255.0 alpha:1.0] forState:UIControlStateDisabled];
 }
 
 - (IBAction)goBack:(id)sender {
@@ -163,4 +172,5 @@
 - (IBAction)cancelCalibrating:(id)sender {
     [self waitForDirectionSelection];
 }
+
 @end

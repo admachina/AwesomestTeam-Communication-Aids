@@ -27,6 +27,7 @@
 		62DC739316E0EF250082BCDF /* profiles.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 62DC739216E0EF250082BCDF /* profiles.sqlite */; };
 		62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DC739616E0F68F0082BCDF /* libsqlite3.dylib */; };
 		982A76DD15D3E17F00D89C0E /* EditingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 982A76DC15D3E17F00D89C0E /* EditingView.m */; };
+		9861611716FB171900D6697E /* text_input_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 9861611616FB171900D6697E /* text_input_background.png */; };
 		987E6EB315B62674004DE229 /* dictionary.txt in Resources */ = {isa = PBXBuildFile; fileRef = 987E6EB215B62674004DE229 /* dictionary.txt */; };
 		98B95BBB16869704002424BC /* CalibrationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98B95BB916869704002424BC /* CalibrationViewController.m */; };
 		98B95BBC16869704002424BC /* CalibrationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 98B95BBA16869704002424BC /* CalibrationViewController.xib */; };
@@ -86,6 +87,7 @@
 		8D1107310486CEB800E47090 /* Communication_Aid-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Communication_Aid-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		982A76DB15D3E17F00D89C0E /* EditingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingView.h; sourceTree = "<group>"; };
 		982A76DC15D3E17F00D89C0E /* EditingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditingView.m; sourceTree = "<group>"; };
+		9861611616FB171900D6697E /* text_input_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = text_input_background.png; sourceTree = "<group>"; };
 		987E6EB215B62674004DE229 /* dictionary.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dictionary.txt; sourceTree = "<group>"; };
 		98B95BB816869704002424BC /* CalibrationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalibrationViewController.h; sourceTree = "<group>"; };
 		98B95BB916869704002424BC /* CalibrationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalibrationViewController.m; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				9861611616FB171900D6697E /* text_input_background.png */,
 				62BFE8EC16FA1D5300A43A45 /* CFNetwork.framework */,
 				62DC739616E0F68F0082BCDF /* libsqlite3.dylib */,
 				140C63AA15D3123F00F50318 /* AVFoundation.framework */,
@@ -332,6 +335,7 @@
 				98F73DDE16D2BB4F0017F00E /* OpenEarsCorpus.txt in Resources */,
 				62660A1716DB088500587D0B /* ProfileViewController.xib in Resources */,
 				62DC739316E0EF250082BCDF /* profiles.sqlite in Resources */,
+				9861611716FB171900D6697E /* text_input_background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
