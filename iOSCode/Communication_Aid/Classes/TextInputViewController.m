@@ -341,6 +341,10 @@
         {
             [textView addText:[NSString stringWithFormat:@"%@", @" "]];
         }
+        else if ([newChar compare:@"backspace"] == NSOrderedSame)
+        {
+            [textView addText:[NSString stringWithFormat:@"%@", @"\b"]];
+	}
         else
         {
             [textView addText:[NSString stringWithFormat:@"%@", newChar]];
