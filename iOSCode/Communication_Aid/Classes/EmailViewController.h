@@ -13,9 +13,12 @@
 #import <MessageUI/MessageUI.h>
 #import <MessageUI/MFMailComposeViewController.h>
 
+@class TextInputViewController;
+
 @interface EmailViewController : UIViewController <MFMailComposeViewControllerDelegate>{
 }
 
-- (IBAction)actionEmailComposer: (NSString*) subject : (NSMutableString*) body;
+@property (nonatomic, assign) TextInputViewController *textInputViewController;
+- (IBAction)actionEmailComposer: (NSString*) subject body: (NSMutableString*) body recipient:(NSString*)recipient;
 
 @end

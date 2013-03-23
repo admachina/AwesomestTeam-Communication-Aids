@@ -12,6 +12,7 @@
 #import "EmailViewController.h"
 #import "FileUploader.h"
 #import "ProfileViewController.h"
+#import "DictionaryParser.h"
 
 @implementation TextInputViewController
 
@@ -29,13 +30,16 @@
 @synthesize charButton6;
 @synthesize charButton7;
 @synthesize charButton8;
+@synthesize calibrateJoystickButton;
 @synthesize joystick_cross_2_states;
 @synthesize joystick_cross_4_states;
 @synthesize messageText;
 @synthesize fliteController;
 @synthesize slt;
 @synthesize emailView;
+@synthesize emailBody;
 @synthesize profile;
+@synthesize parentViewController;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
@@ -141,6 +145,50 @@
 //        }
     }
     
+    DictionaryParser* parser = [[DictionaryParser alloc] init];
+//    emailAddressTree = [parser parse:@"email_dictionary.txt" :@"Letters"];
+    emailAddressTree = [[SelectionTree alloc]init : @"" : @""];
+//    SelectionTree* emailAddressLetters = [parser parse:@"letters.txt" :@"Letters"];
+//    [emailAddressTree addNode:emailAddressLetters];
+    [emailAddressTree addNode:[parser parse:@"letters.txt" :@"Letters"]];
+    [emailAddressTree addNode:[parser parse:@"numbers.txt" :@"Numbers"]];
+    [emailAddressTree addNode:[parser parse:@"punctuation.txt" :@"Punctuation"]];
+    [emailAddressTree addNode:[[SelectionTree alloc] init:@"Cancel Email" :@"Cancel Email"]];
+    [emailAddressTree setRoot:true];
+//    [emailAddressTree addNode:[[SelectionTree alloc] init:@"a" :@"a"]];
+//    [emailAddressTree addNode:[[SelectionTree alloc] init:@"S" :@"c"]];
+//    [emailAddressTree addNode:[[SelectionTree alloc] init:@"DONE" :@"DONE"]];
+//    [emailAddressTree addNode:[[SelectionTree alloc] init:@"E" :@"E"]];
+//    [emailAddressTree addNode:[[SelectionTree alloc] init:@"F" :@"F"]];
+//    [emailAddressTree addNode:[[SelectionTree alloc] init:@"G" :@"G"]];
+//    [emailAddressTree addNode:[[SelectionTree alloc] init:@"L" :@"L"]];
+//    SelectionTree* next = [emailAddressTree addNode:[[SelectionTree alloc] init:@"More" :@""]];
+//    [next addNode:[[SelectionTree alloc] init:@"1" :@"1"]];
+//    [next addNode:[[SelectionTree alloc] init:@"2" :@"2"]];
+//    [next addNode:[[SelectionTree alloc] init:@"3" :@"3"]];
+//    [next addNode:[[SelectionTree alloc] init:@"4" :@"4"]];
+//    [next addNode:[[SelectionTree alloc] init:@"5" :@"5"]];
+//    [next addNode:[[SelectionTree alloc] init:@"6" :@"6"]];
+//    [next addNode:[[SelectionTree alloc] init:@"7" :@"7"]];
+//    SelectionTree* next2 = [next addNode:[[SelectionTree alloc] init:@"More" :@""]];
+//    [next2 addNode:[[SelectionTree alloc] init:@"11" :@"11"]];
+//    [next2 addNode:[[SelectionTree alloc] init:@"22" :@"23"]];
+//    [next2 addNode:[[SelectionTree alloc] init:@"33" :@"33"]];
+//    [next2 addNode:[[SelectionTree alloc] init:@"44" :@"44"]];
+//    [next2 addNode:[[SelectionTree alloc] init:@"55" :@"55"]];
+//    [next2 addNode:[[SelectionTree alloc] init:@"66" :@"66"]];
+//    [next2 addNode:[[SelectionTree alloc] init:@"77" :@"77"]];
+    return self;
+}
+
+- (id)initWithNavigator:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil navigator:(TreeNavigator *)navigator profile:(Profile*)aProfile emailBody:(NSString*)in_emailBody parentTextInputViewController:(TextInputViewController*)parentVC calibViewController:(CalibrationViewController*)calibVC
+{
+    self = [self initWithNavigator:nibNameOrNil bundle:nibBundleOrNil navigator:navigator profile:aProfile];
+    [self setEmailBody:in_emailBody];
+    [self setParentTextInputViewController:parentVC];
+    [self setCalibViewController:calibVC];
+    [textView addText:@"Email address: "];
+    [calibrateJoystickButton setHidden:TRUE];
     return self;
 }
 
@@ -277,10 +325,16 @@
             [[[button titleLabel] text] compare:@"More..."] == NSOrderedSame)
         {
             [button setTitle:@"MORE" forState:UIControlStateNormal];
+            
+            [button setTitleColor:[UIColor colorWithRed:0.0 green:0.0 blue:1.0 alpha:1.0] forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor colorWithRed:0.0 green:0.0 blue:1.0 alpha:1.0] forState:UIControlStateHighlighted];
         }
+        else
+        {
         
         [button setTitleColor:[UIColor colorWithRed:67.0/255.0 green:161.0/255.0 blue:41.0/255.0 alpha:1.0] forState:UIControlStateNormal];
         [button setTitleColor:[UIColor colorWithRed:67.0/255.0 green:161.0/255.0 blue:41.0/255.0 alpha:1.0] forState:UIControlStateHighlighted];
+        }
     }
     else
     {
@@ -294,6 +348,7 @@
     NSMutableArray* newButtonsArray = [[NSMutableArray alloc] init];
     NSMutableArray* leafArray = [[NSMutableArray alloc] init];
 
+    [textView becomeFirstResponder];
     for (int i = 0; i < [buttons count]; i++)
     {
         if (sender == [buttons objectAtIndex :i])
@@ -340,6 +395,35 @@
         if ([newChar compare:@"space"] == NSOrderedSame)
         {
             [textView addText:[NSString stringWithFormat:@"%@", @" "]];
+        }
+        else if ([newChar compare:@"backspace"] == NSOrderedSame)
+        {
+//            NSString* current_text = [textView textStore];
+//            if (( [current_text length] < 15 || [[current_text substringWithRange:NSMakeRange(0, 15)] compare:@"Email Address: "] != NSOrderedSame) ||
+//                ([[current_text substringWithRange:NSMakeRange(0, 15)] compare:@"Email Address: "] == NSOrderedSame && [current_text length] > 15))
+//            {
+                [textView deleteBackward];
+//            }
+//            NSString* current_text = [textView textStore];
+//            if ([current_text length] > 0)
+//            {
+//                [textView addText:[ current_text substringWithRange:NSMakeRange(0, [current_text length] - 1)]];
+//            }
+        }
+        else if ([newChar compare:@"DONE"] == NSOrderedSame)
+        {
+            NSString* subject = @"Communication Aid Email";
+            //body will be all text entered so far.
+            NSMutableString* bodyText = [NSMutableString stringWithString:emailBody != nil ? emailBody : @""];
+
+            NSString* email_address = [[textView textStore] substringWithRange:NSMakeRange(15, [[textView textStore] length] - 15)];
+            [self sendEmail :subject body: bodyText recipient:email_address];
+        }
+        else if ([newChar compare:@"Cancel Email"] == NSOrderedSame)
+        {
+            [[self view] removeFromSuperview];
+            [self resignFirstResponder];
+            [[[self parentTextInputViewController] textView ]becomeFirstResponder];
         }
         else
         {
@@ -394,8 +478,6 @@
 //        [self.fliteController say:[textView textStore] withVoice:self.slt];
 //    }
     
-    [textView becomeFirstResponder];
-    
 	
 }
 
@@ -427,6 +509,7 @@
     [self setCharButton8:nil];
     [self setJoystick_cross_2_states:nil];
     [self setJoystick_cross_4_states:nil];
+    [self setCalibrateJoystickButton:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -453,6 +536,7 @@
     [charButton8 release];
     [joystick_cross_2_states release];
     [joystick_cross_4_states release];
+    [calibrateJoystickButton release];
     [super dealloc];
 }
 
@@ -461,12 +545,20 @@
 - (Boolean)handleIfAnOptionCall:(NSString *)string {
 
     if( [string compare: @"#!Email"] == NSOrderedSame  ){
-        //subject will be static for now
-        NSString* subject = @"Communication Aid Email"; 
-        //body will be all text entered so far.
-        NSMutableString* bodyText = [textView textStore];
-
-        [self sendEmail :subject : bodyText];
+        // Open another text input view controller for entering email address
+        TreeNavigator* navigator = [[TreeNavigator alloc] initWithTree:emailAddressTree];
+        TextInputViewController* emailAddressViewController = [[TextInputViewController alloc] initWithNavigator:@"TextInputViewController" bundle:[NSBundle mainBundle] navigator:navigator profile:profile emailBody:[textView textStore] parentTextInputViewController:self calibViewController:calibViewController];
+        
+        
+        [self.view addSubview:[emailAddressViewController view]];
+//        [self resignFirstResponder];
+        [[emailAddressViewController textView] becomeFirstResponder];
+//        //subject will be static for now
+//        NSString* subject = @"Communication Aid Email"; 
+//        //body will be all text entered so far.
+//        NSMutableString* bodyText = [textView textStore];
+//
+//        [self sendEmail :subject body: bodyText];
         
     } else if ( [string compare: @"#!Speak" ] == NSOrderedSame) {
         
@@ -493,9 +585,13 @@
     return true;
 }
 
--(void) sendEmail:(NSString *)subject :(NSMutableString *)body {
+-(void) sendEmail:(NSString *)subject body:(NSMutableString *)body recipient:(NSString*)recipient{
     //EmailViewController* evc = [[EmailViewController alloc ]init];
-    [emailView actionEmailComposer:subject: body];
+    [self.view addSubview:[emailView view]];
+    [emailView setTextInputViewController:self];
+    [emailView actionEmailComposer:subject body:body recipient:recipient];
+//    [[emailView view] removeFromSuperview];
+//    [textView becomeFirstResponder];
     //[self.view addSubview:[emailView view]];
     //[evc actionEmailComposer: subject : body];
     //[evc dealloc];

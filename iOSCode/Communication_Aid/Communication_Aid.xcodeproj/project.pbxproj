@@ -36,9 +36,14 @@
 		9872A40916FAB141009986C3 /* EmailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9872A40816FAB141009986C3 /* EmailViewController.m */; };
 		9872A40B16FAC01D009986C3 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9872A40A16FAC01D009986C3 /* MessageUI.framework */; };
 		987E6EB315B62674004DE229 /* dictionary.txt in Resources */ = {isa = PBXBuildFile; fileRef = 987E6EB215B62674004DE229 /* dictionary.txt */; };
+		98A8285F16FC83D200AF45DF /* numbers.txt in Resources */ = {isa = PBXBuildFile; fileRef = 98A8285C16FC83D200AF45DF /* numbers.txt */; };
+		98A8286016FC83D200AF45DF /* profiles.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 98A8285D16FC83D200AF45DF /* profiles.sqlite */; };
+		98A8286116FC83D200AF45DF /* punctuation.txt in Resources */ = {isa = PBXBuildFile; fileRef = 98A8285E16FC83D200AF45DF /* punctuation.txt */; };
+		98A8286316FC840A00AF45DF /* letters.txt in Resources */ = {isa = PBXBuildFile; fileRef = 98A8286216FC840A00AF45DF /* letters.txt */; };
 		98A9717D16F4E83200D616C8 /* defaultOptions.txt in Resources */ = {isa = PBXBuildFile; fileRef = 98A9717C16F4E83200D616C8 /* defaultOptions.txt */; };
 		98B95BBB16869704002424BC /* CalibrationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98B95BB916869704002424BC /* CalibrationViewController.m */; };
 		98B95BBC16869704002424BC /* CalibrationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 98B95BBA16869704002424BC /* CalibrationViewController.xib */; };
+		98DCDA6316FC514000D508D9 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98DCDA6216FC514000D508D9 /* CoreText.framework */; };
 		98F2A374156C11A400431E1D /* joystick_cross_1.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 98F2A373156C11A400431E1D /* joystick_cross_1.PNG */; };
 		98F2A376156C144800431E1D /* button_grey_background.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 98F2A375156C144800431E1D /* button_grey_background.PNG */; };
 		98F2A3D8156C17A100431E1D /* TextInputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98F2A3D6156C17A100431E1D /* TextInputViewController.m */; };
@@ -107,10 +112,15 @@
 		9872A40816FAB141009986C3 /* EmailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmailViewController.m; sourceTree = "<group>"; };
 		9872A40A16FAC01D009986C3 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		987E6EB215B62674004DE229 /* dictionary.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dictionary.txt; sourceTree = "<group>"; };
+		98A8285C16FC83D200AF45DF /* numbers.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = numbers.txt; sourceTree = "<group>"; };
+		98A8285D16FC83D200AF45DF /* profiles.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = profiles.sqlite; sourceTree = "<group>"; };
+		98A8285E16FC83D200AF45DF /* punctuation.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = punctuation.txt; sourceTree = "<group>"; };
+		98A8286216FC840A00AF45DF /* letters.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = letters.txt; sourceTree = "<group>"; };
 		98A9717C16F4E83200D616C8 /* defaultOptions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = defaultOptions.txt; sourceTree = "<group>"; };
 		98B95BB816869704002424BC /* CalibrationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalibrationViewController.h; sourceTree = "<group>"; };
 		98B95BB916869704002424BC /* CalibrationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalibrationViewController.m; sourceTree = "<group>"; };
 		98B95BBA16869704002424BC /* CalibrationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CalibrationViewController.xib; path = Classes/CalibrationViewController.xib; sourceTree = "<group>"; };
+		98DCDA6216FC514000D508D9 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		98F2A373156C11A400431E1D /* joystick_cross_1.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = joystick_cross_1.PNG; sourceTree = "<group>"; };
 		98F2A375156C144800431E1D /* button_grey_background.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_grey_background.PNG; sourceTree = "<group>"; };
 		98F2A3D5156C17A100431E1D /* TextInputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputViewController.h; sourceTree = "<group>"; };
@@ -143,6 +153,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98DCDA6316FC514000D508D9 /* CoreText.framework in Frameworks */,
 				62BFE8ED16FA1D5300A43A45 /* CFNetwork.framework in Frameworks */,
 				9872A40B16FAC01D009986C3 /* MessageUI.framework in Frameworks */,
 				62DC739716E0F68F0082BCDF /* libsqlite3.dylib in Frameworks */,
@@ -208,6 +219,11 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				98A8286216FC840A00AF45DF /* letters.txt */,
+				98A8285C16FC83D200AF45DF /* numbers.txt */,
+				98A8285D16FC83D200AF45DF /* profiles.sqlite */,
+				98A8285E16FC83D200AF45DF /* punctuation.txt */,
+				98DCDA6216FC514000D508D9 /* CoreText.framework */,
 				627BDBC916FB201800B253FB /* 2-tree.xml */,
 				627BDBCA16FB201800B253FB /* 8-tree.xml */,
 				9861611816FB309400D6697E /* joystick_cross_2.PNG */,
@@ -374,6 +390,10 @@
 				627BDBCC16FB201800B253FB /* 8-tree.xml in Resources */,
 				9861611916FB309400D6697E /* joystick_cross_2.PNG in Resources */,
 				98A9717D16F4E83200D616C8 /* defaultOptions.txt in Resources */,
+				98A8285F16FC83D200AF45DF /* numbers.txt in Resources */,
+				98A8286016FC83D200AF45DF /* profiles.sqlite in Resources */,
+				98A8286116FC83D200AF45DF /* punctuation.txt in Resources */,
+				98A8286316FC840A00AF45DF /* letters.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

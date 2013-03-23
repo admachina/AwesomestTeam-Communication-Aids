@@ -8,31 +8,35 @@
 // borrowed from :http://iphonedevsdk.com/forum/tutorial-discussion/43633-quick-tutorial-on-how-to-add-mfmailcomposeviewcontroller.html
 
 #import "EmailViewController.h"
+#import "TextInputViewController.h"
 
 @implementation EmailViewController
 
--(IBAction)actionEmailComposer:(NSString *)subject :(NSMutableString *)body{
+@synthesize textInputViewController;
 
-    //if ([MFMailComposeViewController canSendMail]) {
-        
+-(IBAction)actionEmailComposer:(NSString *)subject body:(NSMutableString *)body recipient:(NSString*)recipient{
+
+    if ([MFMailComposeViewController canSendMail]) {
+    
         MFMailComposeViewController *mailViewController = [[MFMailComposeViewController alloc] init];
         mailViewController.mailComposeDelegate = self;
         [mailViewController setSubject: subject];
          [mailViewController setMessageBody:body isHTML:NO];
+        [mailViewController setToRecipients:[NSArray arrayWithObject:recipient]];
           
           [self presentModalViewController:mailViewController animated:YES];
     //[self becomeFirstResponder];
           [mailViewController release];
           
           //}
-          
-    /*
-     else {
+        
+    
+    }     else {
               
             NSLog(@"Device is unable to send email in its current state.");
               
      }
-    */
+    
 }
 
 - (void)viewDidLoad {
@@ -44,8 +48,11 @@
 -(void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
 
     [self dismissModalViewControllerAnimated:YES];
-    //[self resignFirstResponder];
-
+    [[self view] removeFromSuperview];
+    [self resignFirstResponder];
+    [[textInputViewController view] removeFromSuperview];
+    [textInputViewController resignFirstResponder];
+    [[[textInputViewController parentTextInputViewController] textView ]becomeFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -30,10 +30,15 @@
     // Init data
     //NSString* configFileName = @"fakeFilePath";
     NSString* basicTreeFile = @"dictionary.txt";
+//    NSString* basicEmailTreeFile = @"email_dictionary.txt";
     NSString* coreWordsTreeFile = @"coreWordsDict.txt";
     NSString* xmlFile = @"defaultTree.xml";
     
     [self copyFileFromBundleToDocs : basicTreeFile];
+//    [self copyFileFromBundleToDocs : basicEmailTreeFile];
+    [self copyFileFromBundleToDocs : @"letters.txt"];
+    [self copyFileFromBundleToDocs : @"numbers.txt"];
+    [self copyFileFromBundleToDocs : @"punctuation.txt"];
     [self copyFileFromBundleToDocs : coreWordsTreeFile];
     [self copyFileFromBundleToDocs:xmlFile];
     

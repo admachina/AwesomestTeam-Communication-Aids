@@ -36,11 +36,13 @@
     Slt *slt;
     Profile* profile;
     NSMutableArray* buttons;
+    SelectionTree* emailAddressTree;
 }
 
 @property (nonatomic, retain) IBOutlet UIKeyInputExampleView *textView;
 @property (nonatomic, retain) CalibrationViewController *calibViewController;
 @property (nonatomic, retain) EmailViewController* emailView;
+@property (nonatomic, retain) TextInputViewController* parentTextInputViewController;
 @property (nonatomic, retain) IBOutlet UIButton *charButtonLeft;
 @property (nonatomic, retain) IBOutlet UIButton *charButtonUp;
 @property (nonatomic, retain) IBOutlet UIButton *charButtonRight;
@@ -57,22 +59,26 @@
 @property (retain, nonatomic) IBOutlet UIImageView *joystick_cross_4_states;
 
 @property (nonatomic, copy) NSString* messageText;
+@property (nonatomic, copy) NSString* emailBody;
 @property (nonatomic, retain) FliteController *fliteController;
 @property (strong, nonatomic) Slt *slt;
 @property (nonatomic, retain) Profile * profile;
 
 - (id)initWithNavigator:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil navigator:(TreeNavigator *)navigator profile:(Profile*)profile;
+- (id)initWithNavigator:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil navigator:(TreeNavigator *)navigator profile:(Profile*)profile emailBody:(NSString*)emailBody parentTextInputViewController:(TextInputViewController*)parentVC calibViewController:(CalibrationViewController*)calibVC;
 - (IBAction)setText:(id)sender;
 - (void) keyPress:(char) c;
 - (IBAction)calibrateJoystick:(id)sender;
 - (void) exitJoystickCalibration;
+//- (void) exitEmailView;
 //- (void) setProfile:(Profile*)profile;
+@property (retain, nonatomic) IBOutlet UIButton *calibrateJoystickButton;
 
 - (Boolean) handleIfAnOptionCall :(NSString*) string ;
 //here are the possible option calls' handlers:
 
 //email with subject and body
-- (void) sendEmail: ( NSString*) subject: (NSMutableString*) body;
+- (void) sendEmail: ( NSString*)subject body: (NSMutableString*) body recipient:(NSString*)recipient;
 
 
 @end
